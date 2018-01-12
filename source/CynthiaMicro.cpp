@@ -16,6 +16,8 @@ CynthiaMicro::CynthiaMicro(IPlugInstanceInfo instanceInfo)
 	AttachGraphics(pGraphics);
 
 	MakeDefaultPreset((char *) "-", kNumPrograms);
+
+	voice.SetNote(69);
 }
 
 CynthiaMicro::~CynthiaMicro() {}
@@ -27,8 +29,9 @@ void CynthiaMicro::ProcessDoubleReplacing(double** inputs, double** outputs, int
 
 	for (int s = 0; s < nFrames; ++s, ++out1, ++out2)
 	{
-		*out1 = 0.0;
-		*out2 = 0.0;
+		double out = .25 * voice.Next();
+		*out1 = out;
+		*out2 = out;
 	}
 }
 
@@ -36,6 +39,8 @@ void CynthiaMicro::Reset()
 {
 	TRACE;
 	IMutexLock lock(this);
+
+	voice.SetSampleRate(GetSampleRate());
 }
 
 void CynthiaMicro::OnParamChange(int paramIdx)

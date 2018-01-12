@@ -2,6 +2,7 @@
 #define __CYNTHIAMICRO__
 
 #include "IPlug_include_in_plug_hdr.h"
+#include "Voice.h"
 
 class CynthiaMicro : public IPlug
 {
@@ -14,6 +15,7 @@ public:
 	void ProcessDoubleReplacing(double** inputs, double** outputs, int nFrames);
 
 private:
+	Voice voice;
 };
 
 #endif
