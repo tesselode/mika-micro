@@ -12,6 +12,8 @@ void Voice::SetNote(int n)
 
 double Voice::Next()
 {
+	modEnvelope.Update();
+
 	phase1a = fmod(phase1a + frequency / sampleRate, 1.0);
 	phase1b = fmod(phase1b + frequency * 1.01 / sampleRate, 1.0);
 	phase2a = fmod(phase2a + frequency / 1.01 / sampleRate, 1.0);
@@ -22,6 +24,8 @@ double Voice::Next()
 	out += Sine(phase1b);
 	out += Sine(phase2a);
 	out += Sine(phase2b);
+
+	out *= modEnvelope.Get();
 
 	return out;
 }

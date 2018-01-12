@@ -18,6 +18,7 @@ CynthiaMicro::CynthiaMicro(IPlugInstanceInfo instanceInfo)
 	MakeDefaultPreset((char *) "-", kNumPrograms);
 
 	voice.SetNote(69);
+	voice.Start();
 }
 
 CynthiaMicro::~CynthiaMicro() {}
