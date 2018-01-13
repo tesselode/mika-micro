@@ -5,10 +5,24 @@
 
 const int kNumPrograms = 1;
 
+enum Parameters
+{
+	envelopeAttack,
+	envelopeDecay,
+	envelopeSustain,
+	envelopeRelease,
+	numParameters
+};
+
 CynthiaMicro::CynthiaMicro(IPlugInstanceInfo instanceInfo)
-  :	IPLUG_CTOR(1, kNumPrograms, instanceInfo)
+  :	IPLUG_CTOR(numParameters, kNumPrograms, instanceInfo)
 {
 	TRACE;
+
+	GetParam(envelopeAttack)->InitDouble("Envelope attack", 100., 0.1, 100., .01);
+	GetParam(envelopeDecay)->InitDouble("Envelope decay", 1., 0.1, 100., .01);
+	GetParam(envelopeSustain)->InitDouble("Envelope sustain", .5, 0., 1., .01);
+	GetParam(envelopeRelease)->InitDouble("Envelope release", 1., 0.1, 100., .01);
 
 	IGraphics* pGraphics = MakeGraphics(this, GUI_WIDTH, GUI_HEIGHT);
 	pGraphics->AttachPanelBackground(&COLOR_GRAY);
@@ -16,11 +30,6 @@ CynthiaMicro::CynthiaMicro(IPlugInstanceInfo instanceInfo)
 	AttachGraphics(pGraphics);
 
 	MakeDefaultPreset((char *) "-", kNumPrograms);
-
-	for (int i = 0; i < numVoices; i++)
-	{
-		voices[i].SetEnvelopeRelease(1.0);
-	}
 }
 
 CynthiaMicro::~CynthiaMicro() {}
@@ -114,4 +123,15 @@ void CynthiaMicro::Reset()
 void CynthiaMicro::OnParamChange(int paramIdx)
 {
 	IMutexLock lock(this);
+
+	IParam* param = GetParam(paramIdx);
+	double value = param->Value();
+
+	for (int i = 0; i < numVoices; i++)
+	{
+		if (paramIdx == envelopeAttack) voices[i].SetEnvelopeAttack(value);
+		if (paramIdx == envelopeDecay) voices[i].SetEnvelopeDecay(value);
+		if (paramIdx == envelopeSustain) voices[i].SetEnvelopeSustain(value);
+		if (paramIdx == envelopeRelease) voices[i].SetEnvelopeRelease(value);
+	}
 }
