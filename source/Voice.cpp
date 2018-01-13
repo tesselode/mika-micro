@@ -68,6 +68,8 @@ double Voice::Next(double lfoValue)
 		out += oscOut * oscillatorMix;
 	}
 	
+	out = filter.Process(out, 20000.);
+
 	out *= modEnvelope.Get();
 
 	return out;

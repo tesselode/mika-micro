@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Envelope.h"
+#include "Filter.h"
 #include "Oscillator.h"
 
 class Voice
@@ -70,4 +71,6 @@ private:
 	Oscillator osc2b;
 
 	Envelope modEnvelope;
+
+	Filter filter;
 };

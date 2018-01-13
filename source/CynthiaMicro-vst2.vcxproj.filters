@@ -8,6 +8,7 @@
     <ClCompile Include="Envelope.cpp" />
     <ClCompile Include="Voice.cpp" />
     <ClCompile Include="Oscillator.cpp" />
+    <ClCompile Include="Filter.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CynthiaMicro.h" />
@@ -18,6 +19,7 @@
     <ClInclude Include="Envelope.h" />
     <ClInclude Include="Voice.h" />
     <ClInclude Include="Oscillator.h" />
+    <ClInclude Include="Filter.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="CynthiaMicro.rc" />
