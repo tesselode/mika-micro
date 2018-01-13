@@ -16,6 +16,8 @@ enum Parameters
 	envelopeDecay,
 	envelopeSustain,
 	envelopeRelease,
+	lfoAmount,
+	lfoFrequency,
 	numParameters
 };
 
@@ -34,6 +36,9 @@ CynthiaMicro::CynthiaMicro(IPlugInstanceInfo instanceInfo)
 	GetParam(envelopeDecay)->InitDouble("Envelope decay", 1., 0.1, 100., .01);
 	GetParam(envelopeSustain)->InitDouble("Envelope sustain", .5, 0., 1., .01);
 	GetParam(envelopeRelease)->InitDouble("Envelope release", 1., 0.1, 100., .01);
+
+	GetParam(lfoAmount)->InitDouble("Vibrato amount", -.025, -0.1, 0.1, .01);
+	GetParam(lfoFrequency)->InitDouble("Vibrato speed", 5.0, 1.0, 10.0, .01, "hz");
 
 	IGraphics* pGraphics = MakeGraphics(this, GUI_WIDTH, GUI_HEIGHT);
 	pGraphics->AttachPanelBackground(&COLOR_GRAY);
@@ -77,6 +82,9 @@ void CynthiaMicro::ProcessDoubleReplacing(double** inputs, double** outputs, int
 
 	for (int s = 0; s < nFrames; ++s, ++out1, ++out2)
 	{
+		lfo.Update();
+		double lfoValue = lfo.Get(Sine);
+
 		while (!midiQueue.Empty())
 		{
 			IMidiMsg* message = midiQueue.Peek();
@@ -105,7 +113,7 @@ void CynthiaMicro::ProcessDoubleReplacing(double** inputs, double** outputs, int
 		double out = 0.0;
 		for (int i = 0; i < numVoices; i++)
 		{
-			out += .25 * voices[i].Next();
+			out += .25 * voices[i].Next(lfoValue);
 		}
 		*out1 = out;
 		*out2 = out;
@@ -125,6 +133,7 @@ void CynthiaMicro::Reset()
 	TRACE;
 	IMutexLock lock(this);
 
+	lfo.SetSampleRate(GetSampleRate());
 	for (int i = 0; i < numVoices; i++)
 	{
 		voices[i].SetSampleRate(GetSampleRate());
@@ -138,17 +147,26 @@ void CynthiaMicro::OnParamChange(int paramIdx)
 	IParam* param = GetParam(paramIdx);
 	double value = param->Value();
 
-	for (int i = 0; i < numVoices; i++)
+	if (paramIdx == lfoFrequency)
 	{
-		if (paramIdx == oscillator1Split) voices[i].SetOscillator1Split(value);
-		if (paramIdx == oscillator1Coarse) voices[i].SetOscillator1Coarse(value);
-		if (paramIdx == oscillator2Split) voices[i].SetOscillator2Split(value);
-		if (paramIdx == oscillator2Coarse) voices[i].SetOscillator2Coarse(value);
-		if (paramIdx == oscillatorMix) voices[i].SetOscillatorMix(value);
+		lfo.SetFrequency(value);
+	}
+	else
+	{
+		for (int i = 0; i < numVoices; i++)
+		{
+			if (paramIdx == oscillator1Split) voices[i].SetOscillator1Split(value);
+			if (paramIdx == oscillator1Coarse) voices[i].SetOscillator1Coarse(value);
+			if (paramIdx == oscillator2Split) voices[i].SetOscillator2Split(value);
+			if (paramIdx == oscillator2Coarse) voices[i].SetOscillator2Coarse(value);
+			if (paramIdx == oscillatorMix) voices[i].SetOscillatorMix(value);
 
-		if (paramIdx == envelopeAttack) voices[i].SetEnvelopeAttack(value);
-		if (paramIdx == envelopeDecay) voices[i].SetEnvelopeDecay(value);
-		if (paramIdx == envelopeSustain) voices[i].SetEnvelopeSustain(value);
-		if (paramIdx == envelopeRelease) voices[i].SetEnvelopeRelease(value);
+			if (paramIdx == envelopeAttack) voices[i].SetEnvelopeAttack(value);
+			if (paramIdx == envelopeDecay) voices[i].SetEnvelopeDecay(value);
+			if (paramIdx == envelopeSustain) voices[i].SetEnvelopeSustain(value);
+			if (paramIdx == envelopeRelease) voices[i].SetEnvelopeRelease(value);
+
+			if (paramIdx == lfoAmount) voices[i].SetLfoAmount(value);
+		}
 	}
 }

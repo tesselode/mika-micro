@@ -5,7 +5,7 @@ void Voice::SetNote(int n)
 	note = n;
 }
 
-double Voice::Next()
+double Voice::Next(double lfoValue)
 {
 	double out = 0.0;
 
@@ -23,6 +23,10 @@ double Voice::Next()
 		double oscOut = 0.0;
 
 		double oscFrequency = frequency * oscillator1Coarse;
+		if (lfoAmount > 0.0)
+		{
+			oscFrequency *= 1 + lfoAmount * lfoValue;
+		}
 
 		if (oscillator1Split > 1.0)
 		{
@@ -47,6 +51,7 @@ double Voice::Next()
 		double oscOut = 0.0;
 
 		double oscFrequency = frequency * oscillator2Coarse;
+		oscFrequency *= 1 + lfoAmount * lfoValue;
 
 		if (oscillator2Split > 1.0)
 		{

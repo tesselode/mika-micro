@@ -23,6 +23,7 @@ private:
 	int PickVoice();
 
 	IMidiQueue midiQueue;
+	Oscillator lfo;
 	Voice voices[numVoices];
 };
 

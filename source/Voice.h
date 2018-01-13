@@ -30,11 +30,12 @@ public:
 	void SetEnvelopeDecay(double d) { modEnvelope.SetDecay(d); }
 	void SetEnvelopeSustain(double s) { modEnvelope.SetSustain(s); }
 	void SetEnvelopeRelease(double r) { modEnvelope.SetRelease(r); }
+	void SetLfoAmount(double a) { lfoAmount = a; }
 
 	void Start() { modEnvelope.Start(); }
 	void Release() { modEnvelope.Release(); }
 
-	double Next();
+	double Next(double lfoValue);
 
 private:
 	double PitchFactor(double p) { return pow(1.05946309436, p); }
@@ -48,6 +49,7 @@ private:
 	double oscillator2Split = 1.0;
 	double oscillator2Coarse = 1.0;
 	double oscillatorMix = 0.0;
+	double lfoAmount = 0.0;
 
 	Oscillator osc1a;
 	Oscillator osc1b;
