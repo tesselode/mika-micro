@@ -15,8 +15,10 @@ double Voice::Next(double lfoValue)
 
 	frequency += (targetFrequency - frequency) * (glideSpeed / sampleRate);
 
+	double fmAmount = fmCoarse + fmFine;
+
 	// oscillator 1
-	if (oscillatorMix < 1.0)
+	if (oscillatorMix < 1.0 || fmAmount > 0)
 	{
 		double oscOut = 0.0;
 
@@ -49,6 +51,7 @@ double Voice::Next(double lfoValue)
 		double oscOut = 0.0;
 
 		double oscFrequency = frequency * oscillator2Coarse;
+		if (fmAmount > 0.0) oscFrequency *= PitchFactor(fmAmount * osc1a.Get(Sine));
 		oscFrequency *= 1 + lfoAmount * lfoValue;
 
 		if (oscillator2Split > 1.0)

@@ -12,6 +12,8 @@ enum Parameters
 	oscillator2Split,
 	oscillator2Coarse,
 	oscillatorMix,
+	fmCoarse,
+	fmFine,
 	envelopeAttack,
 	envelopeDecay,
 	envelopeSustain,
@@ -33,6 +35,9 @@ CynthiaMicro::CynthiaMicro(IPlugInstanceInfo instanceInfo)
 	GetParam(oscillator2Split)->InitDouble("Oscillator 2 split", 1.005, 1.0, 1.1, .01);
 	GetParam(oscillator2Coarse)->InitInt("Oscillator 1 coarse", 0, -24, 24, "semitones");
 	GetParam(oscillatorMix)->InitDouble("Oscillator mix", 0.5, 0.0, 1.0, .01);
+
+	GetParam(fmCoarse)->InitInt("FM coarse", 12, 0, 24, "semitones");
+	GetParam(fmFine)->InitDouble("FM fine", 0, -1.0, 1.0, .01, "semitones");
 
 	GetParam(envelopeAttack)->InitDouble("Envelope attack", 100., 0.1, 100., .01);
 	GetParam(envelopeDecay)->InitDouble("Envelope decay", 1., 0.1, 100., .01);
@@ -207,6 +212,9 @@ void CynthiaMicro::OnParamChange(int paramIdx)
 			if (paramIdx == oscillator2Split) voices[i].SetOscillator2Split(value);
 			if (paramIdx == oscillator2Coarse) voices[i].SetOscillator2Coarse(value);
 			if (paramIdx == oscillatorMix) voices[i].SetOscillatorMix(value);
+
+			if (paramIdx == fmCoarse) voices[i].SetFmCoarse(value);
+			if (paramIdx == fmFine) voices[i].SetFmFine(value);
 
 			if (paramIdx == envelopeAttack) voices[i].SetEnvelopeAttack(value);
 			if (paramIdx == envelopeDecay) voices[i].SetEnvelopeDecay(value);

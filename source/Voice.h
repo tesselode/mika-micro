@@ -27,6 +27,8 @@ public:
 	void SetOscillator2Split(double s) { oscillator2Split = s; }
 	void SetOscillator2Coarse(double c) { oscillator2Coarse = PitchFactor(c); }
 	void SetOscillatorMix(double m) { oscillatorMix = m; }
+	void SetFmCoarse(int c) { fmCoarse = c; }
+	void SetFmFine(double f) { fmFine = f; }
 	void SetEnvelopeAttack(double a) { modEnvelope.SetAttack(a); }
 	void SetEnvelopeDecay(double d) { modEnvelope.SetDecay(d); }
 	void SetEnvelopeSustain(double s) { modEnvelope.SetSustain(s); }
@@ -61,6 +63,8 @@ private:
 	double oscillator2Split = 1.0;
 	double oscillator2Coarse = 1.0;
 	double oscillatorMix = 0.0;
+	int fmCoarse = 0;
+	double fmFine = 0.0;
 	double lfoAmount = 0.0;
 	bool mono = false;
 	double glideSpeed = 1000.;
