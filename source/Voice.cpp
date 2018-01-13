@@ -15,7 +15,7 @@ double Voice::Next(double lfoValue)
 
 	frequency += (targetFrequency - frequency) * (glideSpeed / sampleRate);
 
-	double fmAmount = fmCoarse + fmFine;
+	double fmAmount = fmCoarse + fmFine + fmEnvelopeAmount * modEnvelope.Get();
 
 	// oscillator 1
 	if (oscillatorMix < 1.0 || fmAmount > 0)
@@ -71,7 +71,9 @@ double Voice::Next(double lfoValue)
 		out += oscOut * oscillatorMix;
 	}
 	
-	double cutoff = filterCutoff + filterKeyTracking * (frequency - 440.0);
+	double cutoff = filterCutoff;
+	cutoff += filterKeyTracking * (frequency - 440.0);
+	cutoff += filterEnvelopeAmount * modEnvelope.Get();
 	out = filter.Process(out, cutoff);
 
 	out *= modEnvelope.Get();

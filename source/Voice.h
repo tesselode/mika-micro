@@ -29,9 +29,11 @@ public:
 	void SetOscillatorMix(double m) { oscillatorMix = m; }
 	void SetFmCoarse(int c) { fmCoarse = c; }
 	void SetFmFine(double f) { fmFine = f; }
+	void SetFmEnvelopeAmount(double a) { fmEnvelopeAmount = a; }
 	void SetFilterCutoff(double c) { filterCutoff = c; }
 	void SetFilterResonance(double r) { filter.SetResonance(r); }
 	void SetFilterKeyTracking(double k) { filterKeyTracking = k; }
+	void SetFilterEnvelopeAmount(double a) { filterEnvelopeAmount = a; }
 	void SetEnvelopeAttack(double a) { modEnvelope.SetAttack(a); }
 	void SetEnvelopeDecay(double d) { modEnvelope.SetDecay(d); }
 	void SetEnvelopeSustain(double s) { modEnvelope.SetSustain(s); }
@@ -75,8 +77,10 @@ private:
 	double oscillatorMix = 0.0;
 	int fmCoarse = 0;
 	double fmFine = 0.0;
+	double fmEnvelopeAmount = 0.0;
 	double filterCutoff = 20000.0;
 	double filterKeyTracking = 0.0;
+	double filterEnvelopeAmount = 0.0;
 	double lfoAmount = 0.0;
 	bool mono = false;
 	double glideSpeed = 1000.;
