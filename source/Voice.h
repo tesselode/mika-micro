@@ -31,8 +31,17 @@ public:
 	void SetEnvelopeSustain(double s) { modEnvelope.SetSustain(s); }
 	void SetEnvelopeRelease(double r) { modEnvelope.SetRelease(r); }
 	void SetLfoAmount(double a) { lfoAmount = a; }
+	void SetMono(bool m) { mono = m; }
+	void SetGlideSpeed(double s) { glideSpeed = s; }
 
-	void Start() { modEnvelope.Start(); }
+	void Start()
+	{
+		if (IsReleased())
+		{
+			pitch = note;
+		}
+		modEnvelope.Start();
+	}
 	void Release() { modEnvelope.Release(); }
 
 	double Next(double lfoValue);
@@ -43,6 +52,7 @@ private:
 
 	double sampleRate = 44100;
 	int note = 69;
+	double pitch = 69;
 
 	double oscillator1Split = 1.0;
 	double oscillator1Coarse = 1.0;
@@ -50,6 +60,8 @@ private:
 	double oscillator2Coarse = 1.0;
 	double oscillatorMix = 0.0;
 	double lfoAmount = 0.0;
+	bool mono = false;
+	double glideSpeed = 1000.;
 
 	Oscillator osc1a;
 	Oscillator osc1b;

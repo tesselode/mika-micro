@@ -18,6 +18,8 @@ enum Parameters
 	envelopeRelease,
 	lfoAmount,
 	lfoFrequency,
+	monoMode,
+	glideSpeed,
 	numParameters
 };
 
@@ -39,6 +41,9 @@ CynthiaMicro::CynthiaMicro(IPlugInstanceInfo instanceInfo)
 
 	GetParam(lfoAmount)->InitDouble("Vibrato amount", -.025, -0.1, 0.1, .01);
 	GetParam(lfoFrequency)->InitDouble("Vibrato speed", 5.0, 1.0, 10.0, .01, "hz");
+
+	GetParam(monoMode)->InitBool("Mono mode", true);
+	GetParam(glideSpeed)->InitDouble("Glide speed", 100., 0.1, 1000., .01);
 
 	IGraphics* pGraphics = MakeGraphics(this, GUI_WIDTH, GUI_HEIGHT);
 	pGraphics->AttachPanelBackground(&COLOR_GRAY);
@@ -92,17 +97,51 @@ void CynthiaMicro::ProcessDoubleReplacing(double** inputs, double** outputs, int
 
 			if (message->StatusMsg() == IMidiMsg::kNoteOn)
 			{
-				int v = PickVoice();
-				voices[v].SetNote(message->NoteNumber());
-				voices[v].Start();
+				if (mono)
+				{
+					voices[0].SetNote(message->NoteNumber());
+					if (heldNotes.empty())
+					{
+						voices[0].Start();
+					}
+				}
+				else
+				{
+					int v = PickVoice();
+					voices[v].SetNote(message->NoteNumber());
+					voices[v].Start();
+				}
+				heldNotes.push_back(message->NoteNumber());
 			}
 			else if (message->StatusMsg() == IMidiMsg::kNoteOff)
 			{
-				for (int i = 0; i < numVoices; i++)
+				for (int i = 0; i < heldNotes.size(); i++)
 				{
-					if (voices[i].GetNote() == message->NoteNumber())
+					if (heldNotes[i] == message->NoteNumber())
 					{
-						voices[i].Release();
+						heldNotes.erase(heldNotes.begin() + i);
+						break;
+					}
+				}
+				if (mono)
+				{
+					if (heldNotes.empty())
+					{
+						voices[0].Release();
+					}
+					else
+					{
+						voices[0].SetNote(heldNotes.back());
+					}
+				}
+				else
+				{
+					for (int i = 0; i < numVoices; i++)
+					{
+						if (voices[i].GetNote() == message->NoteNumber())
+						{
+							voices[i].Release();
+						}
 					}
 				}
 			}
@@ -151,6 +190,14 @@ void CynthiaMicro::OnParamChange(int paramIdx)
 	{
 		lfo.SetFrequency(value);
 	}
+	else if (paramIdx == monoMode)
+	{
+		mono = value;
+		for (int i = 0; i < numVoices; i++)
+		{
+			voices[i].SetMono(value);
+		}
+	}
 	else
 	{
 		for (int i = 0; i < numVoices; i++)
@@ -167,6 +214,8 @@ void CynthiaMicro::OnParamChange(int paramIdx)
 			if (paramIdx == envelopeRelease) voices[i].SetEnvelopeRelease(value);
 
 			if (paramIdx == lfoAmount) voices[i].SetLfoAmount(value);
+
+			if (paramIdx == glideSpeed) voices[i].SetGlideSpeed(value);
 		}
 	}
 }

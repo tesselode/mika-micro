@@ -15,7 +15,9 @@ double Voice::Next(double lfoValue)
 		return 0.0;
 	}
 
-	double frequency = PitchToFrequency(note);
+	pitch += (note - pitch) * (glideSpeed / sampleRate);
+
+	double frequency = PitchToFrequency(pitch);
 
 	// oscillator 1
 	if (oscillatorMix < 1.0)

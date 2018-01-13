@@ -3,6 +3,7 @@
 
 #include "IPlug_include_in_plug_hdr.h"
 #include "IMidiQueue.h"
+#include <vector>
 #include "Voice.h"
 
 const int numVoices = 8;
@@ -23,6 +24,8 @@ private:
 	int PickVoice();
 
 	IMidiQueue midiQueue;
+	bool mono = false;
+	std::vector<int> heldNotes;
 	Oscillator lfo;
 	Voice voices[numVoices];
 };
