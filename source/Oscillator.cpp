@@ -7,6 +7,9 @@ void Oscillator::Update()
 	t = fmod(t, 1.0);
 }
 
+// polyBLEP oscillator
+// http://www.kvraudio.com/forum/viewtopic.php?t=375517
+
 double Oscillator::Blep(double t)
 {
 	if (t < dt)
