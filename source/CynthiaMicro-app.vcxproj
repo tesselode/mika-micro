@@ -280,6 +280,7 @@
     <ClInclude Include="app_wrapper\app_resource.h" />
     <ClInclude Include="CynthiaMicro.h" />
     <ClInclude Include="Envelope.h" />
+    <ClInclude Include="Oscillator.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="Voice.h" />
   </ItemGroup>
@@ -294,6 +295,7 @@
     <ClCompile Include="app_wrapper\app_main.cpp" />
     <ClCompile Include="CynthiaMicro.cpp" />
     <ClCompile Include="Envelope.cpp" />
+    <ClCompile Include="Oscillator.cpp" />
     <ClCompile Include="Voice.cpp" />
   </ItemGroup>
   <ItemGroup>
