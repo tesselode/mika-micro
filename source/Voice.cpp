@@ -11,7 +11,8 @@ double Voice::Next(double lfoValue)
 	double out = 0.0;
 
 	modEnvelope.Update();
-	if (modEnvelope.Get() == 0.0) return 0.0;
+	gateEnvelope.Update();
+	if (GetVolume() == 0) return 0.0;
 
 	frequency += (targetFrequency - frequency) * (glideSpeed / sampleRate);
 
@@ -76,7 +77,7 @@ double Voice::Next(double lfoValue)
 	cutoff += filterEnvelopeAmount * modEnvelope.Get();
 	out = filter.Process(out, cutoff);
 
-	out *= modEnvelope.Get();
+	out *= GetVolume();
 
 	return out;
 }

@@ -7,6 +7,8 @@
 class Voice
 {
 public:
+	Voice() : gateEnvelope(100., 1., 1., 100.) {};
+
 	void SetSampleRate(double sr)
 	{
 		sampleRate = sr;
@@ -14,10 +16,15 @@ public:
 		osc1b.SetSampleRate(sr);
 		osc2a.SetSampleRate(sr);
 		osc2b.SetSampleRate(sr);
+		modEnvelope.SetSampleRate(sr);
+		gateEnvelope.SetSampleRate(sr);
 	}
 
 	int GetNote() { return note; }
-	double GetVolume() { return modEnvelope.Get(); }
+	double GetVolume() {
+
+		return (1 - volumeEnvelopeAmount) * gateEnvelope.Get() + volumeEnvelopeAmount * modEnvelope.Get();
+	}
 	bool IsReleased() { return modEnvelope.IsReleased(); }
 
 	void SetNote(int n);
@@ -41,6 +48,7 @@ public:
 	void SetLfoAmount(double a) { lfoAmount = a; }
 	void SetMono(bool m) { mono = m; }
 	void SetGlideSpeed(double s) { glideSpeed = s; }
+	void SetVolumeEnvelopeAmount(double a) { volumeEnvelopeAmount = a; }
 
 	void Start()
 	{
@@ -56,8 +64,13 @@ public:
 			osc2b.ResetPhase();
 		}
 		modEnvelope.Start();
+		gateEnvelope.Start();
 	}
-	void Release() { modEnvelope.Release(); }
+	void Release()
+	{
+		modEnvelope.Release();
+		gateEnvelope.Release();
+	}
 
 	double Next(double lfoValue);
 
@@ -84,6 +97,7 @@ private:
 	double lfoAmount = 0.0;
 	bool mono = false;
 	double glideSpeed = 1000.;
+	double volumeEnvelopeAmount = 0.0;
 
 	Oscillator osc1a;
 	Oscillator osc1b;
@@ -91,6 +105,7 @@ private:
 	Oscillator osc2b;
 
 	Envelope modEnvelope;
+	Envelope gateEnvelope;
 
 	Filter filter;
 };

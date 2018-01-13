@@ -10,6 +10,15 @@ enum EnvelopeStage
 class Envelope
 {
 public:
+	Envelope() {};
+	Envelope(double a, double d, double s, double r)
+	{
+		SetAttack(a);
+		SetDecay(d);
+		SetSustain(s);
+		SetRelease(r);
+	}
+
 	void SetSampleRate(double sr) { sampleRate = sr; }
 
 	void SetAttack(double a) { attack = a; }
