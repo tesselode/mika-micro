@@ -7,6 +7,7 @@
     </ClCompile>
     <ClCompile Include="Envelope.cpp" />
     <ClCompile Include="Voice.cpp" />
+    <ClCompile Include="Oscillator.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CynthiaMicro.h" />
@@ -16,6 +17,7 @@
     </ClInclude>
     <ClInclude Include="Envelope.h" />
     <ClInclude Include="Voice.h" />
+    <ClInclude Include="Oscillator.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="CynthiaMicro.rc" />

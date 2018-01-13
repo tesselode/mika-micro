@@ -239,6 +239,7 @@
     <ClInclude Include="..\..\WDL\IPlug\IPlugVST.h" />
     <ClInclude Include="CynthiaMicro.h" />
     <ClInclude Include="Envelope.h" />
+    <ClInclude Include="Oscillator.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="Voice.h" />
   </ItemGroup>
@@ -246,6 +247,7 @@
     <ClCompile Include="..\..\WDL\IPlug\IPlugVST.cpp" />
     <ClCompile Include="CynthiaMicro.cpp" />
     <ClCompile Include="Envelope.cpp" />
+    <ClCompile Include="Oscillator.cpp" />
     <ClCompile Include="Voice.cpp" />
   </ItemGroup>
   <ItemGroup>

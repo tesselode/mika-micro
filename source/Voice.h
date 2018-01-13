@@ -20,6 +20,9 @@ public:
 	bool IsReleased() { return modEnvelope.IsReleased(); }
 
 	void SetNote(int n);
+
+	void SetOscillator1Split(double s) { oscillator1Split = s; }
+	void SetOscillatorMix(double m) { oscillatorMix = m; }
 	void SetEnvelopeAttack(double a) { modEnvelope.SetAttack(a); }
 	void SetEnvelopeDecay(double d) { modEnvelope.SetDecay(d); }
 	void SetEnvelopeSustain(double s) { modEnvelope.SetSustain(s); }
@@ -35,6 +38,9 @@ private:
 
 	double sampleRate = 44100;
 	int note = 69;
+
+	double oscillator1Split = 1.0;
+	double oscillatorMix = 0.0;
 
 	Oscillator osc1a;
 	Oscillator osc1b;

@@ -7,26 +7,38 @@ void Voice::SetNote(int n)
 
 double Voice::Next()
 {
-	modEnvelope.Update();
-
-	double frequency = PitchToFrequency(note);
-	osc1a.SetFrequency(frequency);
-	osc1b.SetFrequency(frequency * 1.01);
-	osc2a.SetFrequency(frequency / 1.01);
-	osc2b.SetFrequency(frequency * 1.02);
-
-	osc1a.Update();
-	osc1b.Update();
-	osc2a.Update();
-	osc2b.Update();
-	
 	double out = 0.0;
 
-	out += osc1a.Get(Saw);
-	out += osc1b.Get(Saw);
-	out += osc2a.Get(Saw);
-	out += osc2b.Get(Saw);
+	modEnvelope.Update();
+	if (modEnvelope.Get() == 0.0)
+	{
+		return 0.0;
+	}
 
+	double frequency = PitchToFrequency(note);
+
+	// oscillator 1
+	if (oscillatorMix < 1.0)
+	{
+		double oscOut = 0.0;
+
+		if (oscillator1Split > 1.0)
+		{
+			osc1a.SetFrequency(frequency / oscillator1Split);
+			osc1b.SetFrequency(frequency * oscillator1Split);
+			osc1b.Update();
+			oscOut += osc1b.Get(Saw);
+		}
+		else
+		{
+			osc1a.SetFrequency(frequency);
+		}
+		osc1a.Update();
+		oscOut += osc1a.Get(Saw);
+
+		out += oscOut * (1 - oscillatorMix);
+	}
+	
 	out *= modEnvelope.Get();
 
 	return out;
