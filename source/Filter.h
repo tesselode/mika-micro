@@ -7,13 +7,13 @@ class Filter
 public:
 	Filter()
 	{
-		SetResonance(1.);
+		SetResonance(0.);
 	}
 
 	void SetSampleRate(double sr) { sampleRate = sr; }
 	void SetResonance(double r)
 	{
-		q = r;
+		q = 1 - r;
 		scale = sqrt(q);
 	}
 

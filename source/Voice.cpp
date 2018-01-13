@@ -71,7 +71,8 @@ double Voice::Next(double lfoValue)
 		out += oscOut * oscillatorMix;
 	}
 	
-	out = filter.Process(out, 20000.);
+	double cutoff = filterCutoff + filterKeyTracking * (frequency - 440.0);
+	out = filter.Process(out, cutoff);
 
 	out *= modEnvelope.Get();
 

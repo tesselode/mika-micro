@@ -14,6 +14,9 @@ enum Parameters
 	oscillatorMix,
 	fmCoarse,
 	fmFine,
+	filterCutoff,
+	filterResonance,
+	filterKeyTracking,
 	envelopeAttack,
 	envelopeDecay,
 	envelopeSustain,
@@ -38,6 +41,10 @@ CynthiaMicro::CynthiaMicro(IPlugInstanceInfo instanceInfo)
 
 	GetParam(fmCoarse)->InitInt("FM coarse", 0, 0, 24, "semitones");
 	GetParam(fmFine)->InitDouble("FM fine", 0, -1.0, 1.0, .01, "semitones");
+
+	GetParam(filterCutoff)->InitDouble("Filter cutoff", 20000.0, 20., 20000., .01, "hz");
+	GetParam(filterResonance)->InitDouble("Filter resonance", 0.0, 0.0, .75, .01);
+	GetParam(filterKeyTracking)->InitDouble("Filter key tracking", 0.0, 0.0, 1.0, .01);
 
 	GetParam(envelopeAttack)->InitDouble("Envelope attack", 100., 0.1, 100., .01);
 	GetParam(envelopeDecay)->InitDouble("Envelope decay", 1., 0.1, 100., .01);
@@ -69,9 +76,9 @@ CynthiaMicro::CynthiaMicro(IPlugInstanceInfo instanceInfo)
 	pGraphics->AttachControl(new IKnobMultiControl(this, 48 * 4, 37 * 4, fmFine, &knob));
 	//pGraphics->AttachControl(new IKnobMultiControl(this, 64 * 4, 37 * 4, fmEnv, &knob));
 
-	//pGraphics->AttachControl(new IKnobMultiControl(this, 96 * 4, 37 * 4, filterCutoff, &knob));
-	//pGraphics->AttachControl(new IKnobMultiControl(this, 112 * 4, 37 * 4, filterResonance, &knob));
-	//pGraphics->AttachControl(new IKnobMultiControl(this, 128 * 4, 37 * 4, filterTrack, &knob));
+	pGraphics->AttachControl(new IKnobMultiControl(this, 96 * 4, 37 * 4, filterCutoff, &knob));
+	pGraphics->AttachControl(new IKnobMultiControl(this, 112 * 4, 37 * 4, filterResonance, &knob));
+	pGraphics->AttachControl(new IKnobMultiControl(this, 128 * 4, 37 * 4, filterKeyTracking, &knob));
 	//pGraphics->AttachControl(new IKnobMultiControl(this, 144 * 4, 37 * 4, filterEnv, &knob));
 
 	pGraphics->AttachControl(new IKnobMultiControl(this, 176 * 4, 8 * 4, envelopeAttack, &knob));
@@ -251,6 +258,10 @@ void CynthiaMicro::OnParamChange(int paramIdx)
 
 			if (paramIdx == fmCoarse) voices[i].SetFmCoarse(value);
 			if (paramIdx == fmFine) voices[i].SetFmFine(value);
+
+			if (paramIdx == filterCutoff) voices[i].SetFilterCutoff(value);
+			if (paramIdx == filterResonance) voices[i].SetFilterResonance(value);
+			if (paramIdx == filterKeyTracking) voices[i].SetFilterKeyTracking(value);
 
 			if (paramIdx == envelopeAttack) voices[i].SetEnvelopeAttack(value);
 			if (paramIdx == envelopeDecay) voices[i].SetEnvelopeDecay(value);
