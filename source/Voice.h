@@ -43,6 +43,13 @@ public:
 		{
 			frequency = targetFrequency;
 		}
+		if (modEnvelope.Get() == 0.0)
+		{
+			osc1a.ResetPhase();
+			osc1b.ResetPhase();
+			osc2a.ResetPhase();
+			osc2b.ResetPhase();
+		}
 		modEnvelope.Start();
 	}
 	void Release() { modEnvelope.Release(); }

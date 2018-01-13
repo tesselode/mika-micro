@@ -16,6 +16,7 @@ public:
 	void SetSampleRate(double sr) { sampleRate = sr; }
 
 	void Update();
+	void ResetPhase() { t = 0.0; }
 	double Get(Waveform waveform);
 
 private:

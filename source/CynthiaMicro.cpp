@@ -30,13 +30,13 @@ CynthiaMicro::CynthiaMicro(IPlugInstanceInfo instanceInfo)
 {
 	TRACE;
 
-	GetParam(oscillator1Split)->InitDouble("Oscillator 1 split", 1.01, 1.0, 1.1, .01);
-	GetParam(oscillator1Coarse)->InitInt("Oscillator 1 coarse", -12, -24, 24, "semitones");
-	GetParam(oscillator2Split)->InitDouble("Oscillator 2 split", 1.005, 1.0, 1.1, .01);
+	GetParam(oscillator1Split)->InitDouble("Oscillator 1 split", 1.0, 1.0, 1.1, .01);
+	GetParam(oscillator1Coarse)->InitInt("Oscillator 1 coarse", 0, -24, 24, "semitones");
+	GetParam(oscillator2Split)->InitDouble("Oscillator 2 split", 1.0, 1.0, 1.1, .01);
 	GetParam(oscillator2Coarse)->InitInt("Oscillator 1 coarse", 0, -24, 24, "semitones");
-	GetParam(oscillatorMix)->InitDouble("Oscillator mix", 0.5, 0.0, 1.0, .01);
+	GetParam(oscillatorMix)->InitDouble("Oscillator mix", 0.0, 0.0, 1.0, .01);
 
-	GetParam(fmCoarse)->InitInt("FM coarse", 12, 0, 24, "semitones");
+	GetParam(fmCoarse)->InitInt("FM coarse", 0, 0, 24, "semitones");
 	GetParam(fmFine)->InitDouble("FM fine", 0, -1.0, 1.0, .01, "semitones");
 
 	GetParam(envelopeAttack)->InitDouble("Envelope attack", 100., 0.1, 100., .01);
@@ -44,14 +44,50 @@ CynthiaMicro::CynthiaMicro(IPlugInstanceInfo instanceInfo)
 	GetParam(envelopeSustain)->InitDouble("Envelope sustain", .5, 0., 1., .01);
 	GetParam(envelopeRelease)->InitDouble("Envelope release", 1., 0.1, 100., .01);
 
-	GetParam(lfoAmount)->InitDouble("Vibrato amount", -.025, -0.1, 0.1, .01);
+	GetParam(lfoAmount)->InitDouble("Vibrato amount", 0, -0.1, 0.1, .01);
 	GetParam(lfoFrequency)->InitDouble("Vibrato speed", 5.0, 1.0, 10.0, .01, "hz");
 
 	GetParam(monoMode)->InitBool("Mono mode", true);
-	GetParam(glideSpeed)->InitDouble("Glide speed", 100., 0.1, 1000., .01);
+	GetParam(glideSpeed)->InitDouble("Glide speed", 1000., 0.1, 1000., .01);
 
 	IGraphics* pGraphics = MakeGraphics(this, GUI_WIDTH, GUI_HEIGHT);
-	pGraphics->AttachPanelBackground(&COLOR_GRAY);
+	pGraphics->AttachBackground(BG_ID, BG_FN);
+
+	IBitmap knob = pGraphics->LoadIBitmap(KNOB_ID, KNOB_FN, 54);
+	IBitmap toggle = pGraphics->LoadIBitmap(SWITCH_ID, SWITCH_FN, 2);
+	IBitmap waveformSwitch = pGraphics->LoadIBitmap(WAVEFORM_SWITCH_ID, WAVEFORM_SWITCH_FN, 5);
+
+	//pGraphics->AttachControl(new ISwitchControl(this, 32 * 4, 5 * 4, osc1Wave, &waveformSwitch));
+	pGraphics->AttachControl(new IKnobMultiControl(this, 48 * 4, 5 * 4, oscillator1Coarse, &knob));
+	pGraphics->AttachControl(new IKnobMultiControl(this, 64 * 4, 5 * 4, oscillator1Split, &knob));
+	pGraphics->AttachControl(new IKnobMultiControl(this, 88 * 4, 5 * 4, oscillatorMix, &knob));
+	//pGraphics->AttachControl(new ISwitchControl(this, 112 * 4, 5 * 4, osc2Wave, &waveformSwitch));
+	pGraphics->AttachControl(new IKnobMultiControl(this, 128 * 4, 5 * 4, oscillator2Coarse, &knob));
+	pGraphics->AttachControl(new IKnobMultiControl(this, 144 * 4, 5 * 4, oscillator2Split, &knob));
+
+	pGraphics->AttachControl(new IKnobMultiControl(this, 32 * 4, 37 * 4, fmCoarse, &knob));
+	pGraphics->AttachControl(new IKnobMultiControl(this, 48 * 4, 37 * 4, fmFine, &knob));
+	//pGraphics->AttachControl(new IKnobMultiControl(this, 64 * 4, 37 * 4, fmEnv, &knob));
+
+	//pGraphics->AttachControl(new IKnobMultiControl(this, 96 * 4, 37 * 4, filterCutoff, &knob));
+	//pGraphics->AttachControl(new IKnobMultiControl(this, 112 * 4, 37 * 4, filterResonance, &knob));
+	//pGraphics->AttachControl(new IKnobMultiControl(this, 128 * 4, 37 * 4, filterTrack, &knob));
+	//pGraphics->AttachControl(new IKnobMultiControl(this, 144 * 4, 37 * 4, filterEnv, &knob));
+
+	pGraphics->AttachControl(new IKnobMultiControl(this, 176 * 4, 8 * 4, envelopeAttack, &knob));
+	pGraphics->AttachControl(new IKnobMultiControl(this, 176 * 4, 24 * 4, envelopeDecay, &knob));
+	pGraphics->AttachControl(new IKnobMultiControl(this, 176 * 4, 40 * 4, envelopeSustain, &knob));
+	pGraphics->AttachControl(new IKnobMultiControl(this, 176 * 4, 56 * 4, envelopeRelease, &knob));
+	//pGraphics->AttachControl(new IKnobMultiControl(this, 176 * 4, 72 * 4, modEnvVel, &knob));
+
+	pGraphics->AttachControl(new IKnobMultiControl(this, 32 * 4, 69 * 4, lfoAmount, &knob));
+	pGraphics->AttachControl(new IKnobMultiControl(this, 48 * 4, 69 * 4, lfoFrequency, &knob));
+	//pGraphics->AttachControl(new IKnobMultiControl(this, 64 * 4, 69 * 4, lfoDelay, &knob));
+
+	pGraphics->AttachControl(new ISwitchControl(this, 96 * 4, 69 * 4, monoMode, &toggle));
+	pGraphics->AttachControl(new IKnobMultiControl(this, 112 * 4, 69 * 4, glideSpeed, &knob));
+	//pGraphics->AttachControl(new IKnobMultiControl(this, 128 * 4, 69 * 4, volumeEnv, &knob));
+	//pGraphics->AttachControl(new IKnobMultiControl(this, 144 * 4, 69 * 4, gain, &knob));
 
 	AttachGraphics(pGraphics);
 
