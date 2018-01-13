@@ -41,7 +41,7 @@ double Voice::Next()
 		out += oscOut * (1 - oscillatorMix);
 	}
 
-	// oscillator 1
+	// oscillator 2
 	if (oscillatorMix > 0.0)
 	{
 		double oscOut = 0.0;
