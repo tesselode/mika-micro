@@ -16,9 +16,39 @@ CynthiaMicro::CynthiaMicro(IPlugInstanceInfo instanceInfo)
 	AttachGraphics(pGraphics);
 
 	MakeDefaultPreset((char *) "-", kNumPrograms);
+
+	for (int i = 0; i < numVoices; i++)
+	{
+		voices[i].SetEnvelopeRelease(1.0);
+	}
 }
 
 CynthiaMicro::~CynthiaMicro() {}
+
+int CynthiaMicro::GetQuietestVoice(bool releasedOnly)
+{
+	double quietestVolume = 100;
+	int quietestVoice = -1;
+	for (int i = 0; i < numVoices; i++)
+	{
+		if (voices[i].IsReleased() || !releasedOnly)
+		{
+			if (voices[i].GetVolume() < quietestVolume)
+			{
+				quietestVolume = voices[i].GetVolume();
+				quietestVoice = i;
+			}
+		}
+	}
+	return quietestVoice;
+}
+
+int CynthiaMicro::PickVoice()
+{
+	int v = GetQuietestVoice(true);
+	if (v != -1) return v;
+	return GetQuietestVoice(false);
+}
 
 void CynthiaMicro::ProcessDoubleReplacing(double** inputs, double** outputs, int nFrames)
 {
@@ -34,8 +64,9 @@ void CynthiaMicro::ProcessDoubleReplacing(double** inputs, double** outputs, int
 
 			if (message->StatusMsg() == IMidiMsg::kNoteOn)
 			{
-				voices[0].SetNote(message->NoteNumber());
-				voices[0].Start();
+				int v = PickVoice();
+				voices[v].SetNote(message->NoteNumber());
+				voices[v].Start();
 			}
 			else if (message->StatusMsg() == IMidiMsg::kNoteOff)
 			{
@@ -54,7 +85,7 @@ void CynthiaMicro::ProcessDoubleReplacing(double** inputs, double** outputs, int
 		double out = 0.0;
 		for (int i = 0; i < numVoices; i++)
 		{
-			out += .5 * voices[i].Next();
+			out += .25 * voices[i].Next();
 		}
 		*out1 = out;
 		*out2 = out;

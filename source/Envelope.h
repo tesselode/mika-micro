@@ -17,6 +17,8 @@ public:
 	void SetSustain(double s) { sustain = s; }
 	void SetRelease(double r) { release = r; }
 
+	bool IsReleased() { return stage == EnvelopeStageRelease; }
+
 	void Start() { stage = EnvelopeStageAttack; }
 	void Release() { stage = EnvelopeStageRelease; }
 	double Get() { return value; }

@@ -13,6 +13,9 @@ public:
 	}
 
 	int GetNote() { return note; }
+	double GetVolume() { return modEnvelope.Get(); }
+	bool IsReleased() { return modEnvelope.IsReleased(); }
+
 	void SetNote(int n);
 	void SetEnvelopeAttack(double a) { modEnvelope.SetAttack(a); }
 	void SetEnvelopeDecay(double d) { modEnvelope.SetDecay(d); }

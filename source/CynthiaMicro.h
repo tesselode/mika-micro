@@ -19,6 +19,9 @@ public:
 	void ProcessMidiMsg(IMidiMsg* message);
 
 private:
+	int GetQuietestVoice(bool releasedOnly);
+	int PickVoice();
+
 	IMidiQueue midiQueue;
 	Voice voices[numVoices];
 };
