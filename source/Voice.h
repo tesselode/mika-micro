@@ -38,7 +38,7 @@ public:
 	{
 		if (IsReleased())
 		{
-			pitch = note;
+			frequency = targetFrequency;
 		}
 		modEnvelope.Start();
 	}
@@ -52,7 +52,8 @@ private:
 
 	double sampleRate = 44100;
 	int note = 69;
-	double pitch = 69;
+	double targetFrequency = 440.0;
+	double frequency = 440.0;
 
 	double oscillator1Split = 1.0;
 	double oscillator1Coarse = 1.0;

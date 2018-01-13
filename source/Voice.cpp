@@ -3,6 +3,7 @@
 void Voice::SetNote(int n)
 {
 	note = n;
+	targetFrequency = PitchToFrequency(note);
 }
 
 double Voice::Next(double lfoValue)
@@ -10,14 +11,9 @@ double Voice::Next(double lfoValue)
 	double out = 0.0;
 
 	modEnvelope.Update();
-	if (modEnvelope.Get() == 0.0)
-	{
-		return 0.0;
-	}
+	if (modEnvelope.Get() == 0.0) return 0.0;
 
-	pitch += (note - pitch) * (glideSpeed / sampleRate);
-
-	double frequency = PitchToFrequency(pitch);
+	frequency += (targetFrequency - frequency) * (glideSpeed / sampleRate);
 
 	// oscillator 1
 	if (oscillatorMix < 1.0)
