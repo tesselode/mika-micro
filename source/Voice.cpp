@@ -22,16 +22,18 @@ double Voice::Next()
 	{
 		double oscOut = 0.0;
 
+		double oscFrequency = frequency * oscillator1Coarse;
+
 		if (oscillator1Split > 1.0)
 		{
-			osc1a.SetFrequency(frequency / oscillator1Split);
-			osc1b.SetFrequency(frequency * oscillator1Split);
+			osc1a.SetFrequency(oscFrequency / oscillator1Split);
+			osc1b.SetFrequency(oscFrequency * oscillator1Split);
 			osc1b.Update();
 			oscOut += osc1b.Get(Saw);
 		}
 		else
 		{
-			osc1a.SetFrequency(frequency);
+			osc1a.SetFrequency(oscFrequency);
 		}
 		osc1a.Update();
 		oscOut += osc1a.Get(Saw);
@@ -44,16 +46,18 @@ double Voice::Next()
 	{
 		double oscOut = 0.0;
 
+		double oscFrequency = frequency * oscillator2Coarse;
+
 		if (oscillator2Split > 1.0)
 		{
-			osc2a.SetFrequency(frequency / oscillator2Split);
-			osc2b.SetFrequency(frequency * oscillator2Split);
+			osc2a.SetFrequency(oscFrequency / oscillator2Split);
+			osc2b.SetFrequency(oscFrequency * oscillator2Split);
 			osc2b.Update();
 			oscOut += osc2b.Get(Saw);
 		}
 		else
 		{
-			osc2a.SetFrequency(frequency);
+			osc2a.SetFrequency(oscFrequency);
 		}
 		osc2a.Update();
 		oscOut += osc2a.Get(Saw);
