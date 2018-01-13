@@ -16,9 +16,6 @@ CynthiaMicro::CynthiaMicro(IPlugInstanceInfo instanceInfo)
 	AttachGraphics(pGraphics);
 
 	MakeDefaultPreset((char *) "-", kNumPrograms);
-
-	voice.SetNote(69);
-	voice.Start();
 }
 
 CynthiaMicro::~CynthiaMicro() {}
@@ -30,9 +27,45 @@ void CynthiaMicro::ProcessDoubleReplacing(double** inputs, double** outputs, int
 
 	for (int s = 0; s < nFrames; ++s, ++out1, ++out2)
 	{
-		double out = .25 * voice.Next();
+		while (!midiQueue.Empty())
+		{
+			IMidiMsg* message = midiQueue.Peek();
+			if (message->mOffset > s) break;
+
+			if (message->StatusMsg() == IMidiMsg::kNoteOn)
+			{
+				voices[0].SetNote(message->NoteNumber());
+				voices[0].Start();
+			}
+			else if (message->StatusMsg() == IMidiMsg::kNoteOff)
+			{
+				for (int i = 0; i < numVoices; i++)
+				{
+					if (voices[i].GetNote() == message->NoteNumber())
+					{
+						voices[i].Release();
+					}
+				}
+			}
+
+			midiQueue.Remove();
+		}
+
+		double out = 0.0;
+		for (int i = 0; i < numVoices; i++)
+		{
+			out += .5 * voices[i].Next();
+		}
 		*out1 = out;
 		*out2 = out;
+	}
+}
+
+void CynthiaMicro::ProcessMidiMsg(IMidiMsg * message)
+{
+	if (message->StatusMsg() == IMidiMsg::kNoteOn || message->StatusMsg() == IMidiMsg::kNoteOff)
+	{
+		midiQueue.Add(message);
 	}
 }
 
@@ -41,7 +74,10 @@ void CynthiaMicro::Reset()
 	TRACE;
 	IMutexLock lock(this);
 
-	voice.SetSampleRate(GetSampleRate());
+	for (int i = 0; i < numVoices; i++)
+	{
+		voices[i].SetSampleRate(GetSampleRate());
+	}
 }
 
 void CynthiaMicro::OnParamChange(int paramIdx)

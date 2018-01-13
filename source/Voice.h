@@ -12,6 +12,7 @@ public:
 		modEnvelope.SetSampleRate(sr);
 	}
 
+	int GetNote() { return note; }
 	void SetNote(int n);
 	void SetEnvelopeAttack(double a) { modEnvelope.SetAttack(a); }
 	void SetEnvelopeDecay(double d) { modEnvelope.SetDecay(d); }
@@ -33,6 +34,8 @@ private:
 	Envelope modEnvelope;
 
 	double sampleRate = 44100;
+
+	int note = 69;
 	double frequency = 440.0;
 
 	double phase1a = 0.0;

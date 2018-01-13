@@ -2,7 +2,10 @@
 #define __CYNTHIAMICRO__
 
 #include "IPlug_include_in_plug_hdr.h"
+#include "IMidiQueue.h"
 #include "Voice.h"
+
+const int numVoices = 8;
 
 class CynthiaMicro : public IPlug
 {
@@ -13,9 +16,11 @@ public:
 	void Reset();
 	void OnParamChange(int paramIdx);
 	void ProcessDoubleReplacing(double** inputs, double** outputs, int nFrames);
+	void ProcessMidiMsg(IMidiMsg* message);
 
 private:
-	Voice voice;
+	IMidiQueue midiQueue;
+	Voice voices[numVoices];
 };
 
 #endif

@@ -7,6 +7,7 @@ double Voice::Sine(double t)
 
 void Voice::SetNote(int n)
 {
+	note = n;
 	frequency = PitchToFrequency(n);
 }
 
