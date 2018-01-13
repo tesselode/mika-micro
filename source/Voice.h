@@ -22,6 +22,7 @@ public:
 	void SetNote(int n);
 
 	void SetOscillator1Split(double s) { oscillator1Split = s; }
+	void SetOscillator2Split(double s) { oscillator2Split = s; }
 	void SetOscillatorMix(double m) { oscillatorMix = m; }
 	void SetEnvelopeAttack(double a) { modEnvelope.SetAttack(a); }
 	void SetEnvelopeDecay(double d) { modEnvelope.SetDecay(d); }
@@ -40,6 +41,7 @@ private:
 	int note = 69;
 
 	double oscillator1Split = 1.0;
+	double oscillator2Split = 1.0;
 	double oscillatorMix = 0.0;
 
 	Oscillator osc1a;

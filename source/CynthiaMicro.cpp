@@ -8,6 +8,7 @@ const int kNumPrograms = 1;
 enum Parameters
 {
 	oscillator1Split,
+	oscillator2Split,
 	oscillatorMix,
 	envelopeAttack,
 	envelopeDecay,
@@ -22,7 +23,8 @@ CynthiaMicro::CynthiaMicro(IPlugInstanceInfo instanceInfo)
 	TRACE;
 
 	GetParam(oscillator1Split)->InitDouble("Oscillator 1 split", 1.1, 1.0, 1.1, .01);
-	GetParam(oscillatorMix)->InitDouble("Oscillator mix", 0.0, 0.0, 1.0, .01);
+	GetParam(oscillator2Split)->InitDouble("Oscillator 2 split", 1.05, 1.0, 1.1, .01);
+	GetParam(oscillatorMix)->InitDouble("Oscillator mix", 0.5, 0.0, 1.0, .01);
 
 	GetParam(envelopeAttack)->InitDouble("Envelope attack", 100., 0.1, 100., .01);
 	GetParam(envelopeDecay)->InitDouble("Envelope decay", 1., 0.1, 100., .01);
@@ -135,6 +137,7 @@ void CynthiaMicro::OnParamChange(int paramIdx)
 	for (int i = 0; i < numVoices; i++)
 	{
 		if (paramIdx == oscillator1Split) voices[i].SetOscillator1Split(value);
+		if (paramIdx == oscillator2Split) voices[i].SetOscillator2Split(value);
 		if (paramIdx == oscillatorMix) voices[i].SetOscillatorMix(value);
 
 		if (paramIdx == envelopeAttack) voices[i].SetEnvelopeAttack(value);

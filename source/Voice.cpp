@@ -38,6 +38,28 @@ double Voice::Next()
 
 		out += oscOut * (1 - oscillatorMix);
 	}
+
+	// oscillator 1
+	if (oscillatorMix > 0.0)
+	{
+		double oscOut = 0.0;
+
+		if (oscillator2Split > 1.0)
+		{
+			osc2a.SetFrequency(frequency / oscillator2Split);
+			osc2b.SetFrequency(frequency * oscillator2Split);
+			osc2b.Update();
+			oscOut += osc2b.Get(Saw);
+		}
+		else
+		{
+			osc2a.SetFrequency(frequency);
+		}
+		osc2a.Update();
+		oscOut += osc2a.Get(Saw);
+
+		out += oscOut * oscillatorMix;
+	}
 	
 	out *= modEnvelope.Get();
 
