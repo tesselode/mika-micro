@@ -29,6 +29,8 @@ public:
 	bool IsReleased() { return modEnvelope.IsReleased(); }
 
 	void SetNote(int n);
+	void SetEnvelopeVelocityAmount(double a) { modEnvelope.SetVelocityAmount(a); }
+	void SetVelocity(double v) { modEnvelope.SetVelocity(v); }
 
 	void SetOscillator1Wave(Waveform w) { oscillator1Wave = w; }
 	void SetOscillator1Split(double s) { oscillator1Split = s; }

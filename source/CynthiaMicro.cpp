@@ -25,6 +25,7 @@ enum Parameters
 	envelopeDecay,
 	envelopeSustain,
 	envelopeRelease,
+	envelopeVelocityAmount,
 	lfoAmount,
 	lfoFrequency,
 	lfoDelay,
@@ -60,6 +61,7 @@ CynthiaMicro::CynthiaMicro(IPlugInstanceInfo instanceInfo)
 	GetParam(envelopeDecay)->InitDouble("Envelope decay", 1., 0.1, 100., .01);
 	GetParam(envelopeSustain)->InitDouble("Envelope sustain", .5, 0., 1., .01);
 	GetParam(envelopeRelease)->InitDouble("Envelope release", 1., 0.1, 100., .01);
+	GetParam(envelopeVelocityAmount)->InitDouble("Envelope velocity sensitivity", 0.0, 0.0, 1.0, .01);
 
 	GetParam(lfoAmount)->InitDouble("Vibrato amount", 0, -0.1, 0.1, .01);
 	GetParam(lfoFrequency)->InitDouble("Vibrato speed", 5.0, 1.0, 10.0, .01, "hz");
@@ -97,7 +99,7 @@ CynthiaMicro::CynthiaMicro(IPlugInstanceInfo instanceInfo)
 	pGraphics->AttachControl(new IKnobMultiControl(this, 176 * 4, 24 * 4, envelopeDecay, &knob));
 	pGraphics->AttachControl(new IKnobMultiControl(this, 176 * 4, 40 * 4, envelopeSustain, &knob));
 	pGraphics->AttachControl(new IKnobMultiControl(this, 176 * 4, 56 * 4, envelopeRelease, &knob));
-	//pGraphics->AttachControl(new IKnobMultiControl(this, 176 * 4, 72 * 4, modEnvVel, &knob));
+	pGraphics->AttachControl(new IKnobMultiControl(this, 176 * 4, 72 * 4, envelopeVelocityAmount, &knob));
 
 	pGraphics->AttachControl(new IKnobMultiControl(this, 32 * 4, 69 * 4, lfoAmount, &knob));
 	pGraphics->AttachControl(new IKnobMultiControl(this, 48 * 4, 69 * 4, lfoFrequency, &knob));
@@ -160,6 +162,7 @@ void CynthiaMicro::ProcessDoubleReplacing(double** inputs, double** outputs, int
 				if (mono)
 				{
 					voices[0].SetNote(message->NoteNumber());
+					voices[0].SetVelocity(message->Velocity());
 					if (heldNotes.empty())
 					{
 						voices[0].Start();
@@ -169,6 +172,7 @@ void CynthiaMicro::ProcessDoubleReplacing(double** inputs, double** outputs, int
 				{
 					int v = PickVoice();
 					voices[v].SetNote(message->NoteNumber());
+					voices[v].SetVelocity(message->Velocity());
 					voices[v].Start();
 				}
 				heldNotes.push_back(message->NoteNumber());
@@ -283,6 +287,7 @@ void CynthiaMicro::OnParamChange(int paramIdx)
 			if (paramIdx == envelopeDecay) voices[i].SetEnvelopeDecay(value);
 			if (paramIdx == envelopeSustain) voices[i].SetEnvelopeSustain(value);
 			if (paramIdx == envelopeRelease) voices[i].SetEnvelopeRelease(value);
+			if (paramIdx == envelopeVelocityAmount) voices[i].SetEnvelopeVelocityAmount(value);
 
 			if (paramIdx == lfoAmount) voices[i].SetLfoAmount(value);
 			if (paramIdx == lfoDelay) voices[i].SetLfoDelay(value);
