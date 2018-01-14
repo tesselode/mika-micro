@@ -265,6 +265,10 @@ void CynthiaMicro::OnParamChange(int paramIdx)
 		{
 			voices[i].SetMono(value);
 		}
+		for (int i = 1; i < numVoices; i++)
+		{
+			voices[i].Release();
+		}
 	}
 	else if (paramIdx == gain)
 	{
