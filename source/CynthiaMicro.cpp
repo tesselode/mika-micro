@@ -327,7 +327,6 @@ void CynthiaMicro::OnParamChange(int paramIdx)
 
 	pGraphics->GetControl(glideSpeed + 1)->GrayOut(!GetParam(monoMode)->Value());
 
-	bool test = GetParam(fmEnvelopeAmount)->Value() == 0;
 	pGraphics->GetControl(envelopeAttack + 1)->GrayOut(GetParam(fmEnvelopeAmount)->Value() == 0 && GetParam(filterEnvelope)->Value() == 0 && GetParam(volumeEnvelopeAmount)->Value() == 0);
 	pGraphics->GetControl(envelopeDecay + 1)->GrayOut(GetParam(fmEnvelopeAmount)->Value() == 0 && GetParam(filterEnvelope)->Value() == 0 && GetParam(volumeEnvelopeAmount)->Value() == 0);
 	pGraphics->GetControl(envelopeSustain + 1)->GrayOut(GetParam(fmEnvelopeAmount)->Value() == 0 && GetParam(filterEnvelope)->Value() == 0 && GetParam(volumeEnvelopeAmount)->Value() == 0);
