@@ -73,7 +73,7 @@ CynthiaMicro::CynthiaMicro(IPlugInstanceInfo instanceInfo)
 	GetParam(volumeEnvelopeAmount)->InitDouble("Volume envelope amount", 0.0, 0.0, 1.0, .01);
 	GetParam(gain)->InitDouble("Master volume", 0.5, 0.0, 1.0, .01);
 
-	IGraphics* pGraphics = MakeGraphics(this, GUI_WIDTH, GUI_HEIGHT);
+	pGraphics = MakeGraphics(this, GUI_WIDTH, GUI_HEIGHT);
 	pGraphics->AttachBackground(BG_ID, BG_FN);
 
 	IBitmap knob = pGraphics->LoadIBitmap(KNOB_ID, KNOB_FN, 54);
@@ -304,4 +304,27 @@ void CynthiaMicro::OnParamChange(int paramIdx)
 			if (paramIdx == volumeEnvelopeAmount) voices[i].SetVolumeEnvelopeAmount(value);
 		}
 	}
+
+	// gray out controls
+	pGraphics->GetControl(oscillator1Coarse + 1)->GrayOut(GetParam(oscillatorMix)->Value() == 1.0);
+	pGraphics->GetControl(oscillator1Split + 1)->GrayOut(GetParam(oscillatorMix)->Value() == 1.0);
+	pGraphics->GetControl(oscillator1Wave + 1)->GrayOut(GetParam(oscillatorMix)->Value() == 1.0);
+	pGraphics->GetControl(oscillator2Coarse + 2)->GrayOut(GetParam(oscillatorMix)->Value() == 0.0);
+	pGraphics->GetControl(oscillator2Split + 2)->GrayOut(GetParam(oscillatorMix)->Value() == 0.0);
+	pGraphics->GetControl(oscillator2Wave + 2)->GrayOut(GetParam(oscillatorMix)->Value() == 0.0);
+	pGraphics->GetControl(fmCoarse + 1)->GrayOut(GetParam(oscillatorMix)->Value() == 0.0);
+	pGraphics->GetControl(fmFine + 1)->GrayOut(GetParam(oscillatorMix)->Value() == 0.0);
+	pGraphics->GetControl(fmEnvelopeAmount + 1)->GrayOut(GetParam(oscillatorMix)->Value() == 0.0);
+
+	pGraphics->GetControl(lfoFrequency + 1)->GrayOut(GetParam(lfoAmount)->Value() == 0 || (GetParam(lfoAmount)->Value() < 0 && GetParam(oscillatorMix)->Value() == 0.0));
+	pGraphics->GetControl(lfoDelay + 1)->GrayOut(GetParam(lfoAmount)->Value() == 0 || (GetParam(lfoAmount)->Value() < 0 && GetParam(oscillatorMix)->Value() == 0.0));
+
+	pGraphics->GetControl(glideSpeed + 1)->GrayOut(!GetParam(monoMode)->Value());
+
+	bool test = GetParam(fmEnvelopeAmount)->Value() == 0;
+	pGraphics->GetControl(envelopeAttack + 1)->GrayOut(GetParam(fmEnvelopeAmount)->Value() == 0 && GetParam(filterEnvelope)->Value() == 0 && GetParam(volumeEnvelopeAmount)->Value() == 0);
+	pGraphics->GetControl(envelopeDecay + 1)->GrayOut(GetParam(fmEnvelopeAmount)->Value() == 0 && GetParam(filterEnvelope)->Value() == 0 && GetParam(volumeEnvelopeAmount)->Value() == 0);
+	pGraphics->GetControl(envelopeSustain + 1)->GrayOut(GetParam(fmEnvelopeAmount)->Value() == 0 && GetParam(filterEnvelope)->Value() == 0 && GetParam(volumeEnvelopeAmount)->Value() == 0);
+	pGraphics->GetControl(envelopeRelease + 1)->GrayOut(GetParam(fmEnvelopeAmount)->Value() == 0 && GetParam(filterEnvelope)->Value() == 0 && GetParam(volumeEnvelopeAmount)->Value() == 0);
+	pGraphics->GetControl(envelopeVelocityAmount + 1)->GrayOut(GetParam(fmEnvelopeAmount)->Value() == 0 && GetParam(filterEnvelope)->Value() == 0 && GetParam(volumeEnvelopeAmount)->Value() == 0);
 }

@@ -23,6 +23,7 @@ private:
 	int GetQuietestVoice(bool releasedOnly);
 	int PickVoice();
 
+	IGraphics* pGraphics;
 	IMidiQueue midiQueue;
 	bool mono = false;
 	double masterVolume = 0.5;
