@@ -3,7 +3,7 @@
 #include "IControl.h"
 #include "resource.h"
 
-const int kNumPrograms = 1;
+const int kNumPrograms = 128;
 
 enum Parameters
 {
