@@ -16,6 +16,7 @@ public:
 		osc1b.SetSampleRate(sr);
 		osc2a.SetSampleRate(sr);
 		osc2b.SetSampleRate(sr);
+		filter.SetSampleRate(sr);
 		modEnvelope.SetSampleRate(sr);
 		gateEnvelope.SetSampleRate(sr);
 		lfoDelayEnvelope.SetSampleRate(sr);
