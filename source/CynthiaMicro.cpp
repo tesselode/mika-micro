@@ -51,7 +51,7 @@ CynthiaMicro::CynthiaMicro(IPlugInstanceInfo instanceInfo)
 
 	GetParam(fmCoarse)->InitInt("FM coarse", 0, 0, 24, "semitones");
 	GetParam(fmFine)->InitDouble("FM fine", 0, -1.0, 1.0, .01, "semitones");
-	GetParam(fmEnvelopeAmount)->InitDouble("FM envelope amount", 0.0, 0.0, 24.0, .01, "semitones");
+	GetParam(fmEnvelopeAmount)->InitDouble("FM envelope amount", 0.0, -24.0, 24.0, .01, "semitones");
 
 	GetParam(filterCutoff)->InitDouble("Filter cutoff", 20000.0, 20., 20000., .01, "hz");
 	GetParam(filterResonance)->InitDouble("Filter resonance", 0.0, 0.0, .75, .01);
