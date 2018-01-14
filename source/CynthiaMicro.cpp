@@ -45,10 +45,10 @@ CynthiaMicro::CynthiaMicro(IPlugInstanceInfo instanceInfo)
 
 	GetParam(oscillator1Wave)->InitEnum("Oscillator 1 waveform", Saw, numWaveforms);
 	GetParam(oscillator1Coarse)->InitInt("Oscillator 1 coarse", 0, -24, 24, "semitones");
-	GetParam(oscillator1Split)->InitDouble("Oscillator 1 split", 1.0, 1.0, 1.1, .01);
+	GetParam(oscillator1Split)->InitDouble("Oscillator 1 split", 1.0, 1.0, 1.025, .01);
 	GetParam(oscillator2Wave)->InitEnum("Oscillator 2 waveform", Saw, numWaveforms);
 	GetParam(oscillator2Coarse)->InitInt("Oscillator 1 coarse", 0, -24, 24, "semitones");
-	GetParam(oscillator2Split)->InitDouble("Oscillator 2 split", 1.0, 1.0, 1.1, .01);
+	GetParam(oscillator2Split)->InitDouble("Oscillator 2 split", 1.0, 1.0, 1.025, .01);
 	GetParam(oscillatorMix)->InitDouble("Oscillator mix", 0.0, 0.0, 1.0, .01);
 
 	GetParam(fmCoarse)->InitInt("FM coarse", 0, 0, 24, "semitones");
