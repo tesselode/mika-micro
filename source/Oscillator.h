@@ -5,7 +5,10 @@
 enum Waveform
 {
 	Sine,
+	Triangle,
 	Saw,
+	Square,
+	Pulse,
 	numWaveforms
 };
 
@@ -23,11 +26,15 @@ private:
 	double twoPi = 4 * acos(0.0);
 
 	double Blep(double t);
+	double GeneratePulse(double width);
 
 	double frequency = 440.0;
 	double sampleRate = 44100.0;
 
 	double t = 0.0;
 	double dt = 0.0;
+
+	double triCurrent = 0.0;
+	double triLast = 0.0;
 };
 

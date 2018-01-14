@@ -7,8 +7,10 @@ const int kNumPrograms = 1;
 
 enum Parameters
 {
+	oscillator1Wave,
 	oscillator1Split,
 	oscillator1Coarse,
+	oscillator2Wave,
 	oscillator2Split,
 	oscillator2Coarse,
 	oscillatorMix,
@@ -36,10 +38,12 @@ CynthiaMicro::CynthiaMicro(IPlugInstanceInfo instanceInfo)
 {
 	TRACE;
 
-	GetParam(oscillator1Split)->InitDouble("Oscillator 1 split", 1.0, 1.0, 1.1, .01);
+	GetParam(oscillator1Wave)->InitEnum("Oscillator 1 waveform", Saw, numWaveforms);
 	GetParam(oscillator1Coarse)->InitInt("Oscillator 1 coarse", 0, -24, 24, "semitones");
-	GetParam(oscillator2Split)->InitDouble("Oscillator 2 split", 1.0, 1.0, 1.1, .01);
+	GetParam(oscillator1Split)->InitDouble("Oscillator 1 split", 1.0, 1.0, 1.1, .01);
+	GetParam(oscillator2Wave)->InitEnum("Oscillator 2 waveform", Saw, numWaveforms);
 	GetParam(oscillator2Coarse)->InitInt("Oscillator 1 coarse", 0, -24, 24, "semitones");
+	GetParam(oscillator2Split)->InitDouble("Oscillator 2 split", 1.0, 1.0, 1.1, .01);
 	GetParam(oscillatorMix)->InitDouble("Oscillator mix", 0.0, 0.0, 1.0, .01);
 
 	GetParam(fmCoarse)->InitInt("FM coarse", 0, 0, 24, "semitones");
@@ -70,11 +74,11 @@ CynthiaMicro::CynthiaMicro(IPlugInstanceInfo instanceInfo)
 	IBitmap toggle = pGraphics->LoadIBitmap(SWITCH_ID, SWITCH_FN, 2);
 	IBitmap waveformSwitch = pGraphics->LoadIBitmap(WAVEFORM_SWITCH_ID, WAVEFORM_SWITCH_FN, 5);
 
-	//pGraphics->AttachControl(new ISwitchControl(this, 32 * 4, 5 * 4, osc1Wave, &waveformSwitch));
+	pGraphics->AttachControl(new ISwitchControl(this, 32 * 4, 5 * 4, oscillator1Wave, &waveformSwitch));
 	pGraphics->AttachControl(new IKnobMultiControl(this, 48 * 4, 5 * 4, oscillator1Coarse, &knob));
 	pGraphics->AttachControl(new IKnobMultiControl(this, 64 * 4, 5 * 4, oscillator1Split, &knob));
 	pGraphics->AttachControl(new IKnobMultiControl(this, 88 * 4, 5 * 4, oscillatorMix, &knob));
-	//pGraphics->AttachControl(new ISwitchControl(this, 112 * 4, 5 * 4, osc2Wave, &waveformSwitch));
+	pGraphics->AttachControl(new ISwitchControl(this, 112 * 4, 5 * 4, oscillator2Wave, &waveformSwitch));
 	pGraphics->AttachControl(new IKnobMultiControl(this, 128 * 4, 5 * 4, oscillator2Coarse, &knob));
 	pGraphics->AttachControl(new IKnobMultiControl(this, 144 * 4, 5 * 4, oscillator2Split, &knob));
 
@@ -256,8 +260,10 @@ void CynthiaMicro::OnParamChange(int paramIdx)
 	{
 		for (int i = 0; i < numVoices; i++)
 		{
+			if (paramIdx == oscillator1Wave) voices[i].SetOscillator1Wave((Waveform)(int)value);
 			if (paramIdx == oscillator1Split) voices[i].SetOscillator1Split(value);
 			if (paramIdx == oscillator1Coarse) voices[i].SetOscillator1Coarse(value);
+			if (paramIdx == oscillator2Wave) voices[i].SetOscillator2Wave((Waveform)(int)value);
 			if (paramIdx == oscillator2Split) voices[i].SetOscillator2Split(value);
 			if (paramIdx == oscillator2Coarse) voices[i].SetOscillator2Coarse(value);
 			if (paramIdx == oscillatorMix) voices[i].SetOscillatorMix(value);

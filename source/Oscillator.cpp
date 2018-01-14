@@ -25,14 +25,32 @@ double Oscillator::Blep(double t)
 	return 0.0;
 }
 
+double Oscillator::GeneratePulse(double width)
+{
+	double v = 0.0;
+	if (t < width)
+	{
+		v = 1.0;
+	}
+	else
+	{
+		v = -1.0;
+	}
+	v += Blep(t);
+	v -= Blep(fmod(t + (1 - width), 1.0));
+	return v;
+}
+
 double Oscillator::Get(Waveform waveform)
 {
-	if (waveform == Sine)
+	if (waveform == Sine) return sin(t * twoPi);
+	if (waveform == Triangle)
 	{
-		return sin(t * twoPi);
+		triLast = triCurrent;
+		triCurrent = dt * GeneratePulse(.5) + (1 - dt) * triLast;
+		return triCurrent * 7;
 	}
-	if (waveform == Saw)
-	{
-		return 1 - 2 * t + Blep(t);
-	}
+	if (waveform == Saw) return 1 - 2 * t + Blep(t);
+	if (waveform == Square) return GeneratePulse(.5);
+	if (waveform == Pulse) return GeneratePulse(.75);
 }

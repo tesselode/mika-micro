@@ -29,8 +29,10 @@ public:
 
 	void SetNote(int n);
 
+	void SetOscillator1Wave(Waveform w) { oscillator1Wave = w; }
 	void SetOscillator1Split(double s) { oscillator1Split = s; }
 	void SetOscillator1Coarse(double c) { oscillator1Coarse = PitchFactor(c); }
+	void SetOscillator2Wave(Waveform w) { oscillator2Wave = w; }
 	void SetOscillator2Split(double s) { oscillator2Split = s; }
 	void SetOscillator2Coarse(double c) { oscillator2Coarse = PitchFactor(c); }
 	void SetOscillatorMix(double m) { oscillatorMix = m; }
@@ -56,7 +58,7 @@ public:
 		{
 			frequency = targetFrequency;
 		}
-		if (modEnvelope.Get() == 0.0)
+		if (GetVolume() == 0.0)
 		{
 			osc1a.ResetPhase();
 			osc1b.ResetPhase();
@@ -83,8 +85,10 @@ private:
 	double targetFrequency = 440.0;
 	double frequency = 440.0;
 
+	Waveform oscillator1Wave = Saw;
 	double oscillator1Split = 1.0;
 	double oscillator1Coarse = 1.0;
+	Waveform oscillator2Wave = Saw;
 	double oscillator2Split = 1.0;
 	double oscillator2Coarse = 1.0;
 	double oscillatorMix = 0.0;

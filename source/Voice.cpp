@@ -34,14 +34,14 @@ double Voice::Next(double lfoValue)
 			osc1a.SetFrequency(oscFrequency / oscillator1Split);
 			osc1b.SetFrequency(oscFrequency * oscillator1Split);
 			osc1b.Update();
-			oscOut += osc1b.Get(Saw);
+			oscOut += osc1b.Get(oscillator1Wave);
 		}
 		else
 		{
 			osc1a.SetFrequency(oscFrequency);
 		}
 		osc1a.Update();
-		oscOut += osc1a.Get(Saw);
+		oscOut += osc1a.Get(oscillator1Wave);
 
 		out += oscOut * (1 - oscillatorMix);
 	}
@@ -60,14 +60,14 @@ double Voice::Next(double lfoValue)
 			osc2a.SetFrequency(oscFrequency / oscillator2Split);
 			osc2b.SetFrequency(oscFrequency * oscillator2Split);
 			osc2b.Update();
-			oscOut += osc2b.Get(Saw);
+			oscOut += osc2b.Get(oscillator2Wave);
 		}
 		else
 		{
 			osc2a.SetFrequency(oscFrequency);
 		}
 		osc2a.Update();
-		oscOut += osc2a.Get(Saw);
+		oscOut += osc2a.Get(oscillator2Wave);
 
 		out += oscOut * oscillatorMix;
 	}
