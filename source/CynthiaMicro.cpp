@@ -75,7 +75,7 @@ CynthiaMicro::CynthiaMicro(IPlugInstanceInfo instanceInfo)
 	GetParam(volumeEnvelopeAmount)->InitDouble("Volume envelope amount", 0.0, 0.0, 1.0, .01);
 	GetParam(gain)->InitDouble("Master volume", 0.5, 0.0, 1.0, .01);
 
-	pGraphics = MakeGraphics(this, GUI_WIDTH, GUI_HEIGHT);
+	pGraphics = MakeGraphics(this, GUI_WIDTH, GUI_HEIGHT, 120);
 	pGraphics->AttachBackground(BG_ID, BG_FN);
 
 	IBitmap knob = pGraphics->LoadIBitmap(KNOB_ID, KNOB_FN, 54);
