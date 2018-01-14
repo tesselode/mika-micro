@@ -41,6 +41,8 @@ CynthiaMicro::CynthiaMicro(IPlugInstanceInfo instanceInfo)
 {
 	TRACE;
 
+	srand(time(NULL));
+
 	GetParam(oscillator1Wave)->InitEnum("Oscillator 1 waveform", Saw, numWaveforms);
 	GetParam(oscillator1Coarse)->InitInt("Oscillator 1 coarse", 0, -24, 24, "semitones");
 	GetParam(oscillator1Split)->InitDouble("Oscillator 1 split", 1.0, 1.0, 1.1, .01);

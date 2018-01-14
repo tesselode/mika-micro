@@ -2,7 +2,9 @@
 
 #include "Envelope.h"
 #include "Filter.h"
+#include <math.h>
 #include "Oscillator.h"
+#include <stdlib.h>
 
 class Voice
 {
@@ -83,13 +85,19 @@ public:
 	double Next(double lfoValue);
 
 private:
-	double PitchFactor(double p) { return pow(1.05946309436, p); }
+	double randMToN(double M, double N)
+	{
+		// https://stackoverflow.com/a/17798317
+		return M + (rand() / (RAND_MAX / (N - M)));
+	}
+	double PitchFactor(double p) { return pow(1.0595, p); }
 	double PitchToFrequency(double p) { return 440.0 * PitchFactor(p - 69); }
 
 	double sampleRate = 44100;
 	int note = 69;
 	double targetFrequency = 440.0;
 	double frequency = 440.0;
+	double driftPhase = 0.0;
 
 	Waveform oscillator1Wave = Saw;
 	double oscillator1Split = 1.0;

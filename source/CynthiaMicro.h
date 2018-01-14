@@ -3,6 +3,8 @@
 
 #include "IPlug_include_in_plug_hdr.h"
 #include "IMidiQueue.h"
+#include <stdlib.h>
+#include <time.h>
 #include <vector>
 #include "Voice.h"
 
