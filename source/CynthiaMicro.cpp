@@ -51,7 +51,7 @@ CynthiaMicro::CynthiaMicro(IPlugInstanceInfo instanceInfo)
 
 	GetParam(fmCoarse)->InitInt("FM coarse", 0, 0, 24, "semitones");
 	GetParam(fmFine)->InitDouble("FM fine", 0, -1.0, 1.0, .01, "semitones");
-	GetParam(fmEnvelopeAmount)->InitDouble("FM envelope amount", 0.0, -24.0, 24.0, .01, "semitones");
+	GetParam(fmEnvelopeAmount)->InitDouble("FM envelope amount", 0.0, 0.0, 24.0, .01, "semitones");
 
 	GetParam(filterCutoff)->InitDouble("Filter cutoff", 20000.0, 20., 20000., .01, "hz");
 	GetParam(filterResonance)->InitDouble("Filter resonance", 0.0, 0.0, .75, .01);
@@ -310,8 +310,8 @@ void CynthiaMicro::OnParamChange(int paramIdx)
 	}
 
 	// gray out controls
-	pGraphics->GetControl(oscillator1Coarse + 1)->GrayOut(GetParam(oscillatorMix)->Value() == 1.0);
-	pGraphics->GetControl(oscillator1Split + 1)->GrayOut(GetParam(oscillatorMix)->Value() == 1.0);
+	pGraphics->GetControl(oscillator1Coarse + 1)->GrayOut(GetParam(oscillatorMix)->Value() == 1.0 && GetParam(fmCoarse)->Value() == 0 && GetParam(fmFine)->Value() == 0 && GetParam(fmEnvelopeAmount)->Value() == 0);
+	pGraphics->GetControl(oscillator1Split + 1)->GrayOut(GetParam(oscillatorMix)->Value() == 1.0 && GetParam(fmCoarse)->Value() == 0 && GetParam(fmFine)->Value() == 0 && GetParam(fmEnvelopeAmount)->Value() == 0);
 	pGraphics->GetControl(oscillator1Wave + 1)->GrayOut(GetParam(oscillatorMix)->Value() == 1.0);
 	pGraphics->GetControl(oscillator2Coarse + 2)->GrayOut(GetParam(oscillatorMix)->Value() == 0.0);
 	pGraphics->GetControl(oscillator2Split + 2)->GrayOut(GetParam(oscillatorMix)->Value() == 0.0);
