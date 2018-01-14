@@ -27,6 +27,7 @@ enum Parameters
 	envelopeRelease,
 	lfoAmount,
 	lfoFrequency,
+	lfoDelay,
 	monoMode,
 	glideSpeed,
 	volumeEnvelopeAmount,
@@ -62,6 +63,7 @@ CynthiaMicro::CynthiaMicro(IPlugInstanceInfo instanceInfo)
 
 	GetParam(lfoAmount)->InitDouble("Vibrato amount", 0, -0.1, 0.1, .01);
 	GetParam(lfoFrequency)->InitDouble("Vibrato speed", 5.0, 1.0, 10.0, .01, "hz");
+	GetParam(lfoDelay)->InitDouble("Vibrato delay", 100., 0.1, 100., .01);
 
 	GetParam(monoMode)->InitBool("Mono mode", true);
 	GetParam(glideSpeed)->InitDouble("Glide speed", 1000., 0.1, 1000., .01);
@@ -99,7 +101,7 @@ CynthiaMicro::CynthiaMicro(IPlugInstanceInfo instanceInfo)
 
 	pGraphics->AttachControl(new IKnobMultiControl(this, 32 * 4, 69 * 4, lfoAmount, &knob));
 	pGraphics->AttachControl(new IKnobMultiControl(this, 48 * 4, 69 * 4, lfoFrequency, &knob));
-	//pGraphics->AttachControl(new IKnobMultiControl(this, 64 * 4, 69 * 4, lfoDelay, &knob));
+	pGraphics->AttachControl(new IKnobMultiControl(this, 64 * 4, 69 * 4, lfoDelay, &knob));
 
 	pGraphics->AttachControl(new ISwitchControl(this, 96 * 4, 69 * 4, monoMode, &toggle));
 	pGraphics->AttachControl(new IKnobMultiControl(this, 112 * 4, 69 * 4, glideSpeed, &knob));
@@ -283,6 +285,7 @@ void CynthiaMicro::OnParamChange(int paramIdx)
 			if (paramIdx == envelopeRelease) voices[i].SetEnvelopeRelease(value);
 
 			if (paramIdx == lfoAmount) voices[i].SetLfoAmount(value);
+			if (paramIdx == lfoDelay) voices[i].SetLfoDelay(value);
 
 			if (paramIdx == glideSpeed) voices[i].SetGlideSpeed(value);
 			if (paramIdx == volumeEnvelopeAmount) voices[i].SetVolumeEnvelopeAmount(value);

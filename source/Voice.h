@@ -7,7 +7,7 @@
 class Voice
 {
 public:
-	Voice() : gateEnvelope(100., 1., 1., 100.) {};
+	Voice() : gateEnvelope(100., 1., 1., 100.), lfoDelayEnvelope(100.0, 1.0, 1.0, 1.0) {};
 
 	void SetSampleRate(double sr)
 	{
@@ -18,6 +18,7 @@ public:
 		osc2b.SetSampleRate(sr);
 		modEnvelope.SetSampleRate(sr);
 		gateEnvelope.SetSampleRate(sr);
+		lfoDelayEnvelope.SetSampleRate(sr);
 	}
 
 	int GetNote() { return note; }
@@ -48,6 +49,7 @@ public:
 	void SetEnvelopeSustain(double s) { modEnvelope.SetSustain(s); }
 	void SetEnvelopeRelease(double r) { modEnvelope.SetRelease(r); }
 	void SetLfoAmount(double a) { lfoAmount = a; }
+	void SetLfoDelay(double d) { lfoDelayEnvelope.SetAttack(d); }
 	void SetMono(bool m) { mono = m; }
 	void SetGlideSpeed(double s) { glideSpeed = s; }
 	void SetVolumeEnvelopeAmount(double a) { volumeEnvelopeAmount = a; }
@@ -67,6 +69,7 @@ public:
 		}
 		modEnvelope.Start();
 		gateEnvelope.Start();
+		lfoDelayEnvelope.Reset();
 	}
 	void Release()
 	{
@@ -110,6 +113,7 @@ private:
 
 	Envelope modEnvelope;
 	Envelope gateEnvelope;
+	Envelope lfoDelayEnvelope;
 
 	Filter filter;
 };

@@ -30,6 +30,11 @@ public:
 
 	void Start() { stage = EnvelopeStageAttack; }
 	void Release() { stage = EnvelopeStageRelease; }
+	void Reset()
+	{
+		value = 0.0;
+		Start();
+	}
 	double Get() { return value; }
 	void Update();
 
