@@ -25,6 +25,7 @@ private:
 
 	IMidiQueue midiQueue;
 	bool mono = false;
+	double masterVolume = 0.5;
 	std::vector<int> heldNotes;
 	Oscillator lfo;
 	Voice voices[numVoices];

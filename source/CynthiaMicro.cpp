@@ -32,6 +32,7 @@ enum Parameters
 	monoMode,
 	glideSpeed,
 	volumeEnvelopeAmount,
+	gain,
 	numParameters
 };
 
@@ -70,6 +71,7 @@ CynthiaMicro::CynthiaMicro(IPlugInstanceInfo instanceInfo)
 	GetParam(monoMode)->InitBool("Mono mode", true);
 	GetParam(glideSpeed)->InitDouble("Glide speed", 1000., 0.1, 1000., .01);
 	GetParam(volumeEnvelopeAmount)->InitDouble("Volume envelope amount", 0.0, 0.0, 1.0, .01);
+	GetParam(gain)->InitDouble("Master volume", 0.5, 0.0, 1.0, .01);
 
 	IGraphics* pGraphics = MakeGraphics(this, GUI_WIDTH, GUI_HEIGHT);
 	pGraphics->AttachBackground(BG_ID, BG_FN);
@@ -108,7 +110,7 @@ CynthiaMicro::CynthiaMicro(IPlugInstanceInfo instanceInfo)
 	pGraphics->AttachControl(new ISwitchControl(this, 96 * 4, 69 * 4, monoMode, &toggle));
 	pGraphics->AttachControl(new IKnobMultiControl(this, 112 * 4, 69 * 4, glideSpeed, &knob));
 	pGraphics->AttachControl(new IKnobMultiControl(this, 128 * 4, 69 * 4, volumeEnvelopeAmount, &knob));
-	//pGraphics->AttachControl(new IKnobMultiControl(this, 144 * 4, 69 * 4, gain, &knob));
+	pGraphics->AttachControl(new IKnobMultiControl(this, 144 * 4, 69 * 4, gain, &knob));
 
 	AttachGraphics(pGraphics);
 
@@ -216,8 +218,9 @@ void CynthiaMicro::ProcessDoubleReplacing(double** inputs, double** outputs, int
 		double out = 0.0;
 		for (int i = 0; i < numVoices; i++)
 		{
-			out += .25 * voices[i].Next(lfoValue);
+			out += .5 * voices[i].Next(lfoValue);
 		}
+		out *= masterVolume;
 		*out1 = out;
 		*out2 = out;
 	}
@@ -261,6 +264,10 @@ void CynthiaMicro::OnParamChange(int paramIdx)
 		{
 			voices[i].SetMono(value);
 		}
+	}
+	else if (paramIdx == gain)
+	{
+		masterVolume = value;
 	}
 	else
 	{
