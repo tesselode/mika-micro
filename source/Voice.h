@@ -32,6 +32,7 @@ public:
 	bool IsReleased() { return modEnvelope.IsReleased(); }
 
 	void SetNote(int n);
+	void SetPitchBend(double p) { pitchBend = PitchFactor(p * 2); }
 	void SetEnvelopeVelocityAmount(double a) { modEnvelope.SetVelocityAmount(a); }
 	void SetVelocity(double v) { modEnvelope.SetVelocity(v); }
 
@@ -95,6 +96,7 @@ private:
 
 	double sampleRate = 44100;
 	int note = 69;
+	double pitchBend = 1.0;
 	double targetFrequency = 440.0;
 	double frequency = 440.0;
 	double driftPhase = 0.0;

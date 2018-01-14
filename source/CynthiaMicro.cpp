@@ -213,6 +213,13 @@ void CynthiaMicro::ProcessDoubleReplacing(double** inputs, double** outputs, int
 					}
 				}
 			}
+			else if (message->StatusMsg() == IMidiMsg::kPitchWheel)
+			{
+				for (int i = 0; i < numVoices; i++)
+				{
+					voices[i].SetPitchBend(message->PitchWheel());
+				}
+			}
 
 			midiQueue.Remove();
 		}
@@ -230,7 +237,8 @@ void CynthiaMicro::ProcessDoubleReplacing(double** inputs, double** outputs, int
 
 void CynthiaMicro::ProcessMidiMsg(IMidiMsg * message)
 {
-	if (message->StatusMsg() == IMidiMsg::kNoteOn || message->StatusMsg() == IMidiMsg::kNoteOff)
+	IMidiMsg::EStatusMsg status = message->StatusMsg();
+	if (status == IMidiMsg::kNoteOn || status == IMidiMsg::kNoteOff || status == IMidiMsg::kPitchWheel)
 	{
 		midiQueue.Add(message);
 	}

@@ -28,7 +28,7 @@ double Voice::Next(double lfoValue)
 	{
 		double oscOut = 0.0;
 
-		double oscFrequency = frequency * oscillator1Coarse;
+		double oscFrequency = frequency * oscillator1Coarse * pitchBend;
 		oscFrequency *= 1 + driftValue;
 		if (lfoAmount > 0.0)
 		{
@@ -57,7 +57,7 @@ double Voice::Next(double lfoValue)
 	{
 		double oscOut = 0.0;
 
-		double oscFrequency = frequency * oscillator2Coarse;
+		double oscFrequency = frequency * oscillator2Coarse * pitchBend;
 		oscFrequency *= 1 + driftValue;
 		if (fmAmount > 0.0) oscFrequency *= PitchFactor(fmAmount * osc1a.Get(Sine));
 		oscFrequency *= 1 + lfoAmount * lfoValue * lfoDelayEnvelope.Get();
