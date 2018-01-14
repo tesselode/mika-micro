@@ -58,18 +58,18 @@ CynthiaMicro::CynthiaMicro(IPlugInstanceInfo instanceInfo)
 	GetParam(filterKeyTracking)->InitDouble("Filter key tracking", 0.0, 0.0, 1.0, .01);
 	GetParam(filterEnvelope)->InitDouble("Filter envelope amount", 0.0, -20000.0, 20000.0, .01);
 
-	GetParam(envelopeAttack)->InitDouble("Envelope attack", 100., 0.1, 100., .01);
-	GetParam(envelopeDecay)->InitDouble("Envelope decay", 1., 0.1, 100., .01);
+	GetParam(envelopeAttack)->InitDouble("Envelope attack", 0.1, 0.1, 100., .01, "", "", .05);
+	GetParam(envelopeDecay)->InitDouble("Envelope decay", 99., 0.1, 100., .01, "", "", .05);
 	GetParam(envelopeSustain)->InitDouble("Envelope sustain", .5, 0., 1., .01);
-	GetParam(envelopeRelease)->InitDouble("Envelope release", 1., 0.1, 100., .01);
+	GetParam(envelopeRelease)->InitDouble("Envelope release", 0.1, 0.1, 100., .01, "", "", .05);
 	GetParam(envelopeVelocityAmount)->InitDouble("Envelope velocity sensitivity", 0.0, 0.0, 1.0, .01);
 
 	GetParam(lfoAmount)->InitDouble("Vibrato amount", 0, -0.1, 0.1, .01);
 	GetParam(lfoFrequency)->InitDouble("Vibrato speed", 5.0, 1.0, 10.0, .01, "hz");
-	GetParam(lfoDelay)->InitDouble("Vibrato delay", 100., 0.1, 100., .01);
+	GetParam(lfoDelay)->InitDouble("Vibrato delay", 0.1, 0.1, 100., .01, "", "", .05);
 
 	GetParam(monoMode)->InitBool("Mono mode", true);
-	GetParam(glideSpeed)->InitDouble("Glide speed", 1000., 0.1, 1000., .01);
+	GetParam(glideSpeed)->InitDouble("Glide speed", 10, 10, 1000., .01, "", "", .05);
 	GetParam(volumeEnvelopeAmount)->InitDouble("Volume envelope amount", 0.0, 0.0, 1.0, .01);
 	GetParam(gain)->InitDouble("Master volume", 0.5, 0.0, 1.0, .01);
 
@@ -252,6 +252,7 @@ void CynthiaMicro::OnParamChange(int paramIdx)
 
 	IParam* param = GetParam(paramIdx);
 	double value = param->Value();
+	double reverseValue = param->GetMin() + param->GetMax() - value;
 
 	if (paramIdx == lfoFrequency)
 	{
@@ -290,16 +291,16 @@ void CynthiaMicro::OnParamChange(int paramIdx)
 			if (paramIdx == filterKeyTracking) voices[i].SetFilterKeyTracking(value);
 			if (paramIdx == filterEnvelope) voices[i].SetFilterEnvelopeAmount(value);
 
-			if (paramIdx == envelopeAttack) voices[i].SetEnvelopeAttack(value);
-			if (paramIdx == envelopeDecay) voices[i].SetEnvelopeDecay(value);
+			if (paramIdx == envelopeAttack) voices[i].SetEnvelopeAttack(reverseValue);
+			if (paramIdx == envelopeDecay) voices[i].SetEnvelopeDecay(reverseValue);
 			if (paramIdx == envelopeSustain) voices[i].SetEnvelopeSustain(value);
-			if (paramIdx == envelopeRelease) voices[i].SetEnvelopeRelease(value);
+			if (paramIdx == envelopeRelease) voices[i].SetEnvelopeRelease(reverseValue);
 			if (paramIdx == envelopeVelocityAmount) voices[i].SetEnvelopeVelocityAmount(value);
 
 			if (paramIdx == lfoAmount) voices[i].SetLfoAmount(value);
-			if (paramIdx == lfoDelay) voices[i].SetLfoDelay(value);
+			if (paramIdx == lfoDelay) voices[i].SetLfoDelay(reverseValue);
 
-			if (paramIdx == glideSpeed) voices[i].SetGlideSpeed(value);
+			if (paramIdx == glideSpeed) voices[i].SetGlideSpeed(reverseValue);
 			if (paramIdx == volumeEnvelopeAmount) voices[i].SetVolumeEnvelopeAmount(value);
 		}
 	}
