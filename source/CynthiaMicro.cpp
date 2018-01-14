@@ -68,7 +68,7 @@ CynthiaMicro::CynthiaMicro(IPlugInstanceInfo instanceInfo)
 
 	GetParam(lfoAmount)->InitDouble("Vibrato amount", 0, -0.1, 0.1, .01);
 	GetParam(lfoFrequency)->InitDouble("Vibrato speed", 5.0, 1.0, 10.0, .01, "hz");
-	GetParam(lfoDelay)->InitDouble("Vibrato delay", 0.1, 0.1, 100., .01, "", "", .05);
+	GetParam(lfoDelay)->InitDouble("Vibrato delay", 0.1, 0.1, 100., .01, "", "", .01);
 
 	GetParam(monoMode)->InitBool("Mono mode", true);
 	GetParam(glideSpeed)->InitDouble("Glide speed", 10, 10, 1000., .01, "", "", .05);
