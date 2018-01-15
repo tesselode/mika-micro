@@ -30,6 +30,7 @@ private:
 	bool mono = false;
 	double masterVolume = 0.5;
 	std::vector<int> heldNotes;
+	std::vector<double> velocities;
 	Oscillator lfo;
 	Voice voices[numVoices];
 };

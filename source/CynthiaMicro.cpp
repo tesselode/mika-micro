@@ -180,6 +180,7 @@ void CynthiaMicro::ProcessDoubleReplacing(double** inputs, double** outputs, int
 					voices[v].Start();
 				}
 				heldNotes.push_back(message->NoteNumber());
+				velocities.push_back(message->Velocity());
 			}
 			else if (message->StatusMsg() == IMidiMsg::kNoteOff)
 			{
@@ -188,6 +189,7 @@ void CynthiaMicro::ProcessDoubleReplacing(double** inputs, double** outputs, int
 					if (heldNotes[i] == message->NoteNumber())
 					{
 						heldNotes.erase(heldNotes.begin() + i);
+						velocities.erase(velocities.begin() + i);
 						break;
 					}
 				}
@@ -200,6 +202,7 @@ void CynthiaMicro::ProcessDoubleReplacing(double** inputs, double** outputs, int
 					else
 					{
 						voices[0].SetNote(heldNotes.back());
+						voices[0].SetVelocity(velocities.back());
 					}
 				}
 				else
