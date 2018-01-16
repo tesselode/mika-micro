@@ -18,7 +18,7 @@ enum Parameters
 	fmFine,
 	fmEnvelopeAmount,
 	filterCutoff,
-	filterSmoothing,
+	filterResonance,
 	filterKeyTracking,
 	filterEnvelope,
 	envelopeAttack,
@@ -56,7 +56,7 @@ CynthiaMicro::CynthiaMicro(IPlugInstanceInfo instanceInfo)
 	GetParam(fmEnvelopeAmount)->InitDouble("FM envelope amount", 0.0, -24.0, 24.0, .01, "semitones");
 
 	GetParam(filterCutoff)->InitDouble("Filter cutoff", 20000.0, 20., 20000., .01, "hz", "", 1.0);
-	GetParam(filterSmoothing)->InitDouble("Filter smoothing", 0.0, 0.0, .75, .01);
+	GetParam(filterResonance)->InitDouble("Filter resonance", 0.0, -.75, .75, .01);
 	GetParam(filterKeyTracking)->InitDouble("Filter key tracking", 0.0, 0.0, 1.0, .01);
 	GetParam(filterEnvelope)->InitDouble("Filter envelope amount", 0.0, -20000.0, 20000.0, .01);
 
@@ -95,7 +95,7 @@ CynthiaMicro::CynthiaMicro(IPlugInstanceInfo instanceInfo)
 	pGraphics->AttachControl(new IKnobMultiControl(this, 64 * 4, 37 * 4, fmEnvelopeAmount, &knob));
 
 	pGraphics->AttachControl(new IKnobMultiControl(this, 96 * 4, 37 * 4, filterCutoff, &knob));
-	pGraphics->AttachControl(new IKnobMultiControl(this, 112 * 4, 37 * 4, filterSmoothing, &knob));
+	pGraphics->AttachControl(new IKnobMultiControl(this, 112 * 4, 37 * 4, filterResonance, &knob));
 	pGraphics->AttachControl(new IKnobMultiControl(this, 128 * 4, 37 * 4, filterKeyTracking, &knob));
 	pGraphics->AttachControl(new IKnobMultiControl(this, 144 * 4, 37 * 4, filterEnvelope, &knob));
 
@@ -304,7 +304,7 @@ void CynthiaMicro::OnParamChange(int paramIdx)
 			if (paramIdx == fmEnvelopeAmount) voices[i].SetFmEnvelopeAmount(value);
 
 			if (paramIdx == filterCutoff) voices[i].SetFilterCutoff(value);
-			if (paramIdx == filterSmoothing) voices[i].SetFilterResonance(value);
+			if (paramIdx == filterResonance) voices[i].SetFilterResonance(value);
 			if (paramIdx == filterKeyTracking) voices[i].SetFilterKeyTracking(value);
 			if (paramIdx == filterEnvelope) voices[i].SetFilterEnvelopeAmount(value);
 
@@ -334,7 +334,7 @@ void CynthiaMicro::OnParamChange(int paramIdx)
 	pGraphics->GetControl(fmFine + 1)->GrayOut(GetParam(oscillatorMix)->Value() == 0.0);
 	pGraphics->GetControl(fmEnvelopeAmount + 1)->GrayOut(GetParam(oscillatorMix)->Value() == 0.0);
 
-	pGraphics->GetControl(filterSmoothing + 1)->GrayOut(GetParam(filterCutoff)->Value() == 20000.0);
+	pGraphics->GetControl(filterResonance + 1)->GrayOut(GetParam(filterCutoff)->Value() == 20000.0);
 	pGraphics->GetControl(filterKeyTracking + 1)->GrayOut(GetParam(filterCutoff)->Value() == 20000.0);
 	pGraphics->GetControl(filterEnvelope + 1)->GrayOut(GetParam(filterCutoff)->Value() == 20000.0);
 
