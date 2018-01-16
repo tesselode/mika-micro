@@ -14,6 +14,7 @@ public:
 	void SetSampleRate(double sr)
 	{
 		sampleRate = sr;
+		dt = 1.0 / sr;
 		osc1a.SetSampleRate(sr);
 		osc1b.SetSampleRate(sr);
 		osc2a.SetSampleRate(sr);
@@ -86,15 +87,15 @@ public:
 	double Next(double lfoValue);
 
 private:
-	double randMToN(double M, double N)
-	{
-		// https://stackoverflow.com/a/17798317
-		return M + (rand() / (RAND_MAX / (N - M)));
-	}
-	double PitchFactor(double p) { return pow(1.0595, p); }
+	// https://stackoverflow.com/a/17798317
+	double randomMultiplier = 1.0 / (RAND_MAX * .5);
+	double randomValue() { return rand() * randomMultiplier - 1.0; }
+
+	double PitchFactor(double p) { return pow(1.0595, p); } // slight octave stretch
 	double PitchToFrequency(double p) { return 440.0 * PitchFactor(p - 69); }
 
-	double sampleRate = 44100;
+	double sampleRate = 44100.0;
+	double dt = 1.0 / 44100.0;
 	int note = 69;
 	double pitchBend = 1.0;
 	double targetFrequency = 440.0;

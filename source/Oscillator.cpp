@@ -3,6 +3,7 @@
 void Oscillator::Update()
 {
 	dt = frequency / sampleRate;
+	inverseDt = 1.0 / dt;
 	t += dt;
 	t = fmod(t, 1.0);
 }
@@ -14,12 +15,12 @@ double Oscillator::Blep(double t)
 {
 	if (t < dt)
 	{
-		t /= dt;
+		t *= inverseDt;
 		return t + t - t * t - 1.0;
 	}
 	else if (t > 1.0 - dt)
 	{
-		t = (t - 1.0) / dt;
+		t = (t - 1.0) * inverseDt;
 		return t * t + t + t + 1.0;
 	}
 	return 0.0;
@@ -28,16 +29,9 @@ double Oscillator::Blep(double t)
 double Oscillator::GeneratePulse(double width)
 {
 	double v = 0.0;
-	if (t < width)
-	{
-		v = 1.0;
-	}
-	else
-	{
-		v = -1.0;
-	}
+	v = t < width ? 1.0 : -1.0;
 	v += Blep(t);
-	v -= Blep(fmod(t + (1 - width), 1.0));
+	v -= Blep(fmod(t + (1.0 - width), 1.0));
 	return v;
 }
 

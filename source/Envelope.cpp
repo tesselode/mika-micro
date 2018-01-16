@@ -4,7 +4,7 @@ void Envelope::Update()
 {
 	if (stage == EnvelopeStageAttack)
 	{
-		value += (1.5 - value) * (attack / sampleRate);
+		value += (1.5 - value) * (attack * dt);
 		if (value >= 1.0)
 		{
 			value = 1.0;
@@ -13,18 +13,12 @@ void Envelope::Update()
 	}
 	else if (stage == EnvelopeStageDecay)
 	{
-		value += (sustain - .5 - value) * (decay / sampleRate);
-		if (value < sustain)
-		{
-			value = sustain;
-		}
+		value += (sustain - .5 - value) * (decay * dt);
+		value = value < sustain ? sustain : value;
 	}
 	else if (stage == EnvelopeStageRelease)
 	{
-		value += (-.5 - value) * (release / sampleRate);
-		if (value < 0)
-		{
-			value = 0;
-		}
+		value += (-.5 - value) * (release * dt);
+		value = value < 0 ? 0 : value;
 	}
 }

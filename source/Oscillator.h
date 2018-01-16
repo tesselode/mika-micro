@@ -33,6 +33,7 @@ private:
 
 	double t = 0.0;
 	double dt = 0.0;
+	double inverseDt = 0.0;
 
 	double triCurrent = 0.0;
 	double triLast = 0.0;

@@ -15,11 +15,11 @@ double Voice::Next(double lfoValue)
 	lfoDelayEnvelope.Update();
 	if (GetVolume() == 0) return 0.0;
 
-	driftPhase += randMToN(-1.0, 1.0);
-	driftPhase += (0 - driftPhase) * (1 / sampleRate);
+	driftPhase += randomValue();
+	driftPhase -= driftPhase * dt;
 	double driftValue = .0025 * sin(driftPhase * .001);
 
-	frequency += (targetFrequency - frequency) * (glideSpeed / sampleRate);
+	frequency += (targetFrequency - frequency) * (glideSpeed * dt);
 
 	double fmAmount = fmCoarse + fmFine + fmEnvelopeAmount * modEnvelope.Get();
 

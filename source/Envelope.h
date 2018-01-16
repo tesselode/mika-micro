@@ -19,7 +19,7 @@ public:
 		SetRelease(r);
 	}
 
-	void SetSampleRate(double sr) { sampleRate = sr; }
+	void SetSampleRate(double sr) { dt = 1.0 / sr; }
 
 	void SetAttack(double a) { attack = a; }
 	void SetDecay(double d) { decay = d; }
@@ -41,7 +41,7 @@ public:
 	void Update();
 
 private:
-	double sampleRate = 44100;
+	double dt = 44100;
 
 	double attack = 100.0;
 	double decay = 10.0;
