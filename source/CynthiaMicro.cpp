@@ -73,7 +73,7 @@ CynthiaMicro::CynthiaMicro(IPlugInstanceInfo instanceInfo)
 	GetParam(monoMode)->InitBool("Mono mode", true);
 	GetParam(glideSpeed)->InitDouble("Glide speed", 10, 10, 1000., .01, "", "", .05);
 	GetParam(volumeEnvelopeAmount)->InitDouble("Volume envelope amount", 0.0, 0.0, 1.0, .01);
-	GetParam(gain)->InitDouble("Master volume", 0.5, 0.0, 1.0, .01);
+	GetParam(gain)->InitDouble("Master volume", 0.25, 0.0, 0.5, .01);
 
 	pGraphics = MakeGraphics(this, GUI_WIDTH, GUI_HEIGHT, 120);
 	pGraphics->AttachBackground(BG_ID, BG_FN);
@@ -167,10 +167,7 @@ void CynthiaMicro::ProcessDoubleReplacing(double** inputs, double** outputs, int
 				{
 					voices[0].SetNote(message->NoteNumber());
 					voices[0].SetVelocity(message->Velocity());
-					if (heldNotes.empty())
-					{
-						voices[0].Start();
-					}
+					if (heldNotes.empty()) voices[0].Start();
 				}
 				else
 				{
@@ -230,7 +227,7 @@ void CynthiaMicro::ProcessDoubleReplacing(double** inputs, double** outputs, int
 		double out = 0.0;
 		for (int i = 0; i < numVoices; i++)
 		{
-			out += .5 * voices[i].Next(lfoValue);
+			out += voices[i].Next(lfoValue);
 		}
 		out *= masterVolume;
 		*out1 = out;
@@ -274,14 +271,8 @@ void CynthiaMicro::OnParamChange(int paramIdx)
 	else if (paramIdx == monoMode)
 	{
 		mono = value;
-		for (int i = 0; i < numVoices; i++)
-		{
-			voices[i].SetMono(value);
-		}
-		for (int i = 1; i < numVoices; i++)
-		{
-			voices[i].Release();
-		}
+		for (int i = 0; i < numVoices; i++) voices[i].SetMono(value);
+		for (int i = 1; i < numVoices; i++) voices[i].Release();
 	}
 	else if (paramIdx == gain)
 	{
