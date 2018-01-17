@@ -253,6 +253,7 @@ void CynthiaMicro::Reset()
 	for (int i = 0; i < numVoices; i++)
 	{
 		voices[i].SetSampleRate(GetSampleRate());
+		voices[i].Reset();
 	}
 }
 

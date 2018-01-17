@@ -32,11 +32,7 @@ public:
 	void SetVelocity(double v) { velocity = v / 128.0; }
 	void Start() { stage = EnvelopeStageAttack; }
 	void Release() { stage = EnvelopeStageRelease; }
-	void Reset()
-	{
-		value = 0.0;
-		Start();
-	}
+	void Reset() { value = 0.0; }
 	double Get() { return value * (1 - velocityAmount + velocityAmount * velocity); }
 	void Update();
 

@@ -77,11 +77,18 @@ public:
 		modEnvelope.Start();
 		gateEnvelope.Start();
 		lfoDelayEnvelope.Reset();
+		lfoDelayEnvelope.Start();
 	}
 	void Release()
 	{
 		modEnvelope.Release();
 		gateEnvelope.Release();
+	}
+	void Reset()
+	{
+		modEnvelope.Reset();
+		gateEnvelope.Reset();
+		lfoDelayEnvelope.Reset();
 	}
 
 	double Next(double lfoValue);
