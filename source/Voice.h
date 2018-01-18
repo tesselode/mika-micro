@@ -9,7 +9,7 @@
 class Voice
 {
 public:
-	Voice() : gateEnvelope(100., 1., 1., 25.), lfoDelayEnvelope(100.0, 1.0, 1.0, 1.0) {};
+	Voice() : gateEnvelope(100., 1., 1., 50.), lfoDelayEnvelope(100.0, 1.0, 1.0, 1.0) {};
 
 	void SetSampleRate(double sr)
 	{

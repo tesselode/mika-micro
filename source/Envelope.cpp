@@ -13,12 +13,12 @@ void Envelope::Update()
 	}
 	else if (stage == EnvelopeStageDecay)
 	{
-		value += (sustain - .5 - value) * (decay * dt);
+		value += (sustain - .1 - value) * (decay * dt);
 		value = value < sustain ? sustain : value;
 	}
 	else if (stage == EnvelopeStageRelease)
 	{
-		value += (-.5 - value) * (release * dt);
+		value += (-.1 - value) * (release * dt);
 		value = value < 0 ? 0 : value;
 	}
 }
