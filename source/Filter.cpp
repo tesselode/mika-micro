@@ -12,6 +12,6 @@ double Filter::Process(double input, double cutoff)
 	velocity += fSquare * (input - (value + velocity * (1 - res)));
 	if (smoothing > 0.0) velocity -= velocity * smoothing;
 	value += velocity;
-	value = atan(value * .5) * 2;
+	value = atan(value * .1) * 10;
 	return value * (1 + smoothing);
 }
