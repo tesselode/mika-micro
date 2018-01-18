@@ -48,7 +48,7 @@ public:
 	void SetFmFine(double f) { fmFine = f; }
 	void SetFmEnvelopeAmount(double a) { fmEnvelopeAmount = a; }
 	void SetFilterCutoff(double c) { filterCutoff = c; }
-	void SetFilterResonance(double r) { filter.SetSmoothing(r); }
+	void SetFilterResonance(double r) { filter.SetResonance(r); }
 	void SetFilterKeyTracking(double k) { filterKeyTracking = k; }
 	void SetFilterEnvelopeAmount(double a) { filterEnvelopeAmount = a; }
 	void SetEnvelopeAttack(double a) { modEnvelope.SetAttack(a); }
