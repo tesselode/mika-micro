@@ -2,7 +2,7 @@
 
 ![](https://img.itch.zone/aW1hZ2UvMjEzODg4LzEwMTM3NDQucG5n/original/REIFZB.png)
 
-Cynthia Micro is a small subtractive synthesizer with minimal controls and an unpredictable character.
+Cynthia Micro is a small subtractive synthesizer with minimal controls and a quirky character.
 
 Features:
 - 2 oscillators with 5 waveforms and split knobs
