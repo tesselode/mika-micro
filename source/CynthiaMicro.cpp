@@ -259,6 +259,8 @@ void CynthiaMicro::Reset()
 
 void CynthiaMicro::OnParamChange(int paramIdx)
 {
+	IMutexLock lock(this);
+
 	IParam* param = GetParam(paramIdx);
 	double value = param->Value();
 	double reverseValue = param->GetMin() + param->GetMax() - value;
