@@ -19,6 +19,7 @@ public:
 		osc1b.SetSampleRate(sr);
 		osc2a.SetSampleRate(sr);
 		osc2b.SetSampleRate(sr);
+		oscFm.SetSampleRate(sr);
 		filter.SetSampleRate(sr);
 		modEnvelope.SetSampleRate(sr);
 		gateEnvelope.SetSampleRate(sr);
@@ -73,6 +74,7 @@ public:
 			osc1b.ResetPhase();
 			osc2a.ResetPhase();
 			osc2b.ResetPhase();
+			oscFm.ResetPhase();
 		}
 		modEnvelope.Start();
 		gateEnvelope.Start();
@@ -131,6 +133,7 @@ private:
 	Oscillator osc1b;
 	Oscillator osc2a;
 	Oscillator osc2b;
+	Oscillator oscFm;
 
 	Envelope modEnvelope;
 	Envelope gateEnvelope;

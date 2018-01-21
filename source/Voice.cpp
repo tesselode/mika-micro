@@ -21,15 +21,30 @@ double Voice::Next(double lfoValue)
 
 	frequency += (targetFrequency - frequency) * (glideSpeed * dt);
 
-	double fmAmount = fmCoarse + fmFine + fmEnvelopeAmount * modEnvelope.Get();
+	double fmValue = 0.0;
+
+	// fm
+	if (fmCoarse != 0.0)
+	{
+		double oscFrequency = frequency * oscillator1Coarse * pitchBend;
+		oscFrequency *= 1 + driftValue;
+		if (lfoAmount > 0.0)
+		{
+			oscFrequency *= 1 + lfoAmount * lfoValue * lfoDelayEnvelope.Get();
+		}
+		oscFm.SetFrequency(oscFrequency);
+		oscFm.Update();
+		fmValue = oscFm.Get(Sine) * (fmCoarse + fmFine + fmEnvelopeAmount * modEnvelope.Get());
+	}
 
 	// oscillator 1
-	if (oscillatorMix < 1.0 || fmAmount > 0)
+	if (oscillatorMix < 1.0)
 	{
 		double oscOut = 0.0;
 
 		double oscFrequency = frequency * oscillator1Coarse * pitchBend;
 		oscFrequency *= 1 + driftValue;
+		if (fmCoarse < 0.0) oscFrequency *= PitchFactor(fmValue);
 		if (lfoAmount > 0.0)
 		{
 			oscFrequency *= 1 + lfoAmount * lfoValue * lfoDelayEnvelope.Get();
@@ -59,7 +74,7 @@ double Voice::Next(double lfoValue)
 
 		double oscFrequency = frequency * oscillator2Coarse * pitchBend;
 		oscFrequency *= 1 + driftValue;
-		if (fmAmount > 0.0) oscFrequency *= PitchFactor(fmAmount * osc1a.Get(Sine));
+		if (fmCoarse > 0.0) oscFrequency *= PitchFactor(fmValue);
 		oscFrequency *= 1 + lfoAmount * lfoValue * lfoDelayEnvelope.Get();
 
 		if (oscillator2Split > 1.0)

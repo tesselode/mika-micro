@@ -51,7 +51,7 @@ CynthiaMicro::CynthiaMicro(IPlugInstanceInfo instanceInfo)
 	GetParam(oscillator2Split)->InitDouble("Oscillator 2 split", 1.0, 1.0, 1.025, .01);
 	GetParam(oscillatorMix)->InitDouble("Oscillator mix", 0.0, 0.0, 1.0, .01);
 
-	GetParam(fmCoarse)->InitInt("FM coarse", 0, 0, 24, "semitones");
+	GetParam(fmCoarse)->InitInt("FM coarse", 0, -24, 24, "semitones");
 	GetParam(fmFine)->InitDouble("FM fine", 0, -1.0, 1.0, .01, "semitones");
 	GetParam(fmEnvelopeAmount)->InitDouble("FM envelope amount", 0.0, -24.0, 24.0, .01, "semitones");
 
@@ -315,16 +315,19 @@ void CynthiaMicro::OnParamChange(int paramIdx)
 	}
 
 	// gray out controls
-	pGraphics->GetControl(oscillator1Coarse + 1)->GrayOut(GetParam(oscillatorMix)->Value() == 1.0 && GetParam(fmCoarse)->Value() == 0 && GetParam(fmFine)->Value() == 0 && GetParam(fmEnvelopeAmount)->Value() == 0);
-	pGraphics->GetControl(oscillator1Split + 1)->GrayOut(GetParam(oscillatorMix)->Value() == 1.0 && GetParam(fmCoarse)->Value() == 0 && GetParam(fmFine)->Value() == 0 && GetParam(fmEnvelopeAmount)->Value() == 0);
-	pGraphics->GetControl(oscillator1Wave + 1)->GrayOut(GetParam(oscillatorMix)->Value() == 1.0);
-	pGraphics->GetControl(oscillator2Coarse + 2)->GrayOut(GetParam(oscillatorMix)->Value() == 0.0);
-	pGraphics->GetControl(oscillator2Split + 2)->GrayOut(GetParam(oscillatorMix)->Value() == 0.0);
-	pGraphics->GetControl(oscillator2Wave + 2)->GrayOut(GetParam(oscillatorMix)->Value() == 0.0);
+	bool osc1Enabled = GetParam(oscillatorMix)->Value() < 1.0;
+	bool osc2Enabled = GetParam(oscillatorMix)->Value() > 0.0;
+	bool fmEnabled = (GetParam(fmCoarse)->Value() > 0.0 && GetParam(oscillatorMix)->Value() > 0.0) || (GetParam(fmCoarse)->Value() < 0.0 && GetParam(oscillatorMix)->Value() < 1.0);
 
-	pGraphics->GetControl(fmCoarse + 1)->GrayOut(GetParam(oscillatorMix)->Value() == 0.0);
-	pGraphics->GetControl(fmFine + 1)->GrayOut(GetParam(oscillatorMix)->Value() == 0.0);
-	pGraphics->GetControl(fmEnvelopeAmount + 1)->GrayOut(GetParam(oscillatorMix)->Value() == 0.0);
+	pGraphics->GetControl(oscillator1Coarse + 1)->GrayOut(!(osc1Enabled || fmEnabled));
+	pGraphics->GetControl(oscillator1Split + 1)->GrayOut(!(osc1Enabled || fmEnabled));
+	pGraphics->GetControl(oscillator1Wave + 1)->GrayOut(!osc1Enabled);
+	pGraphics->GetControl(oscillator2Coarse + 2)->GrayOut(!osc2Enabled);
+	pGraphics->GetControl(oscillator2Split + 2)->GrayOut(!osc2Enabled);
+	pGraphics->GetControl(oscillator2Wave + 2)->GrayOut(!osc2Enabled);
+
+	pGraphics->GetControl(fmFine + 1)->GrayOut(!fmEnabled);
+	pGraphics->GetControl(fmEnvelopeAmount + 1)->GrayOut(!fmEnabled);
 
 	pGraphics->GetControl(filterResonance + 1)->GrayOut(GetParam(filterCutoff)->Value() == 20000.0);
 	pGraphics->GetControl(filterKeyTracking + 1)->GrayOut(GetParam(filterCutoff)->Value() == 20000.0);
