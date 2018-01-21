@@ -34,7 +34,7 @@ double Voice::Next(double lfoValue)
 		}
 		oscFm.SetFrequency(oscFrequency);
 		oscFm.Update();
-		fmValue = oscFm.Get(Sine) * (fmCoarse + fmFine + fmEnvelopeAmount * modEnvelope.Get());
+		fmValue = oscFm.Get(Sine) * (fabs(fmCoarse) + fmFine + fmEnvelopeAmount * modEnvelope.Get());
 	}
 
 	// oscillator 1
