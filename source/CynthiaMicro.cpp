@@ -78,7 +78,7 @@ CynthiaMicro::CynthiaMicro(IPlugInstanceInfo instanceInfo)
 	pGraphics = MakeGraphics(this, GUI_WIDTH, GUI_HEIGHT, 120);
 	pGraphics->AttachBackground(BG_ID, BG_FN);
 
-	IBitmap knob = pGraphics->LoadIBitmap(KNOB_ID, KNOB_FN, 54);
+	IBitmap knob = pGraphics->LoadIBitmap(KNOB_ID, KNOB_FN, 55);
 	IBitmap toggle = pGraphics->LoadIBitmap(SWITCH_ID, SWITCH_FN, 2);
 	IBitmap waveformSwitch = pGraphics->LoadIBitmap(WAVEFORM_SWITCH_ID, WAVEFORM_SWITCH_FN, 5);
 
