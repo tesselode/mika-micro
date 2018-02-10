@@ -2,6 +2,7 @@
 #define __MIKAMICRO__
 
 #include "IPlug_include_in_plug_hdr.h"
+#include "Oscillator.h"
 
 class MikaMicro : public IPlug
 {
@@ -14,6 +15,7 @@ public:
 	void ProcessDoubleReplacing(double** inputs, double** outputs, int nFrames);
 
 private:
+	Oscillator osc;
 };
 
 #endif

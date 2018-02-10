@@ -13,7 +13,7 @@ MikaMicro::MikaMicro(IPlugInstanceInfo instanceInfo)
 {
 	TRACE;
 
-	IGraphics* pGraphics = MakeGraphics(this, 300, 300);
+	IGraphics* pGraphics = MakeGraphics(this, GUI_WIDTH, GUI_HEIGHT);
 	pGraphics->AttachPanelBackground(&COLOR_GRAY);
 
 	AttachGraphics(pGraphics);
@@ -30,8 +30,11 @@ void MikaMicro::ProcessDoubleReplacing(double** inputs, double** outputs, int nF
 
 	for (int s = 0; s < nFrames; ++s, ++out1, ++out2)
 	{
-		*out1 = 0;
-		*out2 = 0;
+		double out = 0.0;
+		out += .25 * osc.Next(1.0 / GetSampleRate(), 440.0, OscillatorWaveformSaw);
+
+		*out1 = out;
+		*out2 = out;
 	}
 }
 
