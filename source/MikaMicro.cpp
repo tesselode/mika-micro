@@ -19,6 +19,8 @@ MikaMicro::MikaMicro(IPlugInstanceInfo instanceInfo)
 	AttachGraphics(pGraphics);
 
 	MakeDefaultPreset((char *) "-", 1);
+
+	voice.SetNote(69);
 }
 
 MikaMicro::~MikaMicro() {}
@@ -31,7 +33,7 @@ void MikaMicro::ProcessDoubleReplacing(double** inputs, double** outputs, int nF
 	for (int s = 0; s < nFrames; ++s, ++out1, ++out2)
 	{
 		double out = 0.0;
-		out += .25 * osc.Next(1.0 / GetSampleRate(), 440.0, OscillatorWaveformSaw);
+		out += .25 * voice.Next(1.0 / GetSampleRate());
 
 		*out1 = out;
 		*out2 = out;
