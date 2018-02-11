@@ -1,5 +1,6 @@
 #pragma once
 
+#include <algorithm>
 #include "IPlug_include_in_plug_hdr.h"
 #include "IMidiQueue.h"
 #include <vector>
