@@ -20,8 +20,7 @@ MikaMicro::MikaMicro(IPlugInstanceInfo instanceInfo)
 
 	MakeDefaultPreset((char *) "-", 1);
 
-	voice.SetNote(69);
-	voice.Start();
+	for (int i = 0; i < numVoices; i++) voices.push_back(Voice());
 }
 
 MikaMicro::~MikaMicro() {}
@@ -33,8 +32,11 @@ void MikaMicro::ProcessDoubleReplacing(double** inputs, double** outputs, int nF
 
 	for (int s = 0; s < nFrames; ++s, ++out1, ++out2)
 	{
+		midiReceiver.Process(voices, s);
+
 		double out = 0.0;
-		out += .25 * voice.Next(1.0 / GetSampleRate());
+		for (auto& voice : voices)
+			out += .25 * voice.Next(1.0 / GetSampleRate());
 
 		*out1 = out;
 		*out2 = out;
@@ -50,4 +52,9 @@ void MikaMicro::Reset()
 void MikaMicro::OnParamChange(int paramIdx)
 {
 	IMutexLock lock(this);
+}
+
+void MikaMicro::ProcessMidiMsg(IMidiMsg * message)
+{
+	midiReceiver.Add(message);
 }

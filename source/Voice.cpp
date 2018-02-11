@@ -32,7 +32,7 @@ void Voice::Release()
 
 double Voice::GetVolume()
 {
-	return 0.0;
+	return volumeEnvelope.Get();
 }
 
 bool Voice::IsReleased()
@@ -45,6 +45,6 @@ double Voice::Next(double dt)
 	double out = 0.0;
 	out += osc1.Next(dt, PitchToFrequency(note), OscillatorWaveformSaw);
 	volumeEnvelope.Update(dt, 1.0, 1.0, 0.5, 10.0);
-	out *= volumeEnvelope.Get();
+	out *= GetVolume();
 	return out;
 }

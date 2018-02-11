@@ -2,8 +2,12 @@
 #define __MIKAMICRO__
 
 #include "IPlug_include_in_plug_hdr.h"
+#include "MidiReceiver.h"
 #include "Oscillator.h"
+#include <vector>
 #include "Voice.h"
+
+const int numVoices = 8;
 
 class MikaMicro : public IPlug
 {
@@ -13,10 +17,12 @@ public:
 
 	void Reset();
 	void OnParamChange(int paramIdx);
+	void ProcessMidiMsg(IMidiMsg *message);
 	void ProcessDoubleReplacing(double** inputs, double** outputs, int nFrames);
 
 private:
-	Voice voice;
+	std::vector<Voice> voices;
+	MidiReceiver midiReceiver;
 };
 
 #endif
