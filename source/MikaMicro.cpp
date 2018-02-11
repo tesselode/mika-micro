@@ -21,6 +21,7 @@ MikaMicro::MikaMicro(IPlugInstanceInfo instanceInfo)
 	MakeDefaultPreset((char *) "-", 1);
 
 	voice.SetNote(69);
+	voice.Start();
 }
 
 MikaMicro::~MikaMicro() {}

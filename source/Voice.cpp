@@ -20,9 +20,31 @@ void Voice::SetNote(int n)
 	note = n;
 }
 
+void Voice::Start()
+{
+	volumeEnvelope.Start();
+}
+
+void Voice::Release()
+{
+	volumeEnvelope.Release();
+}
+
+double Voice::GetVolume()
+{
+	return 0.0;
+}
+
+bool Voice::IsReleased()
+{
+	return volumeEnvelope.IsReleased();
+}
+
 double Voice::Next(double dt)
 {
 	double out = 0.0;
 	out += osc1.Next(dt, PitchToFrequency(note), OscillatorWaveformSaw);
+	volumeEnvelope.Update(dt, 1.0, 1.0, 0.5, 10.0);
+	out *= volumeEnvelope.Get();
 	return out;
 }

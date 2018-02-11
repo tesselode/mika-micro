@@ -17,8 +17,9 @@ double Oscillator::Blep(double t, double dt)
 
 double Oscillator::Next(double dt, double frequency, OscillatorWaveform waveform)
 {
-	t += frequency * dt;
-	while (t >= 1.0) t -= 1.0;
+	double phaseIncrement = frequency * dt;
+	phase += phaseIncrement;
+	while (phase >= 1.0) phase -= 1.0;
 	if (waveform == OscillatorWaveformSaw)
-		return 1 - 2 * t + Blep(t, frequency * dt);
+		return 1 - 2 * phase + Blep(phase, phaseIncrement);
 }

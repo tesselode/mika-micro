@@ -13,5 +13,5 @@ public:
 
 private:
 	double Blep(double t, double dt);
-	double t = 0.0;
+	double phase = 0.0;
 };
