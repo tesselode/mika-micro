@@ -38,7 +38,6 @@ void MikaMicro::ProcessMidiMsg(IMidiMsg * message)
 	midiReceiver.Add(message);
 }
 
-
 void MikaMicro::ProcessDoubleReplacing(double** inputs, double** outputs, int nFrames)
 {
 	double* out1 = outputs[0];
@@ -50,7 +49,7 @@ void MikaMicro::ProcessDoubleReplacing(double** inputs, double** outputs, int nF
 
 		double out = 0.0;
 		for (auto& voice : voices)
-			out += .25 * voice.Next(1.0 / GetSampleRate(), parameters);
+			out += .25 * voice.Next(dt, parameters);
 
 		*out1 = out;
 		*out2 = out;
@@ -61,6 +60,7 @@ void MikaMicro::Reset()
 {
 	TRACE;
 	IMutexLock lock(this);
+	dt = 1.0 / GetSampleRate();
 }
 
 void MikaMicro::OnParamChange(int paramIdx)

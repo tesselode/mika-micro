@@ -22,6 +22,8 @@ public:
 	void ProcessDoubleReplacing(double** inputs, double** outputs, int nFrames);
 
 private:
+	double dt = 0.0;
+
 	void InitParameters();
 
 	std::vector<double> parameters;
