@@ -3,19 +3,21 @@
 #include "Envelope.h"
 #include <math.h>
 #include "Oscillator.h"
+#include "Parameters.h"
+#include <vector>
 
 class Voice
 {
 public:
 	int GetNote();
 	void SetNote(int n);
-
-	void Start();
-	void Release();
 	double GetVolume();
 	bool IsReleased();
 
-	double Next(double dt);
+	void Start();
+	void Release();
+
+	double Next(double dt, std::vector<double> &parameters);
 
 private:
 	double PitchFactor(double p);

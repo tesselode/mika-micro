@@ -4,6 +4,7 @@
 #include "IPlug_include_in_plug_hdr.h"
 #include "MidiReceiver.h"
 #include "Oscillator.h"
+#include "Parameters.h"
 #include <vector>
 #include "Voice.h"
 
@@ -21,6 +22,9 @@ public:
 	void ProcessDoubleReplacing(double** inputs, double** outputs, int nFrames);
 
 private:
+	void InitParameters();
+
+	std::vector<double> parameters;
 	std::vector<Voice> voices;
 	MidiReceiver midiReceiver;
 };
