@@ -23,9 +23,16 @@ private:
 	double PitchFactor(double p);
 	double PitchToFrequency(double p);
 
+	double GetOsc1Frequency(std::vector<double> &parameters);
+	double GetOsc2Frequency(std::vector<double> &parameters);
+	double GetOsc1(double dt, std::vector<double> &parameters);
+	double GetOsc2(double dt, std::vector<double> &parameters);
+	double GetOscillators(double dt, std::vector<double> &parameters);
+
 	int note = 69;
 
 	Oscillator osc1;
+	Oscillator osc2;
 
 	Envelope volumeEnvelope;
 };

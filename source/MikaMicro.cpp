@@ -5,6 +5,12 @@
 
 void MikaMicro::InitParameters()
 {
+	GetParam(osc1Coarse)->InitInt("Oscillator 1 coarse", -12.0, -24.0, 24.0, "semitones");
+	GetParam(osc1Fine)->InitDouble("Oscillator 1 fine", 0.0, -1.0, 1.0, .01, "semitones");
+	GetParam(osc2Coarse)->InitInt("Oscillator 2 coarse", 0.0, -24.0, 24.0, "semitones");
+	GetParam(osc2Fine)->InitDouble("Oscillator 2 fine", -.1, -1.0, 1.0, .01, "semitones");
+	GetParam(oscMix)->InitDouble("Oscillator mix", 0.5, 0.0, 1.0, .01);
+
 	GetParam(volEnvA)->InitDouble("Volume envelope attack", 1.0, 0.1, 100.0, .01);
 	GetParam(volEnvD)->InitDouble("Volume envelope decay", 1.0, 0.1, 100.0, .01);
 	GetParam(volEnvS)->InitDouble("Volume envelope sustain", 0.5, 0.0, 1.0, .01);
