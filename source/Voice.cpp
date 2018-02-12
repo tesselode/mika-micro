@@ -30,12 +30,28 @@ double Voice::GetOsc2Frequency(std::vector<double> &parameters)
 
 double Voice::GetOsc1(double dt, std::vector<double> &parameters)
 {
-	return osc1.Next(dt, GetOsc1Frequency(parameters), OscillatorWaveformSaw);
+	if (parameters[osc1Split] > 0.0)
+	{
+		double out = 0.0;
+		auto frequency = GetOsc1Frequency(parameters);
+		out += osc1a.Next(dt, frequency / (1 + parameters[osc1Split]), OscillatorWaveformSaw);
+		out += osc1b.Next(dt, frequency * (1 + parameters[osc1Split]), OscillatorWaveformSaw);
+		return out;
+	}
+	return osc1a.Next(dt, GetOsc1Frequency(parameters), OscillatorWaveformSaw);
 }
 
 double Voice::GetOsc2(double dt, std::vector<double> &parameters)
 {
-	return osc2.Next(dt, GetOsc2Frequency(parameters), OscillatorWaveformSaw);
+	if (parameters[osc2Split] > 0.0)
+	{
+		double out = 0.0;
+		auto frequency = GetOsc2Frequency(parameters);
+		out += osc2a.Next(dt, frequency / (1 + parameters[osc2Split]), OscillatorWaveformSaw);
+		out += osc2b.Next(dt, frequency * (1 + parameters[osc2Split]), OscillatorWaveformSaw);
+		return out;
+	}
+	return osc2a.Next(dt, GetOsc2Frequency(parameters), OscillatorWaveformSaw);
 }
 
 double Voice::GetOscillators(double dt, std::vector<double> &parameters)

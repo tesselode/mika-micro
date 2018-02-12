@@ -31,8 +31,10 @@ private:
 
 	int note = 69;
 
-	Oscillator osc1;
-	Oscillator osc2;
+	Oscillator osc1a;
+	Oscillator osc1b;
+	Oscillator osc2a;
+	Oscillator osc2b;
 
 	Envelope volumeEnvelope;
 };
