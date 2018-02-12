@@ -9,6 +9,8 @@ enum ParameterList
 	osc2Fine,
 	osc2Split,
 	oscMix,
+	fmCoarse,
+	fmFine,
 	volEnvA,
 	volEnvD,
 	volEnvS,

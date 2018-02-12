@@ -20,6 +20,8 @@ double Oscillator::Next(double dt, double frequency, OscillatorWaveform waveform
 	double phaseIncrement = frequency * dt;
 	phase += phaseIncrement;
 	while (phase >= 1.0) phase -= 1.0;
+	if (waveform == OscillatorWaveformSine)
+		return sin(phase * twoPi);
 	if (waveform == OscillatorWaveformSaw)
 		return 1 - 2 * phase + Blep(phase, phaseIncrement);
 }

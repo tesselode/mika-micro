@@ -5,13 +5,16 @@
 
 void MikaMicro::InitParameters()
 {
-	GetParam(osc1Coarse)->InitInt("Oscillator 1 coarse", -12.0, -24.0, 24.0, "semitones");
+	GetParam(osc1Coarse)->InitInt("Oscillator 1 coarse", 0.0, -24.0, 24.0, "semitones");
 	GetParam(osc1Fine)->InitDouble("Oscillator 1 fine", 0.0, -1.0, 1.0, .01, "semitones");
-	GetParam(osc1Split)->InitDouble("Oscillator 1 split", 0.01, 0.0, .1, .025);
-	GetParam(osc2Coarse)->InitInt("Oscillator 2 coarse", 0.0, -24.0, 24.0, "semitones");
+	GetParam(osc1Split)->InitDouble("Oscillator 1 split", 0.0, 0.0, .1, .025);
+	GetParam(osc2Coarse)->InitInt("Oscillator 2 coarse", 12.0, -24.0, 24.0, "semitones");
 	GetParam(osc2Fine)->InitDouble("Oscillator 2 fine", 0.0, -1.0, 1.0, .01, "semitones");
 	GetParam(osc2Split)->InitDouble("Oscillator 2 split", 0.0, 0.0, .1, .025);
-	GetParam(oscMix)->InitDouble("Oscillator mix", 0.5, 0.0, 1.0, .01);
+	GetParam(oscMix)->InitDouble("Oscillator mix", 0.25, 0.0, 1.0, .01);
+
+	GetParam(fmCoarse)->InitInt("FM coarse", 12, -24, 24, "semitones");
+	GetParam(fmFine)->InitDouble("FM fine", 0.0, -1.0, 1.0, .01, "semitones");
 
 	GetParam(volEnvA)->InitDouble("Volume envelope attack", 1.0, 0.1, 100.0, .01);
 	GetParam(volEnvD)->InitDouble("Volume envelope decay", 1.0, 0.1, 100.0, .01);
