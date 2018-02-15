@@ -13,9 +13,18 @@ void MidiReceiver::Process(std::vector<Voice>& voices, int s)
 	{
 		auto *message = midiQueue.Peek();
 		if (message->mOffset > s) break;
+
 		auto status = message->StatusMsg();
 		auto note = message->NoteNumber();
-		if (status == IMidiMsg::kNoteOn)
+		auto velocity = message->Velocity();
+		bool noteOff = status == IMidiMsg::kNoteOff || (status == IMidiMsg::kNoteOn && velocity == 0);
+
+		if (noteOff)
+		{
+			for (auto& voice : voices)
+				if (voice.GetNote() == note) voice.Release();
+		}
+		else if (status == IMidiMsg::kNoteOn)
 		{
 			// get the quietest voice, prioritizing voices that are released
 			auto voice = std::min_element(std::begin(voices), std::end(voices),
@@ -25,11 +34,6 @@ void MidiReceiver::Process(std::vector<Voice>& voices, int s)
 			});
 			voice->SetNote(note);
 			voice->Start();
-		}
-		else if (status == IMidiMsg::kNoteOff)
-		{
-			for (auto& voice : voices)
-				if (voice.GetNote() == note) voice.Release();
 		}
 		midiQueue.Remove();
 	}
