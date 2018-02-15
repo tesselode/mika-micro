@@ -15,6 +15,9 @@ public:
 	double GetVolume();
 	bool IsReleased();
 
+	void SetOsc1Pitch(int coarse, double fine);
+	void SetOsc2Pitch(int coarse, double fine);
+
 	void Start();
 	void Release();
 
@@ -32,6 +35,9 @@ private:
 	double GetOscillators(double dt, std::vector<double> &parameters);
 
 	int note = 69;
+	double baseFrequency = 440.0;
+	double osc1Factor = 1.0;
+	double osc2Factor = 1.0;
 
 	Oscillator oscFm;
 	Oscillator osc1a;

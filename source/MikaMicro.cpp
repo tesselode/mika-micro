@@ -86,6 +86,14 @@ void MikaMicro::Reset()
 
 void MikaMicro::OnParamChange(int paramIdx)
 {
-	parameters[paramIdx] = GetParam(paramIdx)->Value();
 	IMutexLock lock(this);
+
+	parameters[paramIdx] = GetParam(paramIdx)->Value();
+
+	if (paramIdx == osc1Coarse || paramIdx == osc1Fine)
+		for (auto &v : voices)
+			v.SetOsc1Pitch(parameters[osc1Coarse], parameters[osc1Fine]);
+	if (paramIdx == osc2Coarse || paramIdx == osc2Fine)
+		for (auto &v : voices)
+			v.SetOsc2Pitch(parameters[osc2Coarse], parameters[osc2Fine]);
 }

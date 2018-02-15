@@ -1,12 +1,45 @@
 #include "Voice.h"
 
-double Voice::PitchFactor(double p) { return pow(1.0595, p); }
-double Voice::PitchToFrequency(double p) { return 440.0 * PitchFactor(p - 69); }
+double Voice::PitchFactor(double p)
+{
+	return pow(1.0595, p);
+}
 
-int Voice::GetNote() { return note; }
-void Voice::SetNote(int n) { note = n; }
-double Voice::GetVolume() { return volumeEnvelope.Get(); }
-bool Voice::IsReleased() { return volumeEnvelope.IsReleased(); }
+double Voice::PitchToFrequency(double p)
+{
+	return 440.0 * PitchFactor(p - 69);
+}
+
+void Voice::SetOsc1Pitch(int coarse, double fine)
+{
+	osc1Factor = PitchFactor(coarse + fine);
+}
+
+void Voice::SetOsc2Pitch(int coarse, double fine)
+{
+	osc2Factor = PitchFactor(coarse + fine);
+}
+
+int Voice::GetNote()
+{
+	return note;
+}
+
+void Voice::SetNote(int n)
+{
+	note = n;
+	baseFrequency = PitchToFrequency(note);
+}
+
+double Voice::GetVolume()
+{
+	return volumeEnvelope.Get();
+}
+
+bool Voice::IsReleased()
+{
+	return volumeEnvelope.IsReleased();
+}
 
 void Voice::Start()
 {
@@ -20,18 +53,18 @@ void Voice::Release()
 
 double Voice::GetOsc1Frequency(std::vector<double> &parameters, double fm)
 {
-	int p = note + parameters[osc1Coarse] + parameters[osc1Fine];
+	double f = baseFrequency * osc1Factor;
 	if (parameters[fmCoarse] < 0.0)
-		p -= fm * (parameters[fmCoarse] + parameters[fmFine]);
-	return PitchToFrequency(p);
+		f *= PitchFactor(fm * (-parameters[fmCoarse] + parameters[fmFine]));
+	return f;
 }
 
 double Voice::GetOsc2Frequency(std::vector<double> &parameters, double fm)
 {
-	int p = note + parameters[osc2Coarse] + parameters[osc2Fine];
+	double f = baseFrequency * osc2Factor;
 	if (parameters[fmCoarse] > 0.0)
-		p += fm * (parameters[fmCoarse] + parameters[fmFine]);
-	return PitchToFrequency(p);
+		f *= PitchFactor(fm * (parameters[fmCoarse] + parameters[fmFine]));
+	return f;
 }
 
 double Voice::GetOscFm(double dt, std::vector<double>& parameters)
