@@ -161,7 +161,14 @@ void CynthiaMicro::ProcessDoubleReplacing(double** inputs, double** outputs, int
 			IMidiMsg* message = midiQueue.Peek();
 			if (message->mOffset > s) break;
 
-			if (message->StatusMsg() == IMidiMsg::kNoteOn)
+			if (message->StatusMsg() == IMidiMsg::kPitchWheel)
+			{
+				for (int i = 0; i < numVoices; i++)
+				{
+					voices[i].SetPitchBend(message->PitchWheel());
+				}
+			}
+			else if (message->StatusMsg() == IMidiMsg::kNoteOn && message->Velocity() > 0)
 			{
 				if (mono)
 				{
@@ -179,7 +186,7 @@ void CynthiaMicro::ProcessDoubleReplacing(double** inputs, double** outputs, int
 				heldNotes.push_back(message->NoteNumber());
 				velocities.push_back(message->Velocity());
 			}
-			else if (message->StatusMsg() == IMidiMsg::kNoteOff)
+			else
 			{
 				for (int i = 0; i < heldNotes.size(); i++)
 				{
@@ -211,13 +218,6 @@ void CynthiaMicro::ProcessDoubleReplacing(double** inputs, double** outputs, int
 							voices[i].Release();
 						}
 					}
-				}
-			}
-			else if (message->StatusMsg() == IMidiMsg::kPitchWheel)
-			{
-				for (int i = 0; i < numVoices; i++)
-				{
-					voices[i].SetPitchBend(message->PitchWheel());
 				}
 			}
 
