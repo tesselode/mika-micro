@@ -25,6 +25,7 @@ private:
 	double dt = 0.0;
 
 	void InitParameters();
+	void InitGraphics();
 
 	std::vector<double> parameters;
 	std::vector<Voice> voices;

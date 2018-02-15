@@ -29,13 +29,8 @@ void MikaMicro::InitParameters()
 		parameters.push_back(GetParam(i)->Value());
 }
 
-MikaMicro::MikaMicro(IPlugInstanceInfo instanceInfo)
-  :	IPLUG_CTOR(numParameters, 1, instanceInfo)
+void MikaMicro::InitGraphics()
 {
-	TRACE;
-
-	InitParameters();
-
 	IGraphics* pGraphics = MakeGraphics(this, GUI_WIDTH, GUI_HEIGHT);
 	pGraphics->AttachPanelBackground(&COLOR_GRAY);
 
@@ -46,6 +41,15 @@ MikaMicro::MikaMicro(IPlugInstanceInfo instanceInfo)
 	pGraphics->AttachControl(new IKnobMultiControl(this, 150, 50, filterDrive, &knob));
 
 	AttachGraphics(pGraphics);
+}
+
+MikaMicro::MikaMicro(IPlugInstanceInfo instanceInfo)
+  :	IPLUG_CTOR(numParameters, 1, instanceInfo)
+{
+	TRACE;
+
+	InitParameters();
+	InitGraphics();
 
 	MakeDefaultPreset((char *) "-", 1);
 
