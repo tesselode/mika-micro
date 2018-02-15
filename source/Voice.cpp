@@ -78,12 +78,14 @@ double Voice::GetOscillators(double dt, std::vector<double> &parameters)
 
 double Voice::Next(double dt, std::vector<double> &parameters)
 {
+	filter.UpdateF(dt, parameters[filterCutoff]);
 	volumeEnvelope.Update(dt, parameters[volEnvA], parameters[volEnvD], parameters[volEnvS], parameters[volEnvR]);
 	if (GetVolume() == 0.0) return 0.0;
 
 	auto out = GetOscillators(dt, parameters);
-	for (int i = 0; i < 2; i++)
-		out = filter.Process(out, dt, parameters[filterCutoff], parameters[filterResonance], parameters[filterDrive]);
+	if (parameters[filterCutoff] < 20000.)
+		for (int i = 0; i < 2; i++)
+			out = filter.Process(out, dt, parameters[filterResonance], parameters[filterDrive]);
 	out *= GetVolume();
 	return out;
 }
