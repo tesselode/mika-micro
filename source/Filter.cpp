@@ -1,16 +1,12 @@
 #include "Filter.h"
 
-double Filter::fastAtan(double x)
+double Filter::Process(double input, double dt, double cutoff, double resonance, double drive)
 {
-	return fourPi * x - x * (fabs(x) - 1) * (.2447 + .0663 * fabs(x));
-}
-
-double Filter::Process(double input, double dt, double cutoff, double resonance)
-{
-	double f = cutoff * .00005;
+	double f = cutoff * 2.205 * dt;
+	f = f > 1 ? 1 : f;
 	double high = input - (low + band * (1 - resonance));
 	band += f * high;
 	low += f * band;
-	low = fastAtan(low * .1) * 10;
+	low = atan(low * drive) / drive;
 	return low;
 }

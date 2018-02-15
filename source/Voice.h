@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Envelope.h"
+#include "Filter.h"
 #include <math.h>
 #include "Oscillator.h"
 #include "Parameters.h"
@@ -39,5 +40,7 @@ private:
 	Oscillator osc2b;
 
 	Envelope volumeEnvelope;
+
+	Filter filter;
 };
 

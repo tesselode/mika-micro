@@ -5,16 +5,20 @@
 
 void MikaMicro::InitParameters()
 {
-	GetParam(osc1Coarse)->InitInt("Oscillator 1 coarse", 0.0, -24.0, 24.0, "semitones");
+	GetParam(osc1Coarse)->InitInt("Oscillator 1 coarse", -12.0, -24.0, 24.0, "semitones");
 	GetParam(osc1Fine)->InitDouble("Oscillator 1 fine", 0.0, -1.0, 1.0, .01, "semitones");
-	GetParam(osc1Split)->InitDouble("Oscillator 1 split", 0.0, 0.0, .1, .025);
-	GetParam(osc2Coarse)->InitInt("Oscillator 2 coarse", 12.0, -24.0, 24.0, "semitones");
+	GetParam(osc1Split)->InitDouble("Oscillator 1 split", 0.0, 0.0, .025, .01);
+	GetParam(osc2Coarse)->InitInt("Oscillator 2 coarse", 0.0, -24.0, 24.0, "semitones");
 	GetParam(osc2Fine)->InitDouble("Oscillator 2 fine", 0.0, -1.0, 1.0, .01, "semitones");
-	GetParam(osc2Split)->InitDouble("Oscillator 2 split", 0.0, 0.0, .1, .025);
-	GetParam(oscMix)->InitDouble("Oscillator mix", 0.25, 0.0, 1.0, .01);
+	GetParam(osc2Split)->InitDouble("Oscillator 2 split", 0.01, 0.0, .025, .01);
+	GetParam(oscMix)->InitDouble("Oscillator mix", 0.5, 0.0, 1.0, .01);
 
-	GetParam(fmCoarse)->InitInt("FM coarse", 12, -24, 24, "semitones");
+	GetParam(fmCoarse)->InitInt("FM coarse", 0, -24, 24, "semitones");
 	GetParam(fmFine)->InitDouble("FM fine", 0.0, -1.0, 1.0, .01, "semitones");
+
+	GetParam(filterCutoff)->InitDouble("Filter cutoff", 20000., 20., 20000., .01, "hz");
+	GetParam(filterResonance)->InitDouble("Filter resonance", 0.0, 0.0, 0.9, .01);
+	GetParam(filterDrive)->InitDouble("Filter drive", 0.1, 0.1, 2.0, .01);
 
 	GetParam(volEnvA)->InitDouble("Volume envelope attack", 1.0, 0.1, 100.0, .01);
 	GetParam(volEnvD)->InitDouble("Volume envelope decay", 1.0, 0.1, 100.0, .01);
@@ -34,6 +38,12 @@ MikaMicro::MikaMicro(IPlugInstanceInfo instanceInfo)
 
 	IGraphics* pGraphics = MakeGraphics(this, GUI_WIDTH, GUI_HEIGHT);
 	pGraphics->AttachPanelBackground(&COLOR_GRAY);
+
+	auto knob = pGraphics->LoadIBitmap(KNOB_ID, KNOB_FN, 60);
+
+	pGraphics->AttachControl(new IKnobMultiControl(this, 50, 50, filterCutoff, &knob));
+	pGraphics->AttachControl(new IKnobMultiControl(this, 100, 50, filterResonance, &knob));
+	pGraphics->AttachControl(new IKnobMultiControl(this, 150, 50, filterDrive, &knob));
 
 	AttachGraphics(pGraphics);
 
