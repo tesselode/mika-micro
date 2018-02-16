@@ -5,6 +5,7 @@
 #include <math.h>
 #include "Oscillator.h"
 #include "Parameters.h"
+#include "Util.h"
 #include <vector>
 
 class Voice
@@ -27,6 +28,7 @@ private:
 	double PitchFactor(double p);
 	double PitchToFrequency(double p);
 
+	double GetFmAmount(std::vector<double> &parameters);
 	double GetOsc1Frequency(std::vector<double> &parameters, double fm);
 	double GetOsc2Frequency(std::vector<double> &parameters, double fm);
 	double GetOscFm(double dt, std::vector<double> &parameters);
