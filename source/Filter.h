@@ -11,7 +11,7 @@ public:
 
 private:
 	double FastAtan(double x);
-	double GetTargetF(double dt, double cutoff);
+	double GetTargetF(double cutoff);
 
 	double f = 1.0;
 	double band = 0.0;
