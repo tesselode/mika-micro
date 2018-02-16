@@ -16,7 +16,9 @@ double Filter::Process(double input, double dt, double resonance, double drive)
 {
 	double high = input - (low + band * (1 - resonance));
 	band += f * high;
-	low += band * f * (1 - resonance) + band * resonance;
 	low = atan(low * drive) / drive;
+	double correct = band * f;
+	double wonky = band * 44100 * dt;
+	low += correct * (1 - resonance) + wonky * resonance;
 	return low;
 }
