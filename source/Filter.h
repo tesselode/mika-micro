@@ -10,6 +10,7 @@ public:
 	void UpdateF(double dt, double cutoff);
 
 private:
+	double FastAtan(double x);
 	double GetTargetF(double dt, double cutoff);
 
 	double f = 1.0;
