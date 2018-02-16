@@ -5,6 +5,7 @@
 
 void MikaMicro::InitParameters()
 {
+	// oscillators
 	GetParam(osc1Coarse)->InitInt("Oscillator 1 coarse", -12.0, -24.0, 24.0, "semitones");
 	GetParam(osc1Fine)->InitDouble("Oscillator 1 fine", 0.0, -1.0, 1.0, .01, "semitones");
 	GetParam(osc1Split)->InitDouble("Oscillator 1 split", 0.0, 0.0, .025, .01);
@@ -13,13 +14,16 @@ void MikaMicro::InitParameters()
 	GetParam(osc2Split)->InitDouble("Oscillator 2 split", 0.01, 0.0, .025, .01);
 	GetParam(oscMix)->InitDouble("Oscillator mix", 0.5, 0.0, 1.0, .01);
 
+	// fm
 	GetParam(fmCoarse)->InitInt("FM coarse", 0, -24, 24, "semitones");
 	GetParam(fmFine)->InitDouble("FM fine", 0.0, -1.0, 1.0, .01, "semitones");
 
+	// filter
 	GetParam(filterCutoff)->InitDouble("Filter cutoff", 20000., 20., 20000., .01, "hz");
 	GetParam(filterResonance)->InitDouble("Filter resonance", 0.0, 0.0, 0.9, .01);
 	GetParam(filterDrive)->InitDouble("Filter drive", 0.1, 0.1, 2.0, .01);
 
+	// modulation sources
 	GetParam(volEnvA)->InitDouble("Volume envelope attack", 1.0, 0.1, 100.0, .01);
 	GetParam(volEnvD)->InitDouble("Volume envelope decay", 1.0, 0.1, 100.0, .01);
 	GetParam(volEnvS)->InitDouble("Volume envelope sustain", 0.5, 0.0, 1.0, .01);
@@ -29,6 +33,7 @@ void MikaMicro::InitParameters()
 	GetParam(modEnvS)->InitDouble("Modulation envelope sustain", 0.75, 0.0, 1.0, .01);
 	GetParam(modEnvR)->InitDouble("Modulation envelope release", 10.0, 0.1, 100.0, .01);
 
+	// modulation targets
 	GetParam(volEnvPitch)->InitDouble("Volume envelope to pitch", 1.0, 0.5, 2.0, .01);
 	GetParam(volEnvOsc2)->InitDouble("Volume envelope to oscillator 2 pitch", 1.0, 0.5, 2.0, .01);
 	GetParam(volEnvFm)->InitDouble("Volume envelope to FM amount", 0.0, -24.0, 24.0, .01, "semitones");
