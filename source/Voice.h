@@ -33,6 +33,9 @@ private:
 	double GetOsc1(double dt, std::vector<double> &parameters, double fm);
 	double GetOsc2(double dt, std::vector<double> &parameters, double fm);
 	double GetOscillators(double dt, std::vector<double> &parameters);
+	double GetFilterCutoff(std::vector<double> &parameters);
+
+	void UpdateEnvelopes(double dt, std::vector<double> &parameters);
 
 	int note = 69;
 	double baseFrequency = 440.0;
@@ -46,6 +49,9 @@ private:
 	Oscillator osc2b;
 
 	Envelope volumeEnvelope;
+	Envelope modEnvelope;
+	Envelope gateEnvelope;
+	Envelope delayEnvelope;
 
 	Filter filter;
 };

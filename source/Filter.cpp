@@ -3,7 +3,7 @@
 double Filter::GetTargetF(double dt, double cutoff)
 {
 	double f = cutoff * 2.205 * dt;
-	f = f > 1 ? 1 : f;
+	f = f > 1 ? 1 : f < 0 ? 0 : f;
 	return f;
 }
 

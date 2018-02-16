@@ -44,11 +44,17 @@ bool Voice::IsReleased()
 void Voice::Start()
 {
 	volumeEnvelope.Start();
+	modEnvelope.Start();
+	gateEnvelope.Start();
+	delayEnvelope.Start();
 }
 
 void Voice::Release()
 {
 	volumeEnvelope.Release();
+	modEnvelope.Release();
+	gateEnvelope.Release();
+	delayEnvelope.Release();
 }
 
 double Voice::GetOsc1Frequency(std::vector<double> &parameters, double fm)
@@ -109,10 +115,25 @@ double Voice::GetOscillators(double dt, std::vector<double> &parameters)
 	return out;
 }
 
+double Voice::GetFilterCutoff(std::vector<double>& parameters)
+{
+	double cutoff = parameters[filterCutoff];
+	cutoff += parameters[volEnvCutoff] * volumeEnvelope.Get();
+	cutoff += parameters[modEnvCutoff] * modEnvelope.Get();
+	return cutoff;
+}
+
+void Voice::UpdateEnvelopes(double dt, std::vector<double>& parameters)
+{
+	volumeEnvelope.Update(dt, parameters[volEnvA], parameters[volEnvD], parameters[volEnvS], parameters[volEnvR]);
+	modEnvelope.Update(dt, parameters[modEnvA], parameters[modEnvD], parameters[modEnvS], parameters[modEnvR]);
+}
+
 double Voice::Next(double dt, std::vector<double> &parameters)
 {
-	filter.UpdateF(dt, parameters[filterCutoff]);
-	volumeEnvelope.Update(dt, parameters[volEnvA], parameters[volEnvD], parameters[volEnvS], parameters[volEnvR]);
+	filter.UpdateF(dt, GetFilterCutoff(parameters));
+
+	UpdateEnvelopes(dt, parameters);
 	if (GetVolume() == 0.0) return 0.0;
 
 	auto out = GetOscillators(dt, parameters);

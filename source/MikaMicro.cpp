@@ -24,6 +24,19 @@ void MikaMicro::InitParameters()
 	GetParam(volEnvD)->InitDouble("Volume envelope decay", 1.0, 0.1, 100.0, .01);
 	GetParam(volEnvS)->InitDouble("Volume envelope sustain", 0.5, 0.0, 1.0, .01);
 	GetParam(volEnvR)->InitDouble("Volume envelope release", 1.0, 0.1, 100.0, .01);
+	GetParam(modEnvA)->InitDouble("Modulation envelope attack", 1.0, 0.1, 100.0, .01);
+	GetParam(modEnvD)->InitDouble("Modulation envelope decay", 1.0, 0.1, 100.0, .01);
+	GetParam(modEnvS)->InitDouble("Modulation envelope sustain", 0.5, 0.0, 1.0, .01);
+	GetParam(modEnvR)->InitDouble("Modulation envelope release", 1.0, 0.1, 100.0, .01);
+
+	GetParam(volEnvPitch)->InitDouble("Volume envelope to pitch", 0.0, -1.0, 1.0, .01, "octaves");
+	GetParam(volEnvOsc2)->InitDouble("Volume envelope to oscillator 2 pitch", 0.0, -1.0, 1.0, .01, "octaves");
+	GetParam(volEnvFm)->InitDouble("Volume envelope to FM amount", 0.0, -24.0, 24.0, .01, "semitones");
+	GetParam(volEnvCutoff)->InitDouble("Volume envelope to filter cutoff", 0.0, -20000., 20000., .01, "hz");
+	GetParam(modEnvPitch)->InitDouble("Modulation envelope to pitch", 0.0, -1.0, 1.0, .01, "octaves");
+	GetParam(modEnvOsc2)->InitDouble("Modulation envelope to oscillator 2 pitch", 0.0, -1.0, 1.0, .01, "octaves");
+	GetParam(modEnvFm)->InitDouble("Modulation envelope to FM amount", 0.0, -24.0, 24.0, .01, "semitones");
+	GetParam(modEnvCutoff)->InitDouble("Modulation envelope to filter cutoff", 0.0, -20000., 20000., .01, "hz");
 
 	for (int i = 0; i < numParameters; i++)
 		parameters.push_back(GetParam(i)->Value());
