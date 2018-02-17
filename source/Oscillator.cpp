@@ -15,6 +15,11 @@ double Oscillator::Blep(double t, double dt)
 	return 0.0;
 }
 
+void Oscillator::ResetPhase()
+{
+	phase = 0.0;
+}
+
 double Oscillator::Next(double dt, double frequency, OscillatorWaveform waveform)
 {
 	double phaseIncrement = frequency * dt;

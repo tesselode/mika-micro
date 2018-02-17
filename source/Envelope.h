@@ -14,6 +14,7 @@ class Envelope
 public:
 	void Start();
 	void Release();
+	void Reset();
 	void Update(double dt, double a, double d, double s, double r);
 	double Get();
 	bool IsReleased();

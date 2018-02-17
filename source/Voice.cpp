@@ -43,6 +43,17 @@ bool Voice::IsReleased()
 
 void Voice::Start()
 {
+	if (GetVolume() == 0.0)
+	{
+		osc1a.ResetPhase();
+		osc1b.ResetPhase();
+		osc2a.ResetPhase();
+		osc2b.ResetPhase();
+		volumeEnvelope.Reset();
+		modEnvelope.Reset();
+		gateEnvelope.Reset();
+		delayEnvelope.Reset();
+	}
 	volumeEnvelope.Start();
 	modEnvelope.Start();
 	gateEnvelope.Start();

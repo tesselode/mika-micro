@@ -12,6 +12,7 @@ enum OscillatorWaveform
 class Oscillator
 {
 public:
+	void ResetPhase();
 	double Next(double dt, double frequency, OscillatorWaveform waveform);
 
 private:

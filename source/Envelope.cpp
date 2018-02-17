@@ -10,6 +10,11 @@ void Envelope::Release()
 	stage = EnvelopeStageRelease;
 }
 
+void Envelope::Reset()
+{
+	value = 0.0;
+}
+
 void Envelope::Update(double dt, double a, double d, double s, double r)
 {
 	if (stage == EnvelopeStageAttack)

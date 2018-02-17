@@ -14,7 +14,7 @@ double Filter::GetTargetF(double cutoff)
 
 void Filter::UpdateF(double dt, double cutoff)
 {
-	f = lerp(f, GetTargetF(cutoff), dt * 10);
+	f = lerp(f, GetTargetF(cutoff), dt * 100);
 }
 
 double Filter::Process(double input, double dt, double resonance, double drive)
