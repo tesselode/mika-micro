@@ -31,5 +31,6 @@ enum ParameterList
 	modEnvOsc2,
 	modEnvFm,
 	modEnvCutoff,
+	masterVolume,
 	numParameters
 };

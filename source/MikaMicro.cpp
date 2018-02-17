@@ -44,6 +44,9 @@ void MikaMicro::InitParameters()
 	GetParam(modEnvFm)->InitDouble("Modulation envelope to FM amount", 0.0, -24.0, 24.0, .01, "semitones");
 	GetParam(modEnvCutoff)->InitDouble("Modulation envelope to filter cutoff", 0.0, -20000., 20000., .01, "hz");
 
+	// master
+	GetParam(masterVolume)->InitDouble("Master volume", 0.5, 0.0, 1.0, .01);
+
 	for (int i = 0; i < numParameters; i++)
 		parameters.push_back(GetParam(i)->Value());
 }
@@ -96,6 +99,9 @@ void MikaMicro::InitGraphics()
 	pGraphics->AttachControl(new IKnobMultiControl(this, 196.5 * 4, 60.5 * 4, modEnvFm, &smallKnob));
 	pGraphics->AttachControl(new IKnobMultiControl(this, 206.5 * 4, 60.5 * 4, modEnvCutoff, &smallKnob));
 
+	// master
+	pGraphics->AttachControl(new IKnobMultiControl(this, 74 * 4, 90 * 4, masterVolume, &knob));
+
 	AttachGraphics(pGraphics);
 }
 
@@ -130,7 +136,8 @@ void MikaMicro::ProcessDoubleReplacing(double** inputs, double** outputs, int nF
 
 		double out = 0.0;
 		for (auto& voice : voices)
-			out += .25 * voice.Next(dt, parameters);
+			out += .5 * voice.Next(dt, parameters);
+		out *= parameters[masterVolume];
 
 		*out1 = out;
 		*out2 = out;
