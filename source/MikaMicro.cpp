@@ -100,7 +100,7 @@ void MikaMicro::InitGraphics()
 	pGraphics->AttachControl(new IKnobMultiControl(this, 206.5 * 4, 60.5 * 4, modEnvCutoff, &smallKnob));
 
 	// master
-	pGraphics->AttachControl(new IKnobMultiControl(this, 74 * 4, 90 * 4, masterVolume, &knob));
+	pGraphics->AttachControl(new IKnobMultiControl(this, 58 * 4, 90 * 4, masterVolume, &knob));
 
 	AttachGraphics(pGraphics);
 }

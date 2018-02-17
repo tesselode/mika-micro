@@ -51,12 +51,10 @@ void Voice::Start()
 		osc2b.ResetPhase();
 		volumeEnvelope.Reset();
 		modEnvelope.Reset();
-		gateEnvelope.Reset();
 		delayEnvelope.Reset();
 	}
 	volumeEnvelope.Start();
 	modEnvelope.Start();
-	gateEnvelope.Start();
 	delayEnvelope.Start();
 }
 
@@ -64,7 +62,6 @@ void Voice::Release()
 {
 	volumeEnvelope.Release();
 	modEnvelope.Release();
-	gateEnvelope.Release();
 	delayEnvelope.Release();
 }
 

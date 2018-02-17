@@ -52,7 +52,6 @@ private:
 
 	Envelope volumeEnvelope;
 	Envelope modEnvelope;
-	Envelope gateEnvelope;
 	Envelope delayEnvelope;
 
 	Filter filter;
