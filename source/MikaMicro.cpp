@@ -12,7 +12,7 @@ void MikaMicro::InitParameters()
 	GetParam(osc2Coarse)->InitInt("Oscillator 2 coarse", 0, -24, 24, "semitones");
 	GetParam(osc2Fine)->InitDouble("Oscillator 2 fine", 0.0, -1.0, 1.0, .01, "semitones");
 	GetParam(osc2Split)->InitDouble("Oscillator 2 split", 0.0, 0.0, .025, .01);
-	GetParam(oscMix)->InitDouble("Oscillator mix", 0.0, 0.0, 1.0, .01);
+	GetParam(oscMix)->InitDouble("Oscillator mix", 1.0, 0.0, 1.0, .01);
 
 	// fm
 	GetParam(fmCoarse)->InitInt("FM coarse", 0, -24, 24, "semitones");
@@ -24,14 +24,14 @@ void MikaMicro::InitParameters()
 	GetParam(filterDrive)->InitDouble("Filter drive", 0.1, 0.1, 2.0, .01);
 
 	// modulation sources
-	GetParam(volEnvA)->InitDouble("Volume envelope attack", 100.0, 0.1, 1000.0, .01, "", "", 10.0);
-	GetParam(volEnvD)->InitDouble("Volume envelope decay", 10.0, 0.1, 1000.0, .01, "", "", 10.0);
+	GetParam(volEnvA)->InitDouble("Volume envelope attack", 0.1, 0.1, 1000.0, .01, "", "", .01);
+	GetParam(volEnvD)->InitDouble("Volume envelope decay", 998.0, 0.1, 1000.0, .01, "", "", .01);
 	GetParam(volEnvS)->InitDouble("Volume envelope sustain", 1.0, 0.0, 1.0, .01);
-	GetParam(volEnvR)->InitDouble("Volume envelope release", 100.0, 0.1, 1000.0, .01, "", "", 10.0);
-	GetParam(modEnvA)->InitDouble("Modulation envelope attack", 10.0, 0.1, 1000.0, .01, "", "", 10.0);
-	GetParam(modEnvD)->InitDouble("Modulation envelope decay", 10.0, 0.1, 1000.0, .01, "", "", 10.0);
+	GetParam(volEnvR)->InitDouble("Volume envelope release", 100.0, 0.1, 1000.0, .01, "", "", .01);
+	GetParam(modEnvA)->InitDouble("Modulation envelope attack", 998.0, 0.1, 1000.0, .01, "", "", .01);
+	GetParam(modEnvD)->InitDouble("Modulation envelope decay", 998.0, 0.1, 1000.0, .01, "", "", .01);
 	GetParam(modEnvS)->InitDouble("Modulation envelope sustain", 0.5, 0.0, 1.0, .01);
-	GetParam(modEnvR)->InitDouble("Modulation envelope release", 10.0, 0.1, 1000.0, .01, "", "", 10.0);
+	GetParam(modEnvR)->InitDouble("Modulation envelope release", 998.0, 0.1, 1000.0, .01, "", "", .01);
 
 	// modulation targets
 	GetParam(volEnvPitch)->InitDouble("Volume envelope to pitch", 1.0, 0.25, 4.0, .01, "", "", 2.0);
@@ -147,6 +147,12 @@ void MikaMicro::OnParamChange(int paramIdx)
 	IMutexLock lock(this);
 
 	parameters[paramIdx] = GetParam(paramIdx)->Value();
+
+	if (paramIdx == oscMix || paramIdx == volEnvA || paramIdx == volEnvD || paramIdx == volEnvR ||
+			paramIdx == modEnvA || paramIdx == modEnvD || paramIdx == modEnvR)
+	{
+		parameters[paramIdx] = GetParam(paramIdx)->GetMax() + GetParam(paramIdx)->GetMin() - parameters[paramIdx];
+	}
 
 	if (paramIdx == osc1Coarse || paramIdx == osc1Fine)
 		for (auto &v : voices)
