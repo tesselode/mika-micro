@@ -143,6 +143,7 @@ double Voice::GetOscillators(double dt, std::vector<double> &parameters)
 double Voice::GetFilterCutoff(std::vector<double>& parameters)
 {
 	double cutoff = parameters[filterCutoff];
+	cutoff += baseFrequency * parameters[filterKeyTrack];
 	cutoff += parameters[volEnvCutoff] * volumeEnvelope.Get();
 	cutoff += parameters[modEnvCutoff] * modEnvelope.Get();
 	return cutoff;

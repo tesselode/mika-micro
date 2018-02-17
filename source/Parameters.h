@@ -14,6 +14,7 @@ enum ParameterList
 	filterCutoff,
 	filterResonance,
 	filterDrive,
+	filterKeyTrack,
 	volEnvA,
 	volEnvD,
 	volEnvS,
