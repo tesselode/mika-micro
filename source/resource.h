@@ -54,14 +54,20 @@ instrument determined by PLUG _IS _INST
 #define PLUG_DOES_STATE_CHUNKS 0
 
 // Unique IDs for each image resource.
+#define BG_ID 100
 #define KNOB_ID 101
+#define SMALLKNOB_ID 102
+#define SLIDER_ID 103
 
 // Image resource locations for this plug.
+#define BG_FN "resources/img/bg.png"
 #define KNOB_FN "resources/img/knob.png"
+#define SMALLKNOB_FN "resources/img/knobsmall.png"
+#define SLIDER_FN "resources/img/slider.png"
 
 // GUI default dimensions
-#define GUI_WIDTH 300
-#define GUI_HEIGHT 300
+#define GUI_WIDTH 224*4
+#define GUI_HEIGHT 112*4
 
 // on MSVC, you must define SA_API in the resource editor preprocessor macros as well as the c++ ones
 #if defined(SA_API)
