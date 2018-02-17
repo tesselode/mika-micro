@@ -66,8 +66,8 @@ instrument determined by PLUG _IS _INST
 #define SLIDER_FN "resources/img/slider.png"
 
 // GUI default dimensions
-#define GUI_WIDTH 224*5
-#define GUI_HEIGHT 112*5
+#define GUI_WIDTH 224*4
+#define GUI_HEIGHT 112*4
 
 // on MSVC, you must define SA_API in the resource editor preprocessor macros as well as the c++ ones
 #if defined(SA_API)
