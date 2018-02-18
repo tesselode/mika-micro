@@ -6,7 +6,7 @@
 class Filter
 {
 public:
-	double Process(double input, double dt, double resonance, double drive);
+	double Process(double input, double dt, double res1, double res2);
 	void UpdateF(double dt, double cutoff);
 
 private:

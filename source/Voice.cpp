@@ -162,7 +162,7 @@ double Voice::Next(double dt, std::vector<double> &parameters)
 	auto out = GetOscillators(dt, parameters);
 	if (parameters[filterCutoff] < 20000.)
 		for (int i = 0; i < 2; i++)
-			out = filter.Process(out, dt, parameters[filterResonance], parameters[filterDrive]);
+			out = filter.Process(out, dt, parameters[filterRes1], parameters[filterRes2]);
 	out *= GetVolume();
 	return out;
 }

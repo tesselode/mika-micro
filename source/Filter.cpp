@@ -17,12 +17,12 @@ void Filter::UpdateF(double dt, double cutoff)
 	f = lerp(f, GetTargetF(cutoff), dt * 100);
 }
 
-double Filter::Process(double input, double dt, double resonance, double drive)
+double Filter::Process(double input, double dt, double res1, double res2)
 {
 	dt *= 44100;
-	double high = input - (low + band * (1 - resonance));
+	double high = input - (low + band * (1 - res1));
 	band += f * high * dt;
-	low += band * dt * (resonance + f * (1 - resonance));
-	low = FastAtan(low * drive) / drive;
+	low += band * dt * (res2 + f * (1 - res2));
+	low = FastAtan(low * .1) * 10.0;
 	return low;
 }

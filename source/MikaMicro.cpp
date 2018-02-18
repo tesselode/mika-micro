@@ -20,8 +20,8 @@ void MikaMicro::InitParameters()
 
 	// filter
 	GetParam(filterCutoff)->InitDouble("Filter cutoff", 20000., 20., 20000., .01, "hz", "", 2.0);
-	GetParam(filterResonance)->InitDouble("Filter resonance", 0.0, 0.0, 0.9, .01);
-	GetParam(filterDrive)->InitDouble("Filter drive", 0.1, 0.1, 2.0, .01);
+	GetParam(filterRes1)->InitDouble("Filter resonance 1", 0.0, 0.0, 0.9, .01);
+	GetParam(filterRes2)->InitDouble("Filter resonance 2", 0.0, 0.0, 0.9, .01);
 	GetParam(filterKeyTrack)->InitDouble("Filter key tracking", 0.0, 0.0, 1.0, .01);
 
 	// modulation sources
@@ -75,8 +75,8 @@ void MikaMicro::InitGraphics()
 
 	// filter
 	pGraphics->AttachControl(new IKnobMultiControl(this, 26 * 4, 64 * 4, filterCutoff, &knob));
-	pGraphics->AttachControl(new IKnobMultiControl(this, 42 * 4, 64 * 4, filterResonance, &knob));
-	pGraphics->AttachControl(new IKnobMultiControl(this, 58 * 4, 64 * 4, filterDrive, &knob));
+	pGraphics->AttachControl(new IKnobMultiControl(this, 42 * 4, 64 * 4, filterRes1, &knob));
+	pGraphics->AttachControl(new IKnobMultiControl(this, 58 * 4, 64 * 4, filterRes2, &knob));
 	pGraphics->AttachControl(new IKnobMultiControl(this, 74 * 4, 64 * 4, filterKeyTrack, &knob));
 
 	// envelopes
