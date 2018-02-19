@@ -78,7 +78,7 @@ void MikaMicro::InitGraphics()
 	pGraphics->AttachControl(new IKnobMultiControl(this, 42 * 4, 28 * 4, osc2Coarse, &knob));
 	pGraphics->AttachControl(new IKnobMultiControl(this, 58 * 4, 28 * 4, osc2Fine, &knob));
 	pGraphics->AttachControl(new IKnobMultiControl(this, 74 * 4, 28 * 4, osc2Split, &knob));
-	pGraphics->AttachControl(new IFaderControl(this, 96.5 * 4, 17 * 4, 22 * 4, oscMix, &slider));
+	pGraphics->AttachControl(new IFaderControl(this, 94.5 * 4, 17 * 4, 22 * 4, oscMix, &slider));
 
 	// fm
 	pGraphics->AttachControl(new IKnobMultiControl(this, 26 * 4, 44 * 4, fmCoarse, &knob));
@@ -91,14 +91,14 @@ void MikaMicro::InitGraphics()
 	pGraphics->AttachControl(new IKnobMultiControl(this, 74 * 4, 64 * 4, filterKeyTrack, &knob));
 
 	// envelopes
-	pGraphics->AttachControl(new IFaderControl(this, 128.5 * 4, 21 * 4, 22 * 4, volEnvA, &slider));
-	pGraphics->AttachControl(new IFaderControl(this, 136.5 * 4, 21 * 4, 22 * 4, volEnvD, &slider));
-	pGraphics->AttachControl(new IFaderControl(this, 144.5 * 4, 21 * 4, 22 * 4, volEnvS, &slider));
-	pGraphics->AttachControl(new IFaderControl(this, 152.5 * 4, 21 * 4, 22 * 4, volEnvR, &slider));
-	pGraphics->AttachControl(new IFaderControl(this, 128.5 * 4, 57 * 4, 22 * 4, modEnvA, &slider));
-	pGraphics->AttachControl(new IFaderControl(this, 136.5 * 4, 57 * 4, 22 * 4, modEnvD, &slider));
-	pGraphics->AttachControl(new IFaderControl(this, 144.5 * 4, 57 * 4, 22 * 4, modEnvS, &slider));
-	pGraphics->AttachControl(new IFaderControl(this, 152.5 * 4, 57 * 4, 22 * 4, modEnvR, &slider));
+	pGraphics->AttachControl(new IFaderControl(this, 126.5 * 4, 21 * 4, 22 * 4, volEnvA, &slider));
+	pGraphics->AttachControl(new IFaderControl(this, 134.5 * 4, 21 * 4, 22 * 4, volEnvD, &slider));
+	pGraphics->AttachControl(new IFaderControl(this, 142.5 * 4, 21 * 4, 22 * 4, volEnvS, &slider));
+	pGraphics->AttachControl(new IFaderControl(this, 150.5 * 4, 21 * 4, 22 * 4, volEnvR, &slider));
+	pGraphics->AttachControl(new IFaderControl(this, 126.5 * 4, 57 * 4, 22 * 4, modEnvA, &slider));
+	pGraphics->AttachControl(new IFaderControl(this, 134.5 * 4, 57 * 4, 22 * 4, modEnvD, &slider));
+	pGraphics->AttachControl(new IFaderControl(this, 142.5 * 4, 57 * 4, 22 * 4, modEnvS, &slider));
+	pGraphics->AttachControl(new IFaderControl(this, 150.5 * 4, 57 * 4, 22 * 4, modEnvR, &slider));
 	pGraphics->AttachControl(new IKnobMultiControl(this, 170 * 4, 12 * 4, lfoFrequency, &knob));
 	pGraphics->AttachControl(new IKnobMultiControl(this, 186 * 4, 12 * 4, lfoDelay, &knob));
 
