@@ -24,7 +24,7 @@ void MikaMicro::InitParameters()
 	GetParam(filterCutoff)->InitDouble("Filter cutoff", 20000., 20., 20000., .01, "hz", "", 2.0);
 	GetParam(filterRes1)->InitDouble("Filter resonance 1", 0.0, 0.0, 0.9, .01);
 	GetParam(filterRes2)->InitDouble("Filter resonance 2", 0.0, 0.0, 0.9, .01);
-	GetParam(filterKeyTrack)->InitDouble("Filter key tracking", 0.0, 0.0, 1.0, .01);
+	GetParam(filterKeyTrack)->InitDouble("Filter key tracking", 0.0, -1.0, 1.0, .01);
 
 	// modulation sources
 	GetParam(volEnvA)->InitDouble("Volume envelope attack", 0.1, 0.1, 1000.0, .01, "", "", .01);
