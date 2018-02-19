@@ -34,6 +34,7 @@ enum ParameterList
 	modEnvCutoff,
 	lfoFm,
 	lfoCutoff,
+	monoMode,
 	masterVolume,
 	numParameters
 };

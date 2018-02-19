@@ -48,6 +48,7 @@ void MikaMicro::InitParameters()
 	GetParam(lfoCutoff)->InitDouble("Vibrato to filter cutoff", 0.0, -20000., 20000., .01, "hz");
 
 	// master
+	GetParam(monoMode)->InitBool("Mono", true);
 	GetParam(masterVolume)->InitDouble("Master volume", 0.5, 0.0, 1.0, .01);
 
 	for (int i = 0; i < numParameters; i++)
@@ -62,6 +63,7 @@ void MikaMicro::InitGraphics()
 	auto knob = pGraphics->LoadIBitmap(KNOB_ID, KNOB_FN, 55);
 	auto slider = pGraphics->LoadIBitmap(SLIDER_ID, SLIDER_FN, 1);
 	auto waveformSwitch = pGraphics->LoadIBitmap(WAVEFORMSWITCH_ID, WAVEFORMSWITCH_FN, numWaveforms);
+	auto toggleSwitch = pGraphics->LoadIBitmap(TOGGLESWITCH_ID, TOGGLESWITCH_FN, 2);
 
 	// oscillators
 	pGraphics->AttachControl(new ISwitchControl(this, 24 * 4, 12 * 4, osc1Wave, &waveformSwitch));
@@ -106,6 +108,7 @@ void MikaMicro::InitGraphics()
 	pGraphics->AttachControl(new IKnobMultiControl(this, 202 * 4, 68 * 4, lfoCutoff, &knob));
 
 	// master
+	pGraphics->AttachControl(new ISwitchControl(this, 24 * 4, 90 * 4, monoMode, &toggleSwitch));
 	pGraphics->AttachControl(new IKnobMultiControl(this, 56 * 4, 90 * 4, masterVolume, &knob));
 
 	AttachGraphics(pGraphics);
@@ -182,4 +185,11 @@ void MikaMicro::OnParamChange(int paramIdx)
 	if (paramIdx == osc2Coarse || paramIdx == osc2Fine)
 		for (auto &v : voices)
 			v.SetOsc2Pitch(parameters[osc2Coarse], parameters[osc2Fine]);
+
+	if (paramIdx == monoMode)
+	{
+		midiReceiver.SetMono(GetParam(paramIdx)->Value());
+		for (int i = 1; i < std::size(voices); i++)
+			voices[i].Release();
+	}
 }
