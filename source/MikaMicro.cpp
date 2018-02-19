@@ -35,7 +35,6 @@ void MikaMicro::InitParameters()
 	GetParam(modEnvR)->InitDouble("Modulation envelope release", 998.0, 0.1, 1000.0, .01, "", "", .01);
 	GetParam(lfoFrequency)->InitDouble("LFO frequency", 1.0, 0.1, 10.0, .01, "", "", 2.0);
 	GetParam(lfoDelay)->InitDouble("LFO delay", 1000.0, 0.1, 1000.0, .01, "", "", .01);
-	GetParam(lfoWheelAmount)->InitDouble("LFO mod wheel amount", 0.0, 0.0, 1.0, .01);
 
 	// modulation targets
 	GetParam(volEnvPitch)->InitDouble("Volume envelope to pitch", 1.0, 0.5, 2.0, .01, "", "", 2.0);
@@ -97,7 +96,6 @@ void MikaMicro::InitGraphics()
 	pGraphics->AttachControl(new IFaderControl(this, 152.5 * 4, 57 * 4, 22 * 4, modEnvR, &slider));
 	pGraphics->AttachControl(new IKnobMultiControl(this, 170 * 4, 12 * 4, lfoFrequency, &knob));
 	pGraphics->AttachControl(new IKnobMultiControl(this, 186 * 4, 12 * 4, lfoDelay, &knob));
-	pGraphics->AttachControl(new IKnobMultiControl(this, 202 * 4, 12 * 4, lfoWheelAmount, &knob));
 
 	// targets
 	pGraphics->AttachControl(new IKnobMultiControl(this, 176.5 * 4, 50.5 * 4, volEnvPitch, &smallKnob));

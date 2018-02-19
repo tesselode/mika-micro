@@ -25,7 +25,6 @@ enum ParameterList
 	modEnvR,
 	lfoFrequency,
 	lfoDelay,
-	lfoWheelAmount,
 	volEnvPitch,
 	volEnvOsc2,
 	volEnvFm,
