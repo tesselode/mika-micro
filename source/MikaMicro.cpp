@@ -33,16 +33,23 @@ void MikaMicro::InitParameters()
 	GetParam(modEnvD)->InitDouble("Modulation envelope decay", 998.0, 0.1, 1000.0, .01, "", "", .01);
 	GetParam(modEnvS)->InitDouble("Modulation envelope sustain", 0.5, 0.0, 1.0, .01);
 	GetParam(modEnvR)->InitDouble("Modulation envelope release", 998.0, 0.1, 1000.0, .01, "", "", .01);
+	GetParam(lfoFrequency)->InitDouble("LFO frequency", 1.0, 0.1, 10.0, .01, "", "", 2.0);
+	GetParam(lfoDelay)->InitDouble("LFO delay", 1000.0, 0.1, 1000.0, .01, "", "", .01);
+	GetParam(lfoWheelAmount)->InitDouble("LFO mod wheel amount", 0.0, 0.0, 1.0, .01);
 
 	// modulation targets
-	GetParam(volEnvPitch)->InitDouble("Volume envelope to pitch", 1.0, 0.25, 4.0, .01, "", "", 2.0);
-	GetParam(volEnvOsc2)->InitDouble("Volume envelope to oscillator 2 pitch", 1.0, 0.25, 4.0, .01, "", "", 2.0);
+	GetParam(volEnvPitch)->InitDouble("Volume envelope to pitch", 1.0, 0.5, 2.0, .01, "", "", 2.0);
+	GetParam(volEnvOsc2)->InitDouble("Volume envelope to oscillator 2 pitch", 1.0, 0.5, 2.0, .01, "", "", 2.0);
 	GetParam(volEnvFm)->InitDouble("Volume envelope to FM amount", 0.0, -24.0, 24.0, .01, "semitones");
 	GetParam(volEnvCutoff)->InitDouble("Volume envelope to filter cutoff", 0.0, -20000., 20000., .01, "hz");
-	GetParam(modEnvPitch)->InitDouble("Modulation envelope to pitch", 1.0, 0.25, 4.0, .01, "", "", 2.0);
-	GetParam(modEnvOsc2)->InitDouble("Modulation envelope to oscillator 2 pitch", 1.0, 0.25, 4.0, .01, "", "", 2.0);
+	GetParam(modEnvPitch)->InitDouble("Modulation envelope to pitch", 1.0, 0.5, 2.0, .01, "", "", 2.0);
+	GetParam(modEnvOsc2)->InitDouble("Modulation envelope to oscillator 2 pitch", 1.0, 0.5, 2.0, .01, "", "", 2.0);
 	GetParam(modEnvFm)->InitDouble("Modulation envelope to FM amount", 0.0, -24.0, 24.0, .01, "semitones");
 	GetParam(modEnvCutoff)->InitDouble("Modulation envelope to filter cutoff", 0.0, -20000., 20000., .01, "hz");
+	GetParam(lfoPitch)->InitDouble("LFO to pitch", 0.0, 0.0, .1, .01);
+	GetParam(lfoOsc2)->InitDouble("LFO to oscillator 2 pitch", 0.0, 0.0, .1, .01);
+	GetParam(lfoFm)->InitDouble("LFO to FM amount", 0.0, -24.0, 24.0, .01, "semitones");
+	GetParam(lfoCutoff)->InitDouble("LFO to filter cutoff", 0.0, -20000., 20000., .01, "hz");
 
 	// master
 	GetParam(masterVolume)->InitDouble("Master volume", 0.5, 0.0, 1.0, .01);
@@ -88,6 +95,9 @@ void MikaMicro::InitGraphics()
 	pGraphics->AttachControl(new IFaderControl(this, 136.5 * 4, 57 * 4, 22 * 4, modEnvD, &slider));
 	pGraphics->AttachControl(new IFaderControl(this, 144.5 * 4, 57 * 4, 22 * 4, modEnvS, &slider));
 	pGraphics->AttachControl(new IFaderControl(this, 152.5 * 4, 57 * 4, 22 * 4, modEnvR, &slider));
+	pGraphics->AttachControl(new IKnobMultiControl(this, 170 * 4, 12 * 4, lfoFrequency, &knob));
+	pGraphics->AttachControl(new IKnobMultiControl(this, 186 * 4, 12 * 4, lfoDelay, &knob));
+	pGraphics->AttachControl(new IKnobMultiControl(this, 202 * 4, 12 * 4, lfoWheelAmount, &knob));
 
 	// targets
 	pGraphics->AttachControl(new IKnobMultiControl(this, 176.5 * 4, 50.5 * 4, volEnvPitch, &smallKnob));
@@ -98,6 +108,10 @@ void MikaMicro::InitGraphics()
 	pGraphics->AttachControl(new IKnobMultiControl(this, 186.5 * 4, 60.5 * 4, modEnvOsc2, &smallKnob));
 	pGraphics->AttachControl(new IKnobMultiControl(this, 196.5 * 4, 60.5 * 4, modEnvFm, &smallKnob));
 	pGraphics->AttachControl(new IKnobMultiControl(this, 206.5 * 4, 60.5 * 4, modEnvCutoff, &smallKnob));
+	pGraphics->AttachControl(new IKnobMultiControl(this, 176.5 * 4, 70.5 * 4, lfoPitch, &smallKnob));
+	pGraphics->AttachControl(new IKnobMultiControl(this, 186.5 * 4, 70.5 * 4, lfoOsc2, &smallKnob));
+	pGraphics->AttachControl(new IKnobMultiControl(this, 196.5 * 4, 70.5 * 4, lfoFm, &smallKnob));
+	pGraphics->AttachControl(new IKnobMultiControl(this, 206.5 * 4, 70.5 * 4, lfoCutoff, &smallKnob));
 
 	// master
 	pGraphics->AttachControl(new IKnobMultiControl(this, 58 * 4, 90 * 4, masterVolume, &knob));
@@ -132,11 +146,13 @@ void MikaMicro::ProcessDoubleReplacing(double** inputs, double** outputs, int nF
 
 	for (int s = 0; s < nFrames; ++s, ++out1, ++out2)
 	{
+		auto lfoValue = lfo.Next(dt, parameters[lfoFrequency], OscillatorWaveformSine);
+
 		midiReceiver.Process(voices, s);
 
 		double out = 0.0;
 		for (auto& voice : voices)
-			out += .5 * voice.Next(dt, parameters);
+			out += .5 * voice.Next(dt, parameters, lfoValue);
 		out *= parameters[masterVolume];
 
 		*out1 = out;

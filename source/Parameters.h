@@ -23,6 +23,9 @@ enum ParameterList
 	modEnvD,
 	modEnvS,
 	modEnvR,
+	lfoFrequency,
+	lfoDelay,
+	lfoWheelAmount,
 	volEnvPitch,
 	volEnvOsc2,
 	volEnvFm,
@@ -31,6 +34,10 @@ enum ParameterList
 	modEnvOsc2,
 	modEnvFm,
 	modEnvCutoff,
+	lfoPitch,
+	lfoOsc2,
+	lfoFm,
+	lfoCutoff,
 	masterVolume,
 	numParameters
 };

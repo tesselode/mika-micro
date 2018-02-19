@@ -27,6 +27,7 @@ private:
 	void InitParameters();
 	void InitGraphics();
 
+	Oscillator lfo;
 	std::vector<double> parameters;
 	std::vector<Voice> voices;
 	MidiReceiver midiReceiver;

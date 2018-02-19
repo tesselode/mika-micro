@@ -22,22 +22,23 @@ public:
 	void Start();
 	void Release();
 
-	double Next(double dt, std::vector<double> &parameters);
+	double Next(double dt, std::vector<double> &parameters, double lfoValue);
 
 private:
 	double PitchFactor(double p);
 	double PitchToFrequency(double p);
 
-	double GetFmAmount(std::vector<double> &parameters);
-	double GetOsc1Frequency(std::vector<double> &parameters, double fm);
-	double GetOsc2Frequency(std::vector<double> &parameters, double fm);
-	double GetOscFm(double dt, std::vector<double> &parameters);
-	double GetOsc1(double dt, std::vector<double> &parameters, double fm);
-	double GetOsc2(double dt, std::vector<double> &parameters, double fm);
-	double GetOscillators(double dt, std::vector<double> &parameters);
-	double GetFilterCutoff(std::vector<double> &parameters);
+	double GetFmAmount(std::vector<double> &parameters, double lfoValue);
+	double GetOsc1Frequency(std::vector<double> &parameters, double fm, double lfoValue);
+	double GetOsc2Frequency(std::vector<double> &parameters, double fm, double lfoValue);
+	double GetOscFm(double dt, std::vector<double> &parameters, double lfoValue);
+	double GetOsc1(double dt, std::vector<double> &parameters, double fm, double lfoValue);
+	double GetOsc2(double dt, std::vector<double> &parameters, double fm, double lfoValue);
+	double GetOscillators(double dt, std::vector<double> &parameters, double lfoValue);
+	double GetFilterCutoff(std::vector<double> &parameters, double lfoValue);
 
 	void UpdateEnvelopes(double dt, std::vector<double> &parameters);
+	double GetLfoAmount(double lfoValue);
 
 	int note = 69;
 	double baseFrequency = 440.0;
