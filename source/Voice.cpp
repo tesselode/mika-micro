@@ -1,23 +1,13 @@
 #include "Voice.h"
 
-double Voice::PitchFactor(double p)
-{
-	return pow(1.0595, p);
-}
-
-double Voice::PitchToFrequency(double p)
-{
-	return 440.0 * PitchFactor(p - 69);
-}
-
 void Voice::SetOsc1Pitch(int coarse, double fine)
 {
-	osc1Factor = PitchFactor(coarse + fine);
+	osc1Factor = pitchFactor(coarse + fine);
 }
 
 void Voice::SetOsc2Pitch(int coarse, double fine)
 {
-	osc2Factor = PitchFactor(coarse + fine);
+	osc2Factor = pitchFactor(coarse + fine);
 }
 
 int Voice::GetNote()
@@ -28,7 +18,7 @@ int Voice::GetNote()
 void Voice::SetNote(int n)
 {
 	note = n;
-	baseFrequency = PitchToFrequency(note);
+	baseFrequency = pitchToFrequency(note);
 }
 
 double Voice::GetVolume()
@@ -39,6 +29,11 @@ double Voice::GetVolume()
 bool Voice::IsReleased()
 {
 	return volumeEnvelope.IsReleased();
+}
+
+void Voice::SetPitchBendFactor(double v)
+{
+	pitchBendFactor = v;
 }
 
 void Voice::Start()
@@ -65,6 +60,11 @@ void Voice::Release()
 	delayEnvelope.Release();
 }
 
+double Voice::GetBaseFrequency()
+{
+	return baseFrequency * pitchBendFactor;
+}
+
 double Voice::GetFmAmount(std::vector<double>& parameters, double lfoValue)
 {
 	double fm = fabs(parameters[fmCoarse]) + parameters[fmFine];
@@ -76,18 +76,18 @@ double Voice::GetFmAmount(std::vector<double>& parameters, double lfoValue)
 
 double Voice::GetOsc1Frequency(std::vector<double> &parameters, double fm, double lfoValue)
 {
-	double f = baseFrequency * osc1Factor;
+	double f = GetBaseFrequency() * osc1Factor;
 	f *= lerp(1.0, parameters[volEnvPitch], volumeEnvelope.Get());
 	f *= lerp(1.0, parameters[modEnvPitch], modEnvelope.Get());
 	f *= 1 + parameters[lfoPitch] * GetLfoAmount(lfoValue);
 	if (parameters[fmCoarse] < 0.0)
-		f *= PitchFactor(fm * GetFmAmount(parameters, lfoValue));
+		f *= pitchFactor(fm * GetFmAmount(parameters, lfoValue));
 	return f;
 }
 
 double Voice::GetOsc2Frequency(std::vector<double> &parameters, double fm, double lfoValue)
 {
-	double f = baseFrequency * osc2Factor;
+	double f = GetBaseFrequency() * osc2Factor;
 	f *= lerp(1.0, parameters[volEnvPitch], volumeEnvelope.Get());
 	f *= lerp(1.0, parameters[modEnvPitch], modEnvelope.Get());
 	f *= 1 + parameters[lfoPitch] * GetLfoAmount(lfoValue);
@@ -95,7 +95,7 @@ double Voice::GetOsc2Frequency(std::vector<double> &parameters, double fm, doubl
 	f *= lerp(1.0, parameters[modEnvOsc2], modEnvelope.Get());
 	f *= 1 + parameters[lfoOsc2] * GetLfoAmount(lfoValue);
 	if (parameters[fmCoarse] > 0.0)
-		f *= PitchFactor(fm * GetFmAmount(parameters, lfoValue));
+		f *= pitchFactor(fm * GetFmAmount(parameters, lfoValue));
 	return f;
 }
 
@@ -144,7 +144,7 @@ double Voice::GetOscillators(double dt, std::vector<double> &parameters, double 
 double Voice::GetFilterCutoff(std::vector<double>& parameters, double lfoValue)
 {
 	double cutoff = parameters[filterCutoff];
-	cutoff += baseFrequency * parameters[filterKeyTrack];
+	cutoff += GetBaseFrequency() * parameters[filterKeyTrack];
 	cutoff += parameters[volEnvCutoff] * volumeEnvelope.Get();
 	cutoff += parameters[modEnvCutoff] * modEnvelope.Get();
 	cutoff += parameters[lfoCutoff] * GetLfoAmount(lfoValue);

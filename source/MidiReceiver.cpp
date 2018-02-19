@@ -2,9 +2,7 @@
 
 void MidiReceiver::Add(IMidiMsg * message)
 {
-	auto status = message->StatusMsg();
-	if (status == IMidiMsg::kNoteOn || status == IMidiMsg::kNoteOff)
-		midiQueue.Add(message);
+	midiQueue.Add(message);
 }
 
 void MidiReceiver::Process(std::vector<Voice>& voices, int s)
@@ -34,6 +32,11 @@ void MidiReceiver::Process(std::vector<Voice>& voices, int s)
 			});
 			voice->SetNote(note);
 			voice->Start();
+		}
+		else if (status == IMidiMsg::kPitchWheel)
+		{
+			for (auto& voice : voices)
+				voice.SetPitchBendFactor(pitchFactor(message->PitchWheel() * 2));
 		}
 		midiQueue.Remove();
 	}

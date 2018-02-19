@@ -15,6 +15,7 @@ public:
 	void SetNote(int n);
 	double GetVolume();
 	bool IsReleased();
+	void SetPitchBendFactor(double v);
 
 	void SetOsc1Pitch(int coarse, double fine);
 	void SetOsc2Pitch(int coarse, double fine);
@@ -25,9 +26,7 @@ public:
 	double Next(double dt, std::vector<double> &parameters, double lfoValue);
 
 private:
-	double PitchFactor(double p);
-	double PitchToFrequency(double p);
-
+	double GetBaseFrequency();
 	double GetFmAmount(std::vector<double> &parameters, double lfoValue);
 	double GetOsc1Frequency(std::vector<double> &parameters, double fm, double lfoValue);
 	double GetOsc2Frequency(std::vector<double> &parameters, double fm, double lfoValue);
@@ -42,6 +41,7 @@ private:
 
 	int note = 69;
 	double baseFrequency = 440.0;
+	double pitchBendFactor = 1.0;
 	double osc1Factor = 1.0;
 	double osc2Factor = 1.0;
 
