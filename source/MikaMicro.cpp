@@ -33,8 +33,8 @@ void MikaMicro::InitParameters()
 	GetParam(modEnvD)->InitDouble("Modulation envelope decay", 998.0, 0.1, 1000.0, .01, "", "", .01);
 	GetParam(modEnvS)->InitDouble("Modulation envelope sustain", 0.5, 0.0, 1.0, .01);
 	GetParam(modEnvR)->InitDouble("Modulation envelope release", 998.0, 0.1, 1000.0, .01, "", "", .01);
-	GetParam(lfoFrequency)->InitDouble("LFO frequency", 1.0, 0.1, 10.0, .01, "", "", 2.0);
-	GetParam(lfoDelay)->InitDouble("LFO delay", 1000.0, 0.1, 1000.0, .01, "", "", .01);
+	GetParam(lfoFrequency)->InitDouble("LFO frequency", 4.0, 0.1, 10.0, .01, "", "", 2.0);
+	GetParam(lfoDelay)->InitDouble("LFO delay", 0.1, 0.1, 1000.0, .01, "", "", .001);
 
 	// modulation targets
 	GetParam(volEnvPitch)->InitDouble("Volume envelope to pitch", 1.0, 0.5, 2.0, .01, "", "", 2.0);
@@ -172,7 +172,7 @@ void MikaMicro::OnParamChange(int paramIdx)
 	parameters[paramIdx] = GetParam(paramIdx)->Value();
 
 	if (paramIdx == oscMix || paramIdx == volEnvA || paramIdx == volEnvD || paramIdx == volEnvR ||
-			paramIdx == modEnvA || paramIdx == modEnvD || paramIdx == modEnvR)
+			paramIdx == modEnvA || paramIdx == modEnvD || paramIdx == modEnvR || paramIdx == lfoDelay)
 	{
 		parameters[paramIdx] = GetParam(paramIdx)->GetMax() + GetParam(paramIdx)->GetMin() - parameters[paramIdx];
 	}
