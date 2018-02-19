@@ -89,9 +89,8 @@ double Voice::GetOsc1Frequency(std::vector<double> &parameters, double fm, doubl
 {
 	double f = GetBaseFrequency() * osc1Factor;
 	f *= 1 + driftValue;
-	f *= lerp(1.0, parameters[volEnvPitch], volumeEnvelope.Get());
-	f *= lerp(1.0, parameters[modEnvPitch], modEnvelope.Get());
-	f *= 1 + parameters[lfoPitch] * GetLfoAmount(lfoValue);
+	if (parameters[lfoAmount] < 0.0)
+		f *= 1 + parameters[lfoAmount] * GetLfoAmount(lfoValue);
 	if (parameters[fmCoarse] < 0.0)
 		f *= pitchFactor(fm * GetFmAmount(parameters, lfoValue));
 	return f;
@@ -101,12 +100,7 @@ double Voice::GetOsc2Frequency(std::vector<double> &parameters, double fm, doubl
 {
 	double f = GetBaseFrequency() * osc2Factor;
 	f *= 1 + driftValue;
-	f *= lerp(1.0, parameters[volEnvPitch], volumeEnvelope.Get());
-	f *= lerp(1.0, parameters[modEnvPitch], modEnvelope.Get());
-	f *= 1 + parameters[lfoPitch] * GetLfoAmount(lfoValue);
-	f *= lerp(1.0, parameters[volEnvOsc2], volumeEnvelope.Get());
-	f *= lerp(1.0, parameters[modEnvOsc2], modEnvelope.Get());
-	f *= 1 + parameters[lfoOsc2] * GetLfoAmount(lfoValue);
+	f *= 1 + parameters[lfoAmount] * GetLfoAmount(lfoValue);
 	if (parameters[fmCoarse] > 0.0)
 		f *= pitchFactor(fm * GetFmAmount(parameters, lfoValue));
 	return f;

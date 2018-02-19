@@ -56,14 +56,12 @@ instrument determined by PLUG _IS _INST
 // Unique IDs for each image resource.
 #define BG_ID 100
 #define KNOB_ID 101
-#define SMALLKNOB_ID 102
-#define SLIDER_ID 103
-#define WAVEFORMSWITCH_ID 104
+#define SLIDER_ID 102
+#define WAVEFORMSWITCH_ID 103
 
 // Image resource locations for this plug.
 #define BG_FN "resources/img/bg.png"
 #define KNOB_FN "resources/img/knob.png"
-#define SMALLKNOB_FN "resources/img/knobsmall.png"
 #define SLIDER_FN "resources/img/slider.png"
 #define WAVEFORMSWITCH_FN "resources/img/waveforms.png"
 

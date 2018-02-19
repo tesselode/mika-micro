@@ -35,22 +35,17 @@ void MikaMicro::InitParameters()
 	GetParam(modEnvD)->InitDouble("Modulation envelope decay", 998.0, 0.1, 1000.0, .01, "", "", .01);
 	GetParam(modEnvS)->InitDouble("Modulation envelope sustain", 0.5, 0.0, 1.0, .01);
 	GetParam(modEnvR)->InitDouble("Modulation envelope release", 998.0, 0.1, 1000.0, .01, "", "", .01);
-	GetParam(lfoFrequency)->InitDouble("LFO frequency", 4.0, 0.1, 10.0, .01, "", "", 2.0);
-	GetParam(lfoDelay)->InitDouble("LFO delay", 0.1, 0.1, 1000.0, .01, "", "", .001);
+	GetParam(lfoAmount)->InitDouble("Vibrato amount", 0.0, -0.1, 0.1, .01);
+	GetParam(lfoFrequency)->InitDouble("Vibrato frequency", 4.0, 0.1, 10.0, .01, "", "", 2.0);
+	GetParam(lfoDelay)->InitDouble("Vibrato delay", 0.1, 0.1, 1000.0, .01, "", "", .001);
 
 	// modulation targets
-	GetParam(volEnvPitch)->InitDouble("Volume envelope to pitch", 1.0, 0.5, 2.0, .01, "", "", 2.0);
-	GetParam(volEnvOsc2)->InitDouble("Volume envelope to oscillator 2 pitch", 1.0, 0.5, 2.0, .01, "", "", 2.0);
 	GetParam(volEnvFm)->InitDouble("Volume envelope to FM amount", 0.0, -24.0, 24.0, .01, "semitones");
 	GetParam(volEnvCutoff)->InitDouble("Volume envelope to filter cutoff", 0.0, -20000., 20000., .01, "hz");
-	GetParam(modEnvPitch)->InitDouble("Modulation envelope to pitch", 1.0, 0.5, 2.0, .01, "", "", 2.0);
-	GetParam(modEnvOsc2)->InitDouble("Modulation envelope to oscillator 2 pitch", 1.0, 0.5, 2.0, .01, "", "", 2.0);
 	GetParam(modEnvFm)->InitDouble("Modulation envelope to FM amount", 0.0, -24.0, 24.0, .01, "semitones");
 	GetParam(modEnvCutoff)->InitDouble("Modulation envelope to filter cutoff", 0.0, -20000., 20000., .01, "hz");
-	GetParam(lfoPitch)->InitDouble("LFO to pitch", 0.0, 0.0, .1, .01);
-	GetParam(lfoOsc2)->InitDouble("LFO to oscillator 2 pitch", 0.0, 0.0, .1, .01);
-	GetParam(lfoFm)->InitDouble("LFO to FM amount", 0.0, -24.0, 24.0, .01, "semitones");
-	GetParam(lfoCutoff)->InitDouble("LFO to filter cutoff", 0.0, -20000., 20000., .01, "hz");
+	GetParam(lfoFm)->InitDouble("Vibrato to FM amount", 0.0, -24.0, 24.0, .01, "semitones");
+	GetParam(lfoCutoff)->InitDouble("Vibrato to filter cutoff", 0.0, -20000., 20000., .01, "hz");
 
 	// master
 	GetParam(masterVolume)->InitDouble("Master volume", 0.5, 0.0, 1.0, .01);
@@ -65,59 +60,53 @@ void MikaMicro::InitGraphics()
 	pGraphics->AttachBackground(BG_ID, BG_FN);
 
 	auto knob = pGraphics->LoadIBitmap(KNOB_ID, KNOB_FN, 55);
-	auto smallKnob = pGraphics->LoadIBitmap(SMALLKNOB_ID, SMALLKNOB_FN, 55);
 	auto slider = pGraphics->LoadIBitmap(SLIDER_ID, SLIDER_FN, 1);
 	auto waveformSwitch = pGraphics->LoadIBitmap(WAVEFORMSWITCH_ID, WAVEFORMSWITCH_FN, numWaveforms);
 
 	// oscillators
-	pGraphics->AttachControl(new ISwitchControl(this, 26 * 4, 12 * 4, osc1Wave, &waveformSwitch));
-	pGraphics->AttachControl(new IKnobMultiControl(this, 42 * 4, 12 * 4, osc1Coarse, &knob));
-	pGraphics->AttachControl(new IKnobMultiControl(this, 58 * 4, 12 * 4, osc1Fine, &knob));
-	pGraphics->AttachControl(new IKnobMultiControl(this, 74 * 4, 12 * 4, osc1Split, &knob));
-	pGraphics->AttachControl(new ISwitchControl(this, 26 * 4, 28 * 4, osc2Wave, &waveformSwitch));
-	pGraphics->AttachControl(new IKnobMultiControl(this, 42 * 4, 28 * 4, osc2Coarse, &knob));
-	pGraphics->AttachControl(new IKnobMultiControl(this, 58 * 4, 28 * 4, osc2Fine, &knob));
-	pGraphics->AttachControl(new IKnobMultiControl(this, 74 * 4, 28 * 4, osc2Split, &knob));
-	pGraphics->AttachControl(new IFaderControl(this, 94.5 * 4, 17 * 4, 22 * 4, oscMix, &slider));
+	pGraphics->AttachControl(new ISwitchControl(this, 24 * 4, 12 * 4, osc1Wave, &waveformSwitch));
+	pGraphics->AttachControl(new IKnobMultiControl(this, 40 * 4, 12 * 4, osc1Coarse, &knob));
+	pGraphics->AttachControl(new IKnobMultiControl(this, 56 * 4, 12 * 4, osc1Fine, &knob));
+	pGraphics->AttachControl(new IKnobMultiControl(this, 72 * 4, 12 * 4, osc1Split, &knob));
+	pGraphics->AttachControl(new ISwitchControl(this, 24 * 4, 28 * 4, osc2Wave, &waveformSwitch));
+	pGraphics->AttachControl(new IKnobMultiControl(this, 40 * 4, 28 * 4, osc2Coarse, &knob));
+	pGraphics->AttachControl(new IKnobMultiControl(this, 56 * 4, 28 * 4, osc2Fine, &knob));
+	pGraphics->AttachControl(new IKnobMultiControl(this, 72 * 4, 28 * 4, osc2Split, &knob));
+	pGraphics->AttachControl(new IFaderControl(this, 92.5 * 4, 17 * 4, 22 * 4, oscMix, &slider));
 
 	// fm
-	pGraphics->AttachControl(new IKnobMultiControl(this, 26 * 4, 44 * 4, fmCoarse, &knob));
-	pGraphics->AttachControl(new IKnobMultiControl(this, 42 * 4, 44 * 4, fmFine, &knob));
+	pGraphics->AttachControl(new IKnobMultiControl(this, 24 * 4, 44 * 4, fmCoarse, &knob));
+	pGraphics->AttachControl(new IKnobMultiControl(this, 40 * 4, 44 * 4, fmFine, &knob));
 
 	// filter
-	pGraphics->AttachControl(new IKnobMultiControl(this, 26 * 4, 64 * 4, filterCutoff, &knob));
-	pGraphics->AttachControl(new IKnobMultiControl(this, 42 * 4, 64 * 4, filterRes1, &knob));
-	pGraphics->AttachControl(new IKnobMultiControl(this, 58 * 4, 64 * 4, filterRes2, &knob));
-	pGraphics->AttachControl(new IKnobMultiControl(this, 74 * 4, 64 * 4, filterKeyTrack, &knob));
+	pGraphics->AttachControl(new IKnobMultiControl(this, 24 * 4, 64 * 4, filterCutoff, &knob));
+	pGraphics->AttachControl(new IKnobMultiControl(this, 40 * 4, 64 * 4, filterRes1, &knob));
+	pGraphics->AttachControl(new IKnobMultiControl(this, 56 * 4, 64 * 4, filterRes2, &knob));
+	pGraphics->AttachControl(new IKnobMultiControl(this, 72 * 4, 64 * 4, filterKeyTrack, &knob));
 
-	// envelopes
-	pGraphics->AttachControl(new IFaderControl(this, 126.5 * 4, 21 * 4, 22 * 4, volEnvA, &slider));
-	pGraphics->AttachControl(new IFaderControl(this, 134.5 * 4, 21 * 4, 22 * 4, volEnvD, &slider));
-	pGraphics->AttachControl(new IFaderControl(this, 142.5 * 4, 21 * 4, 22 * 4, volEnvS, &slider));
-	pGraphics->AttachControl(new IFaderControl(this, 150.5 * 4, 21 * 4, 22 * 4, volEnvR, &slider));
-	pGraphics->AttachControl(new IFaderControl(this, 126.5 * 4, 57 * 4, 22 * 4, modEnvA, &slider));
-	pGraphics->AttachControl(new IFaderControl(this, 134.5 * 4, 57 * 4, 22 * 4, modEnvD, &slider));
-	pGraphics->AttachControl(new IFaderControl(this, 142.5 * 4, 57 * 4, 22 * 4, modEnvS, &slider));
-	pGraphics->AttachControl(new IFaderControl(this, 150.5 * 4, 57 * 4, 22 * 4, modEnvR, &slider));
-	pGraphics->AttachControl(new IKnobMultiControl(this, 170 * 4, 12 * 4, lfoFrequency, &knob));
-	pGraphics->AttachControl(new IKnobMultiControl(this, 186 * 4, 12 * 4, lfoDelay, &knob));
+	// modulation sources
+	pGraphics->AttachControl(new IFaderControl(this, 119.5 * 4, 21 * 4, 22 * 4, volEnvA, &slider));
+	pGraphics->AttachControl(new IFaderControl(this, 127.5 * 4, 21 * 4, 22 * 4, volEnvD, &slider));
+	pGraphics->AttachControl(new IFaderControl(this, 135.5 * 4, 21 * 4, 22 * 4, volEnvS, &slider));
+	pGraphics->AttachControl(new IFaderControl(this, 143.5 * 4, 21 * 4, 22 * 4, volEnvR, &slider));
+	pGraphics->AttachControl(new IFaderControl(this, 119.5 * 4, 57 * 4, 22 * 4, modEnvA, &slider));
+	pGraphics->AttachControl(new IFaderControl(this, 127.5 * 4, 57 * 4, 22 * 4, modEnvD, &slider));
+	pGraphics->AttachControl(new IFaderControl(this, 135.5 * 4, 57 * 4, 22 * 4, modEnvS, &slider));
+	pGraphics->AttachControl(new IFaderControl(this, 143.5 * 4, 57 * 4, 22 * 4, modEnvR, &slider));
+	pGraphics->AttachControl(new IKnobMultiControl(this, 170 * 4, 12 * 4, lfoAmount, &knob));
+	pGraphics->AttachControl(new IKnobMultiControl(this, 186 * 4, 12 * 4, lfoFrequency, &knob));
+	pGraphics->AttachControl(new IKnobMultiControl(this, 202 * 4, 12 * 4, lfoDelay, &knob));
 
 	// targets
-	pGraphics->AttachControl(new IKnobMultiControl(this, 176.5 * 4, 50.5 * 4, volEnvPitch, &smallKnob));
-	pGraphics->AttachControl(new IKnobMultiControl(this, 186.5 * 4, 50.5 * 4, volEnvOsc2, &smallKnob));
-	pGraphics->AttachControl(new IKnobMultiControl(this, 196.5 * 4, 50.5 * 4, volEnvFm, &smallKnob));
-	pGraphics->AttachControl(new IKnobMultiControl(this, 206.5 * 4, 50.5 * 4, volEnvCutoff, &smallKnob));
-	pGraphics->AttachControl(new IKnobMultiControl(this, 176.5 * 4, 60.5 * 4, modEnvPitch, &smallKnob));
-	pGraphics->AttachControl(new IKnobMultiControl(this, 186.5 * 4, 60.5 * 4, modEnvOsc2, &smallKnob));
-	pGraphics->AttachControl(new IKnobMultiControl(this, 196.5 * 4, 60.5 * 4, modEnvFm, &smallKnob));
-	pGraphics->AttachControl(new IKnobMultiControl(this, 206.5 * 4, 60.5 * 4, modEnvCutoff, &smallKnob));
-	pGraphics->AttachControl(new IKnobMultiControl(this, 176.5 * 4, 70.5 * 4, lfoPitch, &smallKnob));
-	pGraphics->AttachControl(new IKnobMultiControl(this, 186.5 * 4, 70.5 * 4, lfoOsc2, &smallKnob));
-	pGraphics->AttachControl(new IKnobMultiControl(this, 196.5 * 4, 70.5 * 4, lfoFm, &smallKnob));
-	pGraphics->AttachControl(new IKnobMultiControl(this, 206.5 * 4, 70.5 * 4, lfoCutoff, &smallKnob));
+	pGraphics->AttachControl(new IKnobMultiControl(this, 170 * 4, 52 * 4, volEnvFm, &knob));
+	pGraphics->AttachControl(new IKnobMultiControl(this, 186 * 4, 52 * 4, modEnvFm, &knob));
+	pGraphics->AttachControl(new IKnobMultiControl(this, 202 * 4, 52 * 4, lfoFm, &knob));
+	pGraphics->AttachControl(new IKnobMultiControl(this, 170 * 4, 68 * 4, volEnvCutoff, &knob));
+	pGraphics->AttachControl(new IKnobMultiControl(this, 186 * 4, 68 * 4, modEnvCutoff, &knob));
+	pGraphics->AttachControl(new IKnobMultiControl(this, 202 * 4, 68 * 4, lfoCutoff, &knob));
 
 	// master
-	pGraphics->AttachControl(new IKnobMultiControl(this, 58 * 4, 90 * 4, masterVolume, &knob));
+	pGraphics->AttachControl(new IKnobMultiControl(this, 56 * 4, 90 * 4, masterVolume, &knob));
 
 	AttachGraphics(pGraphics);
 }
