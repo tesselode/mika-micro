@@ -115,11 +115,11 @@ double Voice::GetOsc1(double dt, std::vector<double> &parameters, double fm, dou
 	{
 		double out = 0.0;
 		auto frequency = GetOsc1Frequency(parameters, fm, lfoValue);
-		out += osc1a.Next(dt, frequency / (1 + parameters[osc1Split]), OscillatorWaveformSaw);
-		out += osc1b.Next(dt, frequency * (1 + parameters[osc1Split]), OscillatorWaveformSaw);
+		out += osc1a.Next(dt, frequency / (1 + parameters[osc1Split]), (OscillatorWaveform)(int)parameters[osc1Wave]);
+		out += osc1b.Next(dt, frequency * (1 + parameters[osc1Split]), (OscillatorWaveform)(int)parameters[osc1Wave]);
 		return out;
 	}
-	return osc1a.Next(dt, GetOsc1Frequency(parameters, fm, lfoValue), OscillatorWaveformSaw);
+	return osc1a.Next(dt, GetOsc1Frequency(parameters, fm, lfoValue), (OscillatorWaveform)(int)parameters[osc1Wave]);
 }
 
 double Voice::GetOsc2(double dt, std::vector<double> &parameters, double fm, double lfoValue)
@@ -128,11 +128,11 @@ double Voice::GetOsc2(double dt, std::vector<double> &parameters, double fm, dou
 	{
 		double out = 0.0;
 		auto frequency = GetOsc2Frequency(parameters, fm, lfoValue);
-		out += osc2a.Next(dt, frequency / (1 + parameters[osc2Split]), OscillatorWaveformSaw);
-		out += osc2b.Next(dt, frequency * (1 + parameters[osc2Split]), OscillatorWaveformSaw);
+		out += osc2a.Next(dt, frequency / (1 + parameters[osc2Split]), (OscillatorWaveform)(int)parameters[osc2Wave]);
+		out += osc2b.Next(dt, frequency * (1 + parameters[osc2Split]), (OscillatorWaveform)(int)parameters[osc2Wave]);
 		return out;
 	}
-	return osc2a.Next(dt, GetOsc2Frequency(parameters, fm, lfoValue), OscillatorWaveformSaw);
+	return osc2a.Next(dt, GetOsc2Frequency(parameters, fm, lfoValue), (OscillatorWaveform)(int)parameters[osc2Wave]);
 }
 
 double Voice::GetOscillators(double dt, std::vector<double> &parameters, double lfoValue)

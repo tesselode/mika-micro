@@ -2,9 +2,11 @@
 
 enum ParameterList
 {
+	osc1Wave,
 	osc1Coarse,
 	osc1Fine,
 	osc1Split,
+	osc2Wave,
 	osc2Coarse,
 	osc2Fine,
 	osc2Split,
