@@ -117,17 +117,22 @@ void MikaMicro::InitGraphics()
 	AttachGraphics(pGraphics);
 }
 
+void MikaMicro::InitVoices()
+{
+	for (int i = 0; i < numVoices; i++)
+		voices.push_back(Voice());
+}
+
 MikaMicro::MikaMicro(IPlugInstanceInfo instanceInfo)
   :	IPLUG_CTOR(numParameters, 1, instanceInfo)
 {
 	TRACE;
 
 	InitParameters();
+	InitVoices();
 	InitGraphics();
 
 	MakeDefaultPreset((char *) "-", 1);
-
-	for (int i = 0; i < numVoices; i++) voices.push_back(Voice());
 }
 
 MikaMicro::~MikaMicro() {}

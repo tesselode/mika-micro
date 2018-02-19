@@ -65,6 +65,11 @@ double Voice::GetBaseFrequency()
 	return baseFrequency * pitchBendFactor;
 }
 
+double Voice::GetLfoAmount(double lfoValue)
+{
+	return lfoValue * delayEnvelope.Get();
+}
+
 double Voice::GetFmAmount(std::vector<double>& parameters, double lfoValue)
 {
 	double fm = fabs(parameters[fmCoarse]) + parameters[fmFine];
@@ -156,11 +161,6 @@ void Voice::UpdateEnvelopes(double dt, std::vector<double>& parameters)
 	volumeEnvelope.Update(dt, parameters[volEnvA], parameters[volEnvD], parameters[volEnvS], parameters[volEnvR]);
 	modEnvelope.Update(dt, parameters[modEnvA], parameters[modEnvD], parameters[modEnvS], parameters[modEnvR]);
 	delayEnvelope.Update(dt, parameters[lfoDelay], 1.0, 1.0, 0.1);
-}
-
-double Voice::GetLfoAmount(double lfoValue)
-{
-	return lfoValue * delayEnvelope.Get();
 }
 
 double Voice::Next(double dt, std::vector<double> &parameters, double lfoValue)

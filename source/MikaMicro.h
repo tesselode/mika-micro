@@ -26,6 +26,7 @@ private:
 
 	void InitParameters();
 	void InitGraphics();
+	void InitVoices();
 
 	Oscillator lfo;
 	std::vector<double> parameters;

@@ -27,6 +27,7 @@ public:
 
 private:
 	double GetBaseFrequency();
+	double GetLfoAmount(double lfoValue);
 	double GetFmAmount(std::vector<double> &parameters, double lfoValue);
 	double GetOsc1Frequency(std::vector<double> &parameters, double fm, double lfoValue);
 	double GetOsc2Frequency(std::vector<double> &parameters, double fm, double lfoValue);
@@ -37,7 +38,6 @@ private:
 	double GetFilterCutoff(std::vector<double> &parameters, double lfoValue);
 
 	void UpdateEnvelopes(double dt, std::vector<double> &parameters);
-	double GetLfoAmount(double lfoValue);
 
 	int note = 69;
 	double baseFrequency = 440.0;
