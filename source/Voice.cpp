@@ -10,6 +10,12 @@ void Voice::SetOsc2Pitch(int coarse, double fine)
 	osc2Factor = pitchFactor(coarse + fine);
 }
 
+Voice::Voice(int seed)
+	:gen(seed),
+	dist(-1.0, 1.0)
+{
+}
+
 int Voice::GetNote()
 {
 	return note;
@@ -79,9 +85,10 @@ double Voice::GetFmAmount(std::vector<double>& parameters, double lfoValue)
 	return fm;
 }
 
-double Voice::GetOsc1Frequency(std::vector<double> &parameters, double fm, double lfoValue)
+double Voice::GetOsc1Frequency(std::vector<double> &parameters, double fm, double lfoValue, double driftValue)
 {
 	double f = GetBaseFrequency() * osc1Factor;
+	f *= 1 + driftValue;
 	f *= lerp(1.0, parameters[volEnvPitch], volumeEnvelope.Get());
 	f *= lerp(1.0, parameters[modEnvPitch], modEnvelope.Get());
 	f *= 1 + parameters[lfoPitch] * GetLfoAmount(lfoValue);
@@ -90,9 +97,10 @@ double Voice::GetOsc1Frequency(std::vector<double> &parameters, double fm, doubl
 	return f;
 }
 
-double Voice::GetOsc2Frequency(std::vector<double> &parameters, double fm, double lfoValue)
+double Voice::GetOsc2Frequency(std::vector<double> &parameters, double fm, double lfoValue, double driftValue)
 {
 	double f = GetBaseFrequency() * osc2Factor;
+	f *= 1 + driftValue;
 	f *= lerp(1.0, parameters[volEnvPitch], volumeEnvelope.Get());
 	f *= lerp(1.0, parameters[modEnvPitch], modEnvelope.Get());
 	f *= 1 + parameters[lfoPitch] * GetLfoAmount(lfoValue);
@@ -104,51 +112,52 @@ double Voice::GetOsc2Frequency(std::vector<double> &parameters, double fm, doubl
 	return f;
 }
 
-double Voice::GetOscFm(double dt, std::vector<double>& parameters, double lfoValue)
+double Voice::GetOscFm(double dt, std::vector<double>& parameters, double lfoValue, double driftValue)
 {
-	return oscFm.Next(dt, GetOsc1Frequency(parameters, 0.0, lfoValue), OscillatorWaveformSine);
+	return oscFm.Next(dt, GetOsc1Frequency(parameters, 0.0, lfoValue, driftValue), OscillatorWaveformSine);
 }
 
-double Voice::GetOsc1(double dt, std::vector<double> &parameters, double fm, double lfoValue)
+double Voice::GetOsc1(double dt, std::vector<double> &parameters, double fm, double lfoValue, double driftValue)
 {
 	if (parameters[osc1Split] > 0.0)
 	{
 		double out = 0.0;
-		auto frequency = GetOsc1Frequency(parameters, fm, lfoValue);
+		auto frequency = GetOsc1Frequency(parameters, fm, lfoValue, driftValue);
 		out += osc1a.Next(dt, frequency / (1 + parameters[osc1Split]), (OscillatorWaveform)(int)parameters[osc1Wave]);
 		out += osc1b.Next(dt, frequency * (1 + parameters[osc1Split]), (OscillatorWaveform)(int)parameters[osc1Wave]);
 		return out;
 	}
-	return osc1a.Next(dt, GetOsc1Frequency(parameters, fm, lfoValue), (OscillatorWaveform)(int)parameters[osc1Wave]);
+	return osc1a.Next(dt, GetOsc1Frequency(parameters, fm, lfoValue, driftValue), (OscillatorWaveform)(int)parameters[osc1Wave]);
 }
 
-double Voice::GetOsc2(double dt, std::vector<double> &parameters, double fm, double lfoValue)
+double Voice::GetOsc2(double dt, std::vector<double> &parameters, double fm, double lfoValue, double driftValue)
 {
 	if (parameters[osc2Split] > 0.0)
 	{
 		double out = 0.0;
-		auto frequency = GetOsc2Frequency(parameters, fm, lfoValue);
+		auto frequency = GetOsc2Frequency(parameters, fm, lfoValue, driftValue);
 		out += osc2a.Next(dt, frequency / (1 + parameters[osc2Split]), (OscillatorWaveform)(int)parameters[osc2Wave]);
 		out += osc2b.Next(dt, frequency * (1 + parameters[osc2Split]), (OscillatorWaveform)(int)parameters[osc2Wave]);
 		return out;
 	}
-	return osc2a.Next(dt, GetOsc2Frequency(parameters, fm, lfoValue), (OscillatorWaveform)(int)parameters[osc2Wave]);
+	return osc2a.Next(dt, GetOsc2Frequency(parameters, fm, lfoValue, driftValue), (OscillatorWaveform)(int)parameters[osc2Wave]);
 }
 
-double Voice::GetOscillators(double dt, std::vector<double> &parameters, double lfoValue)
+double Voice::GetOscillators(double dt, std::vector<double> &parameters, double lfoValue, double driftValue)
 {
-	auto fm = GetOscFm(dt, parameters, lfoValue);
+	auto fm = GetOscFm(dt, parameters, lfoValue, driftValue);
 	double out = 0.0;
 	if (parameters[oscMix] < 1.0)
-		out += GetOsc1(dt, parameters, fm, lfoValue) * (1 - parameters[oscMix]);
+		out += GetOsc1(dt, parameters, fm, lfoValue, driftValue) * (1 - parameters[oscMix]);
 	if (parameters[oscMix] > 0.0)
-		out += GetOsc2(dt, parameters, fm, lfoValue) * parameters[oscMix];
+		out += GetOsc2(dt, parameters, fm, lfoValue, driftValue) * parameters[oscMix];
 	return out;
 }
 
-double Voice::GetFilterCutoff(std::vector<double>& parameters, double lfoValue)
+double Voice::GetFilterCutoff(std::vector<double>& parameters, double lfoValue, double driftValue)
 {
 	double cutoff = parameters[filterCutoff];
+	cutoff *= 1 + driftValue;
 	cutoff += GetBaseFrequency() * parameters[filterKeyTrack];
 	cutoff += parameters[volEnvCutoff] * volumeEnvelope.Get();
 	cutoff += parameters[modEnvCutoff] * modEnvelope.Get();
@@ -165,12 +174,16 @@ void Voice::UpdateEnvelopes(double dt, std::vector<double>& parameters)
 
 double Voice::Next(double dt, std::vector<double> &parameters, double lfoValue)
 {
-	filter.UpdateF(dt, GetFilterCutoff(parameters, lfoValue));
+	driftPhase += dist(gen);
+	driftPhase -= driftPhase * dt;
+	double driftValue = .01 * sin(driftPhase * 10 * dt);
+
+	filter.UpdateF(dt, GetFilterCutoff(parameters, lfoValue, driftValue));
 
 	UpdateEnvelopes(dt, parameters);
 	if (GetVolume() == 0.0) return 0.0;
 
-	auto out = GetOscillators(dt, parameters, lfoValue);
+	auto out = GetOscillators(dt, parameters, lfoValue, driftValue);
 	if (parameters[filterCutoff] < 20000.)
 		for (int i = 0; i < 2; i++)
 			out = filter.Process(out, dt, parameters[filterRes1], parameters[filterRes2]);
