@@ -15,7 +15,7 @@ int Voice::GetNote()
 void Voice::SetNote(int n)
 {
 	note = n;
-	baseFrequency = pitchToFrequency(note);
+	targetFrequency = pitchToFrequency(note);
 }
 
 void Voice::SetVelocity(int v)
@@ -50,6 +50,7 @@ void Voice::SetOsc2Pitch(int coarse, double fine)
 
 void Voice::Start()
 {
+	baseFrequency = targetFrequency;
 	if (GetVolume() == 0.0) Reset();
 	volumeEnvelope.Start();
 	modEnvelope.Start();
@@ -188,6 +189,7 @@ double Voice::Next(double dt, double lfo)
 	deltaTime = dt;
 	lfoValue = lfo;
 
+	baseFrequency = lerp(baseFrequency, targetFrequency, parameters[glideSpeed] * dt);
 	UpdateDrift();
 	filter.UpdateF(dt, GetFilterCutoff());
 	UpdateEnvelopes();

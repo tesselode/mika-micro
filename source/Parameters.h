@@ -37,6 +37,7 @@ enum ParameterList
 	lfoFm,
 	lfoCutoff,
 	monoMode,
+	glideSpeed,
 	masterVolume,
 	numParameters
 };

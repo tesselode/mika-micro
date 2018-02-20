@@ -50,7 +50,8 @@ void MikaMicro::InitParameters()
 	GetParam(lfoCutoff)->InitDouble("Vibrato to filter cutoff", 0.0, -20000., 20000., .01, "hz");
 
 	// master
-	GetParam(monoMode)->InitBool("Mono", true);
+	GetParam(monoMode)->InitBool("Mono mode", true);
+	GetParam(glideSpeed)->InitDouble("Glide speed", 1.0, 1.0, 1000.0, .01, "", "", .1);
 	GetParam(masterVolume)->InitDouble("Master volume", 0.5, 0.0, 1.0, .01);
 
 	for (int i = 0; i < numParameters; i++)
@@ -113,6 +114,7 @@ void MikaMicro::InitGraphics()
 
 	// master
 	pGraphics->AttachControl(new ISwitchControl(this, 24 * 4, 90 * 4, monoMode, &toggleSwitch));
+	pGraphics->AttachControl(new IKnobMultiControl(this, 40 * 4, 90 * 4, glideSpeed, &knob));
 	pGraphics->AttachControl(new IKnobMultiControl(this, 56 * 4, 90 * 4, masterVolume, &knob));
 
 	AttachGraphics(pGraphics);
@@ -178,7 +180,8 @@ void MikaMicro::OnParamChange(int paramIdx)
 	parameters[paramIdx] = GetParam(paramIdx)->Value();
 
 	if (paramIdx == oscMix || paramIdx == volEnvA || paramIdx == volEnvD || paramIdx == volEnvR ||
-			paramIdx == modEnvA || paramIdx == modEnvD || paramIdx == modEnvR || paramIdx == lfoDelay)
+			paramIdx == modEnvA || paramIdx == modEnvD || paramIdx == modEnvR || paramIdx == lfoDelay ||
+			paramIdx == glideSpeed)
 	{
 		parameters[paramIdx] = GetParam(paramIdx)->GetMax() + GetParam(paramIdx)->GetMin() - parameters[paramIdx];
 	}
