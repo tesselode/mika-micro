@@ -77,6 +77,10 @@ void MidiReceiver::Process(std::vector<Voice>& voices, int s)
 			for (auto& voice : voices)
 				voice.SetPitchBendFactor(pitchFactor(message->PitchWheel() * 2));
 		}
+		else if (status == IMidiMsg::kAllNotesOff)
+		{
+			for (auto& voice : voices) voice.Release();
+		}
 		midiQueue.Remove();
 	}
 }
