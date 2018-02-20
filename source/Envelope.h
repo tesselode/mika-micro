@@ -16,7 +16,7 @@ public:
 	void Release();
 	void Reset();
 	void Update(double dt, double a, double d, double s, double r);
-	double Get();
+	double Get(double velocitySensitivity, int velocity);
 	bool IsReleased();
 
 private:

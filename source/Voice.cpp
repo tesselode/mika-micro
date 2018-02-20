@@ -18,9 +18,14 @@ void Voice::SetNote(int n)
 	baseFrequency = pitchToFrequency(note);
 }
 
+void Voice::SetVelocity(int v)
+{
+	velocity = v;
+}
+
 double Voice::GetVolume()
 {
-	return volumeEnvelope.Get();
+	return volumeEnvelope.Get(parameters[volEnvV], velocity);
 }
 
 bool Voice::IsReleased()
@@ -65,14 +70,14 @@ double Voice::GetBaseFrequency()
 
 double Voice::GetLfoAmount()
 {
-	return lfoValue * delayEnvelope.Get();
+	return lfoValue * delayEnvelope.Get(0.0, 0);
 }
 
 double Voice::GetFmAmount()
 {
 	double fm = fabs(parameters[fmCoarse]) + parameters[fmFine];
-	fm += parameters[volEnvFm] * volumeEnvelope.Get();
-	fm += parameters[modEnvFm] * modEnvelope.Get();
+	fm += parameters[volEnvFm] * volumeEnvelope.Get(parameters[volEnvV], velocity);
+	fm += parameters[modEnvFm] * modEnvelope.Get(parameters[modEnvV], velocity);
 	fm += parameters[lfoFm] * GetLfoAmount();
 	return fm;
 }
@@ -147,8 +152,8 @@ double Voice::GetFilterCutoff()
 	double cutoff = parameters[filterCutoff];
 	cutoff *= 1 + driftValue;
 	cutoff += GetBaseFrequency() * parameters[filterKeyTrack];
-	cutoff += parameters[volEnvCutoff] * volumeEnvelope.Get();
-	cutoff += parameters[modEnvCutoff] * modEnvelope.Get();
+	cutoff += parameters[volEnvCutoff] * volumeEnvelope.Get(parameters[volEnvV], velocity);
+	cutoff += parameters[modEnvCutoff] * modEnvelope.Get(parameters[modEnvV], velocity);
 	cutoff += parameters[lfoCutoff] * GetLfoAmount();
 	return cutoff;
 }

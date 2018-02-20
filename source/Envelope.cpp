@@ -38,9 +38,9 @@ void Envelope::Update(double dt, double a, double d, double s, double r)
 	}
 }
 
-double Envelope::Get()
+double Envelope::Get(double velocitySensitivity, int velocity)
 {
-	return value;
+	return value * ((1 - velocitySensitivity) + velocitySensitivity * velocity * .0078125);
 }
 
 bool Envelope::IsReleased()

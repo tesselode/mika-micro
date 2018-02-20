@@ -31,10 +31,12 @@ void MikaMicro::InitParameters()
 	GetParam(volEnvD)->InitDouble("Volume envelope decay", 998.0, 0.1, 1000.0, .01, "", "", .01);
 	GetParam(volEnvS)->InitDouble("Volume envelope sustain", 1.0, 0.0, 1.0, .01);
 	GetParam(volEnvR)->InitDouble("Volume envelope release", 100.0, 0.1, 1000.0, .01, "", "", .01);
+	GetParam(volEnvV)->InitDouble("Volume envelope velocity sensitivity", 0.0, 0.0, 1.0, .01);
 	GetParam(modEnvA)->InitDouble("Modulation envelope attack", 998.0, 0.1, 1000.0, .01, "", "", .01);
 	GetParam(modEnvD)->InitDouble("Modulation envelope decay", 998.0, 0.1, 1000.0, .01, "", "", .01);
 	GetParam(modEnvS)->InitDouble("Modulation envelope sustain", 0.5, 0.0, 1.0, .01);
 	GetParam(modEnvR)->InitDouble("Modulation envelope release", 998.0, 0.1, 1000.0, .01, "", "", .01);
+	GetParam(modEnvV)->InitDouble("Modulation envelope velocity sensitivity", 0.0, 0.0, 1.0, .01);
 	GetParam(lfoAmount)->InitDouble("Vibrato amount", 0.0, -0.1, 0.1, .01);
 	GetParam(lfoFrequency)->InitDouble("Vibrato frequency", 4.0, 0.1, 10.0, .01, "", "", 2.0);
 	GetParam(lfoDelay)->InitDouble("Vibrato delay", 0.1, 0.1, 1000.0, .01, "", "", .001);
@@ -91,10 +93,12 @@ void MikaMicro::InitGraphics()
 	pGraphics->AttachControl(new IFaderControl(this, 127.5 * 4, 21 * 4, 22 * 4, volEnvD, &slider));
 	pGraphics->AttachControl(new IFaderControl(this, 135.5 * 4, 21 * 4, 22 * 4, volEnvS, &slider));
 	pGraphics->AttachControl(new IFaderControl(this, 143.5 * 4, 21 * 4, 22 * 4, volEnvR, &slider));
+	pGraphics->AttachControl(new IFaderControl(this, 151.5 * 4, 21 * 4, 22 * 4, volEnvV, &slider));
 	pGraphics->AttachControl(new IFaderControl(this, 119.5 * 4, 57 * 4, 22 * 4, modEnvA, &slider));
 	pGraphics->AttachControl(new IFaderControl(this, 127.5 * 4, 57 * 4, 22 * 4, modEnvD, &slider));
 	pGraphics->AttachControl(new IFaderControl(this, 135.5 * 4, 57 * 4, 22 * 4, modEnvS, &slider));
 	pGraphics->AttachControl(new IFaderControl(this, 143.5 * 4, 57 * 4, 22 * 4, modEnvR, &slider));
+	pGraphics->AttachControl(new IFaderControl(this, 151.5 * 4, 57 * 4, 22 * 4, modEnvV, &slider));
 	pGraphics->AttachControl(new IKnobMultiControl(this, 170 * 4, 12 * 4, lfoAmount, &knob));
 	pGraphics->AttachControl(new IKnobMultiControl(this, 186 * 4, 12 * 4, lfoFrequency, &knob));
 	pGraphics->AttachControl(new IKnobMultiControl(this, 202 * 4, 12 * 4, lfoDelay, &knob));

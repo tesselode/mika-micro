@@ -38,6 +38,7 @@ void MidiReceiver::Process(std::vector<Voice>& voices, int s)
 				else
 				{
 					voices[0].SetNote(heldNotes.back().note);
+					voices[0].SetVelocity(heldNotes.back().velocity);
 				}
 			}
 			else
@@ -51,6 +52,7 @@ void MidiReceiver::Process(std::vector<Voice>& voices, int s)
 			if (mono)
 			{
 				voices[0].SetNote(note);
+				voices[0].SetVelocity(velocity);
 				if (heldNotes.empty()) voices[0].Start();
 			}
 			else
@@ -64,6 +66,7 @@ void MidiReceiver::Process(std::vector<Voice>& voices, int s)
 					return a.IsReleased() == b.IsReleased() ? a.GetVolume() < b.GetVolume() : a.IsReleased();
 				});
 				voice->SetNote(note);
+				voice->SetVelocity(velocity);
 				voice->Start();
 			}
 

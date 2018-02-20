@@ -16,6 +16,7 @@ public:
 
 	int GetNote();
 	void SetNote(int n);
+	void SetVelocity(int v);
 	double GetVolume();
 	bool IsReleased();
 	void SetPitchBendFactor(double v);
@@ -31,6 +32,7 @@ public:
 private:
 	std::vector<double>& parameters;
 	int note = 69;
+	int velocity = 0;
 	double baseFrequency = 440.0;
 	double pitchBendFactor = 1.0;
 	double osc1Factor = 1.0;
