@@ -189,12 +189,11 @@ double Voice::Next(double dt, double lfo)
 	deltaTime = dt;
 	lfoValue = lfo;
 
-	baseFrequency = lerp(baseFrequency, targetFrequency, parameters[glideSpeed] * dt);
-	UpdateDrift();
 	filter.UpdateF(dt, GetFilterCutoff());
 	UpdateEnvelopes();
-
 	if (GetVolume() == 0.0) return 0.0;
+	baseFrequency = lerp(baseFrequency, targetFrequency, parameters[glideSpeed] * dt);
+	UpdateDrift();
 
 	auto out = GetOscillators();
 	if (parameters[filterCutoff] < 20000.)
