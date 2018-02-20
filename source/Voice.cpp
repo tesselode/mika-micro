@@ -10,8 +10,9 @@ void Voice::SetOsc2Pitch(int coarse, double fine)
 	osc2Factor = pitchFactor(coarse + fine);
 }
 
-Voice::Voice(int seed)
-	:gen(seed),
+Voice::Voice(std::vector<double>& params, int seed)
+	:parameters(params),
+	gen(seed),
 	dist(-1.0, 1.0)
 {
 }
@@ -71,113 +72,115 @@ double Voice::GetBaseFrequency()
 	return baseFrequency * pitchBendFactor;
 }
 
-double Voice::GetLfoAmount(double lfoValue)
+double Voice::GetLfoAmount()
 {
 	return lfoValue * delayEnvelope.Get();
 }
 
-double Voice::GetFmAmount(std::vector<double>& parameters, double lfoValue)
+double Voice::GetFmAmount()
 {
 	double fm = fabs(parameters[fmCoarse]) + parameters[fmFine];
 	fm += parameters[volEnvFm] * volumeEnvelope.Get();
 	fm += parameters[modEnvFm] * modEnvelope.Get();
-	fm += parameters[lfoFm] * GetLfoAmount(lfoValue);
+	fm += parameters[lfoFm] * GetLfoAmount();
 	return fm;
 }
 
-double Voice::GetOsc1Frequency(std::vector<double> &parameters, double fm, double lfoValue, double driftValue)
+double Voice::GetOsc1Frequency(double fmValue)
 {
 	double f = GetBaseFrequency() * osc1Factor;
 	f *= 1 + driftValue;
 	if (parameters[lfoAmount] < 0.0)
-		f *= 1 + parameters[lfoAmount] * GetLfoAmount(lfoValue);
+		f *= 1 + parameters[lfoAmount] * GetLfoAmount();
 	if (parameters[fmCoarse] < 0.0)
-		f *= pitchFactor(fm * GetFmAmount(parameters, lfoValue));
+		f *= pitchFactor(fmValue * GetFmAmount());
 	return f;
 }
 
-double Voice::GetOsc2Frequency(std::vector<double> &parameters, double fm, double lfoValue, double driftValue)
+double Voice::GetOsc2Frequency(double fmValue)
 {
 	double f = GetBaseFrequency() * osc2Factor;
 	f *= 1 + driftValue;
-	f *= 1 + parameters[lfoAmount] * GetLfoAmount(lfoValue);
+	f *= 1 + parameters[lfoAmount] * GetLfoAmount();
 	if (parameters[fmCoarse] > 0.0)
-		f *= pitchFactor(fm * GetFmAmount(parameters, lfoValue));
+		f *= pitchFactor(fmValue * GetFmAmount());
 	return f;
 }
 
-double Voice::GetOscFm(double dt, std::vector<double>& parameters, double lfoValue, double driftValue)
+double Voice::GetOscFm()
 {
-	return oscFm.Next(dt, GetOsc1Frequency(parameters, 0.0, lfoValue, driftValue), OscillatorWaveformSine);
+	return oscFm.Next(dt, GetOsc1Frequency(0.0), OscillatorWaveformSine);
 }
 
-double Voice::GetOsc1(double dt, std::vector<double> &parameters, double fm, double lfoValue, double driftValue)
+double Voice::GetOsc1()
 {
 	if (parameters[osc1Split] > 0.0)
 	{
 		double out = 0.0;
-		auto frequency = GetOsc1Frequency(parameters, fm, lfoValue, driftValue);
+		auto frequency = GetOsc1Frequency(fmValue);
 		out += osc1a.Next(dt, frequency / (1 + parameters[osc1Split]), (OscillatorWaveform)(int)parameters[osc1Wave]);
 		out += osc1b.Next(dt, frequency * (1 + parameters[osc1Split]), (OscillatorWaveform)(int)parameters[osc1Wave]);
 		return out;
 	}
-	return osc1a.Next(dt, GetOsc1Frequency(parameters, fm, lfoValue, driftValue), (OscillatorWaveform)(int)parameters[osc1Wave]);
+	return osc1a.Next(dt, GetOsc1Frequency(fmValue), (OscillatorWaveform)(int)parameters[osc1Wave]);
 }
 
-double Voice::GetOsc2(double dt, std::vector<double> &parameters, double fm, double lfoValue, double driftValue)
+double Voice::GetOsc2()
 {
 	if (parameters[osc2Split] > 0.0)
 	{
 		double out = 0.0;
-		auto frequency = GetOsc2Frequency(parameters, fm, lfoValue, driftValue);
+		auto frequency = GetOsc2Frequency(fmValue);
 		out += osc2a.Next(dt, frequency / (1 + parameters[osc2Split]), (OscillatorWaveform)(int)parameters[osc2Wave]);
 		out += osc2b.Next(dt, frequency * (1 + parameters[osc2Split]), (OscillatorWaveform)(int)parameters[osc2Wave]);
 		return out;
 	}
-	return osc2a.Next(dt, GetOsc2Frequency(parameters, fm, lfoValue, driftValue), (OscillatorWaveform)(int)parameters[osc2Wave]);
+	return osc2a.Next(dt, GetOsc2Frequency(fmValue), (OscillatorWaveform)(int)parameters[osc2Wave]);
 }
 
-double Voice::GetOscillators(double dt, std::vector<double> &parameters, double lfoValue, double driftValue)
+double Voice::GetOscillators()
 {
-	auto fm = GetOscFm(dt, parameters, lfoValue, driftValue);
+	fmValue = GetOscFm();
 	double out = 0.0;
 	if (parameters[oscMix] < 1.0)
-		out += GetOsc1(dt, parameters, fm, lfoValue, driftValue) * (1 - parameters[oscMix]);
+		out += GetOsc1() * (1 - parameters[oscMix]);
 	if (parameters[oscMix] > 0.0)
-		out += GetOsc2(dt, parameters, fm, lfoValue, driftValue) * parameters[oscMix];
+		out += GetOsc2() * parameters[oscMix];
 	return out;
 }
 
-double Voice::GetFilterCutoff(std::vector<double>& parameters, double lfoValue, double driftValue)
+double Voice::GetFilterCutoff()
 {
 	double cutoff = parameters[filterCutoff];
 	cutoff *= 1 + driftValue;
 	cutoff += GetBaseFrequency() * parameters[filterKeyTrack];
 	cutoff += parameters[volEnvCutoff] * volumeEnvelope.Get();
 	cutoff += parameters[modEnvCutoff] * modEnvelope.Get();
-	cutoff += parameters[lfoCutoff] * GetLfoAmount(lfoValue);
+	cutoff += parameters[lfoCutoff] * GetLfoAmount();
 	return cutoff;
 }
 
-void Voice::UpdateEnvelopes(double dt, std::vector<double>& parameters)
+void Voice::UpdateEnvelopes()
 {
 	volumeEnvelope.Update(dt, parameters[volEnvA], parameters[volEnvD], parameters[volEnvS], parameters[volEnvR]);
 	modEnvelope.Update(dt, parameters[modEnvA], parameters[modEnvD], parameters[modEnvS], parameters[modEnvR]);
 	delayEnvelope.Update(dt, parameters[lfoDelay], 1.0, 1.0, 0.1);
 }
 
-double Voice::Next(double dt, std::vector<double> &parameters, double lfoValue)
+double Voice::Next(double dt, double lfo)
 {
+	this->dt = dt;
+	lfoValue = lfo;
 	driftPhase += dist(gen);
 	driftPhase -= driftPhase * dt;
-	double driftValue = .01 * sin(driftPhase * 10 * dt);
+	driftValue = .01 * sin(driftPhase * 10 * dt);
 
-	filter.UpdateF(dt, GetFilterCutoff(parameters, lfoValue, driftValue));
+	filter.UpdateF(dt, GetFilterCutoff());
 
-	UpdateEnvelopes(dt, parameters);
+	UpdateEnvelopes();
 	if (GetVolume() == 0.0) return 0.0;
 
-	auto out = GetOscillators(dt, parameters, lfoValue, driftValue);
+	auto out = GetOscillators();
 	if (parameters[filterCutoff] < 20000.)
 		for (int i = 0; i < 2; i++)
 			out = filter.Process(out, dt, parameters[filterRes1], parameters[filterRes2]);

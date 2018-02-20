@@ -117,7 +117,7 @@ void MikaMicro::InitGraphics()
 void MikaMicro::InitVoices()
 {
 	for (int i = 0; i < numVoices; i++)
-		voices.push_back(Voice(i));
+		voices.push_back(Voice(parameters, i));
 }
 
 MikaMicro::MikaMicro(IPlugInstanceInfo instanceInfo)
@@ -152,7 +152,7 @@ void MikaMicro::ProcessDoubleReplacing(double** inputs, double** outputs, int nF
 
 		double out = 0.0;
 		for (auto& voice : voices)
-			out += .5 * voice.Next(dt, parameters, lfoValue);
+			out += .5 * voice.Next(dt, lfoValue);
 		out *= parameters[masterVolume];
 
 		*out1 = out;
