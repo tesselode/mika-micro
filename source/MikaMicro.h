@@ -22,6 +22,8 @@ public:
 	void ProcessDoubleReplacing(double** inputs, double** outputs, int nFrames);
 
 private:
+	IGraphics * pGraphics;
+
 	double dt = 0.0;
 
 	void InitParameters();
@@ -32,6 +34,8 @@ private:
 	std::vector<double> parameters;
 	std::vector<Voice> voices;
 	MidiReceiver midiReceiver;
+
+	void GrayOutControls();
 };
 
 #endif

@@ -43,10 +43,10 @@ void MikaMicro::InitParameters()
 
 	// modulation targets
 	GetParam(volEnvFm)->InitDouble("Volume envelope to FM amount", 0.0, -24.0, 24.0, .01, "semitones");
-	GetParam(volEnvCutoff)->InitDouble("Volume envelope to filter cutoff", 0.0, -20000., 20000., .01, "hz");
 	GetParam(modEnvFm)->InitDouble("Modulation envelope to FM amount", 0.0, -24.0, 24.0, .01, "semitones");
-	GetParam(modEnvCutoff)->InitDouble("Modulation envelope to filter cutoff", 0.0, -20000., 20000., .01, "hz");
 	GetParam(lfoFm)->InitDouble("Vibrato to FM amount", 0.0, -24.0, 24.0, .01, "semitones");
+	GetParam(volEnvCutoff)->InitDouble("Volume envelope to filter cutoff", 0.0, -20000., 20000., .01, "hz");
+	GetParam(modEnvCutoff)->InitDouble("Modulation envelope to filter cutoff", 0.0, -20000., 20000., .01, "hz");
 	GetParam(lfoCutoff)->InitDouble("Vibrato to filter cutoff", 0.0, -20000., 20000., .01, "hz");
 
 	// master
@@ -60,7 +60,7 @@ void MikaMicro::InitParameters()
 
 void MikaMicro::InitGraphics()
 {
-	IGraphics* pGraphics = MakeGraphics(this, GUI_WIDTH, GUI_HEIGHT, 120);
+	pGraphics = MakeGraphics(this, GUI_WIDTH, GUI_HEIGHT, 120);
 	pGraphics->AttachBackground(BG_ID, BG_FN);
 
 	auto knob = pGraphics->LoadIBitmap(KNOB_ID, KNOB_FN, 55);
@@ -173,12 +173,51 @@ void MikaMicro::Reset()
 	dt = 1.0 / GetSampleRate();
 }
 
+void MikaMicro::GrayOutControls()
+{
+	auto fmEnabled = (parameters[fmCoarse] < 0.0 && parameters[oscMix] < 1.0) ||
+		(parameters[fmCoarse] > 0.0 && parameters[oscMix] > 0.0);
+	auto osc1Enabled = parameters[oscMix] < 1.0;
+	auto osc2Enabled = parameters[oscMix] > 0.0;
+	auto filterEnabled = parameters[filterCutoff] < 20000.;
+	auto vibratoEnabled = parameters[lfoFm] != 0.0 || parameters[lfoCutoff] != 0.0 ||
+		parameters[lfoAmount] < 0.0 || (parameters[lfoAmount] > 0.0 && osc2Enabled);
+	
+	pGraphics->GetControl(osc1Wave + 1)->GrayOut(!osc1Enabled);
+	pGraphics->GetControl(osc1Coarse + 1)->GrayOut(!(osc1Enabled || fmEnabled));
+	pGraphics->GetControl(osc1Fine + 1)->GrayOut(!(osc1Enabled || fmEnabled));
+	pGraphics->GetControl(osc1Split + 1)->GrayOut(!osc1Enabled);
+	
+	pGraphics->GetControl(osc2Wave + 1)->GrayOut(!osc2Enabled);
+	pGraphics->GetControl(osc2Coarse + 1)->GrayOut(!osc2Enabled);
+	pGraphics->GetControl(osc2Fine + 1)->GrayOut(!osc2Enabled);
+	pGraphics->GetControl(osc2Split + 1)->GrayOut(!osc2Enabled);
+
+	pGraphics->GetControl(fmFine + 1)->GrayOut(!fmEnabled);
+	
+	pGraphics->GetControl(filterRes1 + 1)->GrayOut(!filterEnabled);
+	pGraphics->GetControl(filterRes2 + 1)->GrayOut(!filterEnabled);
+	pGraphics->GetControl(filterKeyTrack + 1)->GrayOut(!filterEnabled);
+	
+	pGraphics->GetControl(lfoFrequency + 1)->GrayOut(!vibratoEnabled);
+	pGraphics->GetControl(lfoDelay + 1)->GrayOut(!vibratoEnabled);
+
+	pGraphics->GetControl(volEnvFm + 1)->GrayOut(!fmEnabled);
+	pGraphics->GetControl(modEnvFm + 1)->GrayOut(!fmEnabled);
+	pGraphics->GetControl(lfoFm - 2)->GrayOut(!fmEnabled); // wdl-ol are you ok?
+	pGraphics->GetControl(volEnvCutoff + 3)->GrayOut(!filterEnabled);
+	pGraphics->GetControl(modEnvCutoff + 3)->GrayOut(!filterEnabled);
+	pGraphics->GetControl(lfoCutoff)->GrayOut(!filterEnabled);
+
+	pGraphics->GetControl(glideSpeed + 1)->GrayOut(!parameters[monoMode]);
+}
+
 void MikaMicro::OnParamChange(int paramIdx)
 {
 	IMutexLock lock(this);
 
+	// reverse parameters
 	parameters[paramIdx] = GetParam(paramIdx)->Value();
-
 	if (paramIdx == oscMix || paramIdx == volEnvA || paramIdx == volEnvD || paramIdx == volEnvR ||
 			paramIdx == modEnvA || paramIdx == modEnvD || paramIdx == modEnvR || paramIdx == lfoDelay ||
 			paramIdx == glideSpeed)
@@ -187,16 +226,14 @@ void MikaMicro::OnParamChange(int paramIdx)
 	}
 
 	if (paramIdx == osc1Coarse || paramIdx == osc1Fine)
-		for (auto &v : voices)
-			v.SetOsc1Pitch(parameters[osc1Coarse], parameters[osc1Fine]);
+		for (auto &v : voices) v.SetOsc1Pitch(parameters[osc1Coarse], parameters[osc1Fine]);
 	if (paramIdx == osc2Coarse || paramIdx == osc2Fine)
-		for (auto &v : voices)
-			v.SetOsc2Pitch(parameters[osc2Coarse], parameters[osc2Fine]);
-
+		for (auto &v : voices) v.SetOsc2Pitch(parameters[osc2Coarse], parameters[osc2Fine]);
 	if (paramIdx == monoMode)
 	{
-		midiReceiver.SetMono(GetParam(paramIdx)->Value());
-		for (int i = 1; i < std::size(voices); i++)
-			voices[i].Release();
+		midiReceiver.SetMono((bool)parameters[monoMode]);
+		for (auto &v : voices) v.Release();
 	}
+
+	GrayOutControls();
 }
