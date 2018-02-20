@@ -65,6 +65,7 @@ void MikaMicro::InitGraphics()
 
 	auto knob = pGraphics->LoadIBitmap(KNOB_ID, KNOB_FN, 55);
 	auto slider = pGraphics->LoadIBitmap(SLIDER_ID, SLIDER_FN, 1);
+	auto sliderBg = pGraphics->LoadIBitmap(SLIDERBG_ID, SLIDERBG_FN, 1);
 	auto waveformSwitch = pGraphics->LoadIBitmap(WAVEFORMSWITCH_ID, WAVEFORMSWITCH_FN, numWaveforms);
 	auto toggleSwitch = pGraphics->LoadIBitmap(TOGGLESWITCH_ID, TOGGLESWITCH_FN, 2);
 
@@ -77,6 +78,7 @@ void MikaMicro::InitGraphics()
 	pGraphics->AttachControl(new IKnobMultiControl(this, 40 * 4, 28 * 4, osc2Coarse, &knob));
 	pGraphics->AttachControl(new IKnobMultiControl(this, 56 * 4, 28 * 4, osc2Fine, &knob));
 	pGraphics->AttachControl(new IKnobMultiControl(this, 72 * 4, 28 * 4, osc2Split, &knob));
+	pGraphics->AttachControl(new IBitmapControl(this, 93.5 * 4, 17 * 4, &sliderBg));
 	pGraphics->AttachControl(new IFaderControl(this, 92.5 * 4, 17 * 4, 22 * 4, oscMix, &slider));
 
 	// fm
@@ -90,15 +92,25 @@ void MikaMicro::InitGraphics()
 	pGraphics->AttachControl(new IKnobMultiControl(this, 72 * 4, 64 * 4, filterKeyTrack, &knob));
 
 	// modulation sources
+	pGraphics->AttachControl(new IBitmapControl(this, 120.5 * 4, 21 * 4, &sliderBg));
 	pGraphics->AttachControl(new IFaderControl(this, 119.5 * 4, 21 * 4, 22 * 4, volEnvA, &slider));
+	pGraphics->AttachControl(new IBitmapControl(this, 128.5 * 4, 21 * 4, &sliderBg));
 	pGraphics->AttachControl(new IFaderControl(this, 127.5 * 4, 21 * 4, 22 * 4, volEnvD, &slider));
+	pGraphics->AttachControl(new IBitmapControl(this, 136.5 * 4, 21 * 4, &sliderBg));
 	pGraphics->AttachControl(new IFaderControl(this, 135.5 * 4, 21 * 4, 22 * 4, volEnvS, &slider));
+	pGraphics->AttachControl(new IBitmapControl(this, 144.5 * 4, 21 * 4, &sliderBg));
 	pGraphics->AttachControl(new IFaderControl(this, 143.5 * 4, 21 * 4, 22 * 4, volEnvR, &slider));
+	pGraphics->AttachControl(new IBitmapControl(this, 152.5 * 4, 21 * 4, &sliderBg));
 	pGraphics->AttachControl(new IFaderControl(this, 151.5 * 4, 21 * 4, 22 * 4, volEnvV, &slider));
+	pGraphics->AttachControl(new IBitmapControl(this, 120.5 * 4, 57 * 4, &sliderBg));
 	pGraphics->AttachControl(new IFaderControl(this, 119.5 * 4, 57 * 4, 22 * 4, modEnvA, &slider));
+	pGraphics->AttachControl(new IBitmapControl(this, 128.5 * 4, 57 * 4, &sliderBg));
 	pGraphics->AttachControl(new IFaderControl(this, 127.5 * 4, 57 * 4, 22 * 4, modEnvD, &slider));
+	pGraphics->AttachControl(new IBitmapControl(this, 136.5 * 4, 57 * 4, &sliderBg));
 	pGraphics->AttachControl(new IFaderControl(this, 135.5 * 4, 57 * 4, 22 * 4, modEnvS, &slider));
+	pGraphics->AttachControl(new IBitmapControl(this, 144.5 * 4, 57 * 4, &sliderBg));
 	pGraphics->AttachControl(new IFaderControl(this, 143.5 * 4, 57 * 4, 22 * 4, modEnvR, &slider));
+	pGraphics->AttachControl(new IBitmapControl(this, 152.5 * 4, 57 * 4, &sliderBg));
 	pGraphics->AttachControl(new IFaderControl(this, 151.5 * 4, 57 * 4, 22 * 4, modEnvV, &slider));
 	pGraphics->AttachControl(new IKnobMultiControl(this, 170 * 4, 12 * 4, lfoAmount, &knob));
 	pGraphics->AttachControl(new IKnobMultiControl(this, 186 * 4, 12 * 4, lfoFrequency, &knob));
@@ -180,36 +192,22 @@ void MikaMicro::GrayOutControls()
 	auto osc1Enabled = parameters[oscMix] < 1.0;
 	auto osc2Enabled = parameters[oscMix] > 0.0;
 	auto filterEnabled = parameters[filterCutoff] < 20000.;
+	auto modEnvEnabled = parameters[modEnvFm] != 0.0 || parameters[modEnvCutoff] != 0.0;
 	auto vibratoEnabled = parameters[lfoFm] != 0.0 || parameters[lfoCutoff] != 0.0 ||
 		parameters[lfoAmount] < 0.0 || (parameters[lfoAmount] > 0.0 && osc2Enabled);
 	
-	pGraphics->GetControl(osc1Wave + 1)->GrayOut(!osc1Enabled);
-	pGraphics->GetControl(osc1Coarse + 1)->GrayOut(!(osc1Enabled || fmEnabled));
-	pGraphics->GetControl(osc1Fine + 1)->GrayOut(!(osc1Enabled || fmEnabled));
-	pGraphics->GetControl(osc1Split + 1)->GrayOut(!osc1Enabled);
-	
-	pGraphics->GetControl(osc2Wave + 1)->GrayOut(!osc2Enabled);
-	pGraphics->GetControl(osc2Coarse + 1)->GrayOut(!osc2Enabled);
-	pGraphics->GetControl(osc2Fine + 1)->GrayOut(!osc2Enabled);
-	pGraphics->GetControl(osc2Split + 1)->GrayOut(!osc2Enabled);
-
-	pGraphics->GetControl(fmFine + 1)->GrayOut(!fmEnabled);
-	
-	pGraphics->GetControl(filterRes1 + 1)->GrayOut(!filterEnabled);
-	pGraphics->GetControl(filterRes2 + 1)->GrayOut(!filterEnabled);
-	pGraphics->GetControl(filterKeyTrack + 1)->GrayOut(!filterEnabled);
-	
-	pGraphics->GetControl(lfoFrequency + 1)->GrayOut(!vibratoEnabled);
-	pGraphics->GetControl(lfoDelay + 1)->GrayOut(!vibratoEnabled);
-
-	pGraphics->GetControl(volEnvFm + 1)->GrayOut(!fmEnabled);
-	pGraphics->GetControl(modEnvFm + 1)->GrayOut(!fmEnabled);
-	pGraphics->GetControl(lfoFm - 2)->GrayOut(!fmEnabled); // wdl-ol are you ok?
-	pGraphics->GetControl(volEnvCutoff + 3)->GrayOut(!filterEnabled);
-	pGraphics->GetControl(modEnvCutoff + 3)->GrayOut(!filterEnabled);
-	pGraphics->GetControl(lfoCutoff)->GrayOut(!filterEnabled);
-
-	pGraphics->GetControl(glideSpeed + 1)->GrayOut(!parameters[monoMode]);
+	pGraphics->GetControl(1)->GrayOut(!osc1Enabled);
+	pGraphics->GetControl(2)->GrayOut(!(osc1Enabled || fmEnabled));
+	pGraphics->GetControl(3)->GrayOut(!(osc1Enabled || fmEnabled));
+	pGraphics->GetControl(4)->GrayOut(!osc1Enabled);
+	for (int i = 5; i < 9; i++) pGraphics->GetControl(i)->GrayOut(!osc2Enabled);
+	pGraphics->GetControl(12)->GrayOut(!fmEnabled);
+	for (int i = 14; i < 17; i++) pGraphics->GetControl(i)->GrayOut(!filterEnabled);
+	for (int i = 27; i < 37; i++) pGraphics->GetControl(i)->GrayOut(!modEnvEnabled);
+	for (int i = 38; i < 40; i++) pGraphics->GetControl(i)->GrayOut(!vibratoEnabled);
+	for (int i = 40; i < 43; i++) pGraphics->GetControl(i)->GrayOut(!fmEnabled);
+	for (int i = 43; i < 46; i++) pGraphics->GetControl(i)->GrayOut(!filterEnabled);
+	pGraphics->GetControl(47)->GrayOut(!parameters[monoMode]);
 }
 
 void MikaMicro::OnParamChange(int paramIdx)
