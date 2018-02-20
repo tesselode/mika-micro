@@ -1,15 +1,5 @@
 #include "Voice.h"
 
-void Voice::SetOsc1Pitch(int coarse, double fine)
-{
-	osc1Factor = pitchFactor(coarse + fine);
-}
-
-void Voice::SetOsc2Pitch(int coarse, double fine)
-{
-	osc2Factor = pitchFactor(coarse + fine);
-}
-
 Voice::Voice(std::vector<double>& params, int seed)
 	:parameters(params),
 	gen(seed),
@@ -43,18 +33,19 @@ void Voice::SetPitchBendFactor(double v)
 	pitchBendFactor = v;
 }
 
+void Voice::SetOsc1Pitch(int coarse, double fine)
+{
+	osc1Factor = pitchFactor(coarse + fine);
+}
+
+void Voice::SetOsc2Pitch(int coarse, double fine)
+{
+	osc2Factor = pitchFactor(coarse + fine);
+}
+
 void Voice::Start()
 {
-	if (GetVolume() == 0.0)
-	{
-		osc1a.ResetPhase();
-		osc1b.ResetPhase();
-		osc2a.ResetPhase();
-		osc2b.ResetPhase();
-		volumeEnvelope.Reset();
-		modEnvelope.Reset();
-		delayEnvelope.Reset();
-	}
+	if (GetVolume() == 0.0) Reset();
 	volumeEnvelope.Start();
 	modEnvelope.Start();
 	delayEnvelope.Start();
@@ -86,56 +77,58 @@ double Voice::GetFmAmount()
 	return fm;
 }
 
-double Voice::GetOsc1Frequency(double fmValue)
+double Voice::GetOsc1Frequency(bool applyFm)
 {
 	double f = GetBaseFrequency() * osc1Factor;
 	f *= 1 + driftValue;
 	if (parameters[lfoAmount] < 0.0)
 		f *= 1 + parameters[lfoAmount] * GetLfoAmount();
-	if (parameters[fmCoarse] < 0.0)
+	if (applyFm && parameters[fmCoarse] < 0.0)
 		f *= pitchFactor(fmValue * GetFmAmount());
 	return f;
 }
 
-double Voice::GetOsc2Frequency(double fmValue)
+double Voice::GetOsc2Frequency(bool applyFm)
 {
 	double f = GetBaseFrequency() * osc2Factor;
 	f *= 1 + driftValue;
 	f *= 1 + parameters[lfoAmount] * GetLfoAmount();
-	if (parameters[fmCoarse] > 0.0)
+	if (applyFm && parameters[fmCoarse] > 0.0)
 		f *= pitchFactor(fmValue * GetFmAmount());
 	return f;
 }
 
 double Voice::GetOscFm()
 {
-	return oscFm.Next(dt, GetOsc1Frequency(0.0), OscillatorWaveformSine);
+	return oscFm.Next(deltaTime, GetOsc1Frequency(false), OscillatorWaveformSine);
 }
 
 double Voice::GetOsc1()
 {
+	auto waveform = (OscillatorWaveform)(int)parameters[osc1Wave];
+	auto frequency = GetOsc1Frequency(true);
 	if (parameters[osc1Split] > 0.0)
 	{
 		double out = 0.0;
-		auto frequency = GetOsc1Frequency(fmValue);
-		out += osc1a.Next(dt, frequency / (1 + parameters[osc1Split]), (OscillatorWaveform)(int)parameters[osc1Wave]);
-		out += osc1b.Next(dt, frequency * (1 + parameters[osc1Split]), (OscillatorWaveform)(int)parameters[osc1Wave]);
+		out += osc1a.Next(deltaTime, frequency / (1 + parameters[osc1Split]), waveform);
+		out += osc1b.Next(deltaTime, frequency * (1 + parameters[osc1Split]), waveform);
 		return out;
 	}
-	return osc1a.Next(dt, GetOsc1Frequency(fmValue), (OscillatorWaveform)(int)parameters[osc1Wave]);
+	return osc1a.Next(deltaTime, frequency, waveform);
 }
 
 double Voice::GetOsc2()
 {
+	auto waveform = (OscillatorWaveform)(int)parameters[osc2Wave];
+	auto frequency = GetOsc2Frequency(true);
 	if (parameters[osc2Split] > 0.0)
 	{
 		double out = 0.0;
-		auto frequency = GetOsc2Frequency(fmValue);
-		out += osc2a.Next(dt, frequency / (1 + parameters[osc2Split]), (OscillatorWaveform)(int)parameters[osc2Wave]);
-		out += osc2b.Next(dt, frequency * (1 + parameters[osc2Split]), (OscillatorWaveform)(int)parameters[osc2Wave]);
+		out += osc2a.Next(deltaTime, frequency / (1 + parameters[osc2Split]), waveform);
+		out += osc2b.Next(deltaTime, frequency * (1 + parameters[osc2Split]), waveform);
 		return out;
 	}
-	return osc2a.Next(dt, GetOsc2Frequency(fmValue), (OscillatorWaveform)(int)parameters[osc2Wave]);
+	return osc2a.Next(deltaTime, frequency, waveform);
 }
 
 double Voice::GetOscillators()
@@ -160,24 +153,40 @@ double Voice::GetFilterCutoff()
 	return cutoff;
 }
 
+void Voice::UpdateDrift()
+{
+	driftPhase += dist(gen);
+	driftPhase -= driftPhase * deltaTime;
+	driftValue = .01 * sin(driftPhase * 10 * deltaTime);
+}
+
 void Voice::UpdateEnvelopes()
 {
-	volumeEnvelope.Update(dt, parameters[volEnvA], parameters[volEnvD], parameters[volEnvS], parameters[volEnvR]);
-	modEnvelope.Update(dt, parameters[modEnvA], parameters[modEnvD], parameters[modEnvS], parameters[modEnvR]);
-	delayEnvelope.Update(dt, parameters[lfoDelay], 1.0, 1.0, 0.1);
+	volumeEnvelope.Update(deltaTime, parameters[volEnvA], parameters[volEnvD], parameters[volEnvS], parameters[volEnvR]);
+	modEnvelope.Update(deltaTime, parameters[modEnvA], parameters[modEnvD], parameters[modEnvS], parameters[modEnvR]);
+	delayEnvelope.Update(deltaTime, parameters[lfoDelay], 1.0, 1.0, 0.1);
+}
+
+void Voice::Reset()
+{
+	osc1a.ResetPhase();
+	osc1b.ResetPhase();
+	osc2a.ResetPhase();
+	osc2b.ResetPhase();
+	volumeEnvelope.Reset();
+	modEnvelope.Reset();
+	delayEnvelope.Reset();
 }
 
 double Voice::Next(double dt, double lfo)
 {
-	this->dt = dt;
+	deltaTime = dt;
 	lfoValue = lfo;
-	driftPhase += dist(gen);
-	driftPhase -= driftPhase * dt;
-	driftValue = .01 * sin(driftPhase * 10 * dt);
 
+	UpdateDrift();
 	filter.UpdateF(dt, GetFilterCutoff());
-
 	UpdateEnvelopes();
+
 	if (GetVolume() == 0.0) return 0.0;
 
 	auto out = GetOscillators();

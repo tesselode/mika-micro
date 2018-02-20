@@ -35,7 +35,7 @@ private:
 	double pitchBendFactor = 1.0;
 	double osc1Factor = 1.0;
 	double osc2Factor = 1.0;
-	double dt = 0.0;
+	double deltaTime = 0.0;
 	double fmValue = 0.0;
 	double lfoValue = 0.0;
 	double driftValue = 0.0;
@@ -59,13 +59,15 @@ private:
 	double GetBaseFrequency();
 	double GetLfoAmount();
 	double GetFmAmount();
-	double GetOsc1Frequency(double fmValue);
-	double GetOsc2Frequency(double fmValue);
+	double GetOsc1Frequency(bool applyFm);
+	double GetOsc2Frequency(bool applyFm);
 	double GetOscFm();
 	double GetOsc1();
 	double GetOsc2();
 	double GetOscillators();
 	double GetFilterCutoff();
+	void UpdateDrift();
 	void UpdateEnvelopes();
+	void Reset();
 };
 
