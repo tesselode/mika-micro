@@ -139,7 +139,7 @@ void MikaMicro::InitVoices()
 }
 
 MikaMicro::MikaMicro(IPlugInstanceInfo instanceInfo)
-  :	IPLUG_CTOR(numParameters, 1, instanceInfo)
+  :	IPLUG_CTOR(numParameters, 128, instanceInfo)
 {
 	TRACE;
 
