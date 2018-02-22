@@ -17,24 +17,24 @@ void Envelope::Reset()
 
 void Envelope::Update(double dt, double a, double d, double s, double r)
 {
-	if (stage == EnvelopeStageAttack)
+	switch (stage)
 	{
+	case EnvelopeStageAttack:
 		value = lerp(value, 1.1, a * dt);
 		if (value > 1.0)
 		{
 			value = 1.0;
 			stage = EnvelopeStageDecay;
 		}
-	}
-	else if (stage == EnvelopeStageDecay)
-	{
+		break;
+	case EnvelopeStageDecay:
 		value = lerp(value, s - .1, d * dt);
 		if (value < s) value = s;
-	}
-	else if (stage == EnvelopeStageRelease)
-	{
+		break;
+	case EnvelopeStageRelease:
 		value = lerp(value, -.1, r * dt);
 		if (value < 0.0) value = 0.0;
+		break;
 	}
 }
 

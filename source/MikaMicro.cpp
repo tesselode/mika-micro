@@ -214,23 +214,38 @@ void MikaMicro::OnParamChange(int paramIdx)
 {
 	IMutexLock lock(this);
 
-	// reverse parameters
 	parameters[paramIdx] = GetParam(paramIdx)->Value();
-	if (paramIdx == oscMix || paramIdx == volEnvA || paramIdx == volEnvD || paramIdx == volEnvR ||
-			paramIdx == modEnvA || paramIdx == modEnvD || paramIdx == modEnvR || paramIdx == lfoDelay ||
-			paramIdx == glideSpeed)
-	{
-		parameters[paramIdx] = GetParam(paramIdx)->GetMax() + GetParam(paramIdx)->GetMin() - parameters[paramIdx];
-	}
 
-	if (paramIdx == osc1Coarse || paramIdx == osc1Fine)
-		for (auto &v : voices) v.SetOsc1Pitch(parameters[osc1Coarse], parameters[osc1Fine]);
-	if (paramIdx == osc2Coarse || paramIdx == osc2Fine)
-		for (auto &v : voices) v.SetOsc2Pitch(parameters[osc2Coarse], parameters[osc2Fine]);
-	if (paramIdx == monoMode)
+	switch (paramIdx)
 	{
+	// reverse parameters
+	case oscMix:
+	case volEnvA:
+	case volEnvD:
+	case volEnvR:
+	case modEnvA:
+	case modEnvD:
+	case modEnvR:
+	case lfoDelay:
+	case glideSpeed:
+		parameters[paramIdx] = GetParam(paramIdx)->GetMax() + GetParam(paramIdx)->GetMin() - parameters[paramIdx];
+		break;
+
+	// oscillator pitch
+	case osc1Coarse:
+	case osc1Fine:
+		for (auto &v : voices) v.SetOsc1Pitch(parameters[osc1Coarse], parameters[osc1Fine]);
+		break;
+	case osc2Coarse:
+	case osc2Fine:
+		for (auto &v : voices) v.SetOsc2Pitch(parameters[osc2Coarse], parameters[osc2Fine]);
+		break;
+
+	// mono
+	case monoMode:
 		midiReceiver.SetMono((bool)parameters[monoMode]);
 		for (auto &v : voices) v.Release();
+		break;
 	}
 
 	GrayOutControls();

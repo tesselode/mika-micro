@@ -35,18 +35,19 @@ double Oscillator::Next(double dt, double frequency, OscillatorWaveform waveform
 	phase += phaseIncrement;
 	while (phase >= 1.0) phase -= 1.0;
 
-	if (waveform == OscillatorWaveformSine)
-		return sin(phase * twoPi);
-	if (waveform == OscillatorWaveformTriangle)
+	switch (waveform)
 	{
+	case OscillatorWaveformSine:
+		return sin(phase * twoPi);
+	case OscillatorWaveformTriangle:
 		triLast = triCurrent;
 		triCurrent = phaseIncrement * GeneratePulse(.5, phaseIncrement) + (1 - phaseIncrement) * triLast;
 		return triCurrent * 5;
-	}
-	if (waveform == OscillatorWaveformSaw)
+	case OscillatorWaveformSaw:
 		return 1 - 2 * phase + Blep(phase, phaseIncrement);
-	if (waveform == OscillatorWaveformSquare)
+	case OscillatorWaveformSquare:
 		return GeneratePulse(.5, phaseIncrement);
-	if (waveform == OscillatorWaveformPulse)
+	case OscillatorWaveformPulse:
 		return GeneratePulse(.75, phaseIncrement);
+	}
 }
