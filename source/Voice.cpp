@@ -1,9 +1,7 @@
 #include "Voice.h"
 
-Voice::Voice(std::vector<double>& params, int seed)
-	:parameters(params),
-	gen(seed),
-	dist(-1.0, 1.0)
+Voice::Voice(std::vector<double>& params)
+	:parameters(params)
 {
 }
 
@@ -161,7 +159,7 @@ double Voice::GetFilterCutoff()
 
 void Voice::UpdateDrift()
 {
-	driftPhase += dist(gen);
+	driftPhase += -1.0 + 2.0 * xorshf96() / 4294967296.0;
 	driftPhase -= driftPhase * deltaTime;
 	driftValue = .01 * sin(driftPhase * 10 * deltaTime);
 }

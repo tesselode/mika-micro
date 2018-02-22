@@ -5,14 +5,13 @@
 #include <math.h>
 #include "Oscillator.h"
 #include "Parameters.h"
-#include <random>
 #include "Util.h"
 #include <vector>
 
 class Voice
 {
 public:
-	Voice(std::vector<double>& params, int seed);
+	Voice(std::vector<double>& params);
 
 	int GetNote();
 	void SetNote(int n);
@@ -43,8 +42,6 @@ private:
 	double lfoValue = 0.0;
 	double driftValue = 0.0;
 
-	std::mt19937 gen;
-	std::uniform_real_distribution<> dist;
 	double driftPhase = 0.0;
 
 	Oscillator oscFm;

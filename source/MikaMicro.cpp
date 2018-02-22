@@ -135,7 +135,7 @@ void MikaMicro::InitGraphics()
 void MikaMicro::InitVoices()
 {
 	for (int i = 0; i < numVoices; i++)
-		voices.push_back(Voice(parameters, i));
+		voices.push_back(Voice(parameters));
 }
 
 MikaMicro::MikaMicro(IPlugInstanceInfo instanceInfo)
