@@ -161,7 +161,7 @@ void Voice::UpdateDrift()
 {
 	driftPhase += -1.0 + 2.0 * xorshf96() / 4294967296.0;
 	driftPhase -= driftPhase * deltaTime;
-	driftValue = .01 * sin(driftPhase * 10 * deltaTime);
+	driftValue = .01 * fastSin(driftPhase * 10 * deltaTime);
 }
 
 void Voice::UpdateEnvelopes()

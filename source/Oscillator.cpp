@@ -5,6 +5,7 @@ void Oscillator::ResetPhase()
 	phase = 0.0;
 }
 
+// http://www.kvraudio.com/forum/viewtopic.php?t=375517
 double Oscillator::Blep(double t, double dt)
 {
 	if (t < dt)
