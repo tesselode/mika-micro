@@ -15,7 +15,12 @@ MikaMicro::MikaMicro(IPlugInstanceInfo instanceInfo)
 
 	MakeDefaultPreset((char *) "-", 1);
 
+	voice.SetVolumeEnvelopeAttack(1.0);
+	voice.SetVolumeEnvelopeDecay(1.0);
+	voice.SetVolumeEnvelopeSustain(0.5);
+	voice.SetVolumeEnvelopeRelease(1.0);
 	voice.SetNote(69);
+	voice.Start();
 }
 
 MikaMicro::~MikaMicro() {}
