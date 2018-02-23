@@ -14,6 +14,8 @@ MikaMicro::MikaMicro(IPlugInstanceInfo instanceInfo)
 	AttachGraphics(pGraphics);
 
 	MakeDefaultPreset((char *) "-", 1);
+
+	voice.SetNote(69);
 }
 
 MikaMicro::~MikaMicro() {}
@@ -25,8 +27,11 @@ void MikaMicro::ProcessDoubleReplacing(double** inputs, double** outputs, int nF
 
 	for (int s = 0; s < nFrames; ++s, ++out1, ++out2)
 	{
-		*out1 = 0.0;
-		*out2 = 0.0;
+		auto out = 0.0;
+		out += .25 * voice.Next();
+
+		*out1 = out;
+		*out2 = out;
 	}
 }
 
@@ -34,6 +39,7 @@ void MikaMicro::Reset()
 {
 	TRACE;
 	IMutexLock lock(this);
+	voice.SetSampleRate(GetSampleRate());
 }
 
 void MikaMicro::OnParamChange(int paramIdx)
