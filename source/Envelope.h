@@ -24,6 +24,7 @@ public:
 	void Reset() { value = 0.0; }
 	void Update();
 	double Get() { return value; }
+	bool IsReleased() { return stage == EnvelopeStageRelease; }
 
 private:
 	double dt = 0.0;

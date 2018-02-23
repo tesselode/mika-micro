@@ -11,25 +11,68 @@ void MikaMicro::InitParameters()
 	GetParam(volEnvR)->InitDouble("Volume envelope release", 100.0, 0.5, 1000.0, .01, "", "", .025);
 }
 
+void MikaMicro::InitGraphics()
+{
+	IGraphics* pGraphics = MakeGraphics(this, GUI_WIDTH, GUI_HEIGHT, 120);
+	pGraphics->AttachPanelBackground(&COLOR_GRAY);
+
+	AttachGraphics(pGraphics);
+}
+
 MikaMicro::MikaMicro(IPlugInstanceInfo instanceInfo)
   :	IPLUG_CTOR(numParameters, 1, instanceInfo)
 {
 	TRACE;
 
 	InitParameters();
-
-	IGraphics* pGraphics = MakeGraphics(this, GUI_WIDTH, GUI_HEIGHT, 120);
-	pGraphics->AttachPanelBackground(&COLOR_GRAY);
-
-	AttachGraphics(pGraphics);
+	InitGraphics();
 
 	MakeDefaultPreset((char *) "-", 1);
-
-	voices[0].SetNote(69);
-	voices[0].Start();
 }
 
 MikaMicro::~MikaMicro() {}
+
+void MikaMicro::PlayVoices(int s)
+{
+	while (!midiQueue.Empty())
+	{
+		auto *message = midiQueue.Peek();
+		if (message->mOffset > s) break;
+
+		auto status = message->StatusMsg();
+		auto note = message->NoteNumber();
+		auto velocity = message->Velocity();
+		bool noteOff = status == IMidiMsg::kNoteOff || (status == IMidiMsg::kNoteOn && velocity == 0);
+
+		if (noteOff)
+		{
+			for (auto& voice : voices)
+				if (voice.GetNote() == note) voice.Release();
+		}
+		else if (status == IMidiMsg::kNoteOn)
+		{
+			// get the quietest voice, prioritizing voices that are released
+			auto voice = std::min_element(
+				std::begin(voices),
+				std::end(voices),
+				[](Voice a, Voice b)
+			{
+				return a.IsReleased() == b.IsReleased() ? a.GetVolume() < b.GetVolume() : a.IsReleased();
+			});
+			voice->SetNote(note);
+			voice->Start();
+		}
+
+		midiQueue.Remove();
+	}
+}
+
+double MikaMicro::GetVoices()
+{
+	auto out = 0.0;
+	for (auto &voice : voices) out += voice.Next();
+	return out * .25;
+}
 
 void MikaMicro::ProcessDoubleReplacing(double** inputs, double** outputs, int nFrames)
 {
@@ -38,10 +81,8 @@ void MikaMicro::ProcessDoubleReplacing(double** inputs, double** outputs, int nF
 
 	for (int s = 0; s < nFrames; ++s, ++out1, ++out2)
 	{
-		auto out = 0.0;
-		for (auto &voice : voices) out += voice.Next();
-		out *= .25;
-
+		PlayVoices(s);
+		auto out = GetVoices();
 		*out1 = out;
 		*out2 = out;
 	}
@@ -80,4 +121,9 @@ void MikaMicro::OnParamChange(int paramIdx)
 	case volEnvR:
 		for (auto &voice : voices) voice.SetVolumeEnvelopeRelease(value);
 	}
+}
+
+void MikaMicro::ProcessMidiMsg(IMidiMsg * message)
+{
+	midiQueue.Add(message);
 }

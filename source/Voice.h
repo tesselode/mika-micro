@@ -19,6 +19,8 @@ public:
 	void SetVolumeEnvelopeRelease(double r) { volumeEnvelope.SetRelease(r); }
 
 	double GetVolume() { return volumeEnvelope.Get(); }
+	bool IsReleased() { return volumeEnvelope.IsReleased(); }
+	int GetNote() { return note; }
 	void SetNote(int n)
 	{
 		note = n;
