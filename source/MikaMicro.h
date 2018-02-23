@@ -1,6 +1,7 @@
 #ifndef __MIKAMICRO__
 #define __MIKAMICRO__
 
+#include <array>
 #include "IPlug_include_in_plug_hdr.h"
 #include "MidiReceiver.h"
 #include "Oscillator.h"
@@ -31,7 +32,7 @@ private:
 	void InitVoices();
 
 	Oscillator lfo;
-	std::vector<double> parameters;
+	std::array<double, numParameters> parameters;
 	std::vector<Voice> voices;
 	MidiReceiver midiReceiver;
 

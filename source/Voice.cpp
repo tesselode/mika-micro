@@ -1,6 +1,6 @@
 #include "Voice.h"
 
-Voice::Voice(std::vector<double>& params)
+Voice::Voice(std::array<double, numParameters>& params)
 	:parameters(params)
 {
 }

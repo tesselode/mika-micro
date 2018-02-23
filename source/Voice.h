@@ -1,5 +1,6 @@
 #pragma once
 
+#include <array>
 #include "Envelope.h"
 #include "Filter.h"
 #include <math.h>
@@ -11,7 +12,7 @@
 class Voice
 {
 public:
-	Voice(std::vector<double>& params);
+	Voice(std::array<double, numParameters>& params);
 
 	int GetNote();
 	void SetNote(int n);
@@ -29,7 +30,7 @@ public:
 	double Next(double dt, double lfo);
 
 private:
-	std::vector<double>& parameters;
+	std::array<double, numParameters>& parameters;
 	int note = 69;
 	int velocity = 0;
 	double targetFrequency = 440.0;

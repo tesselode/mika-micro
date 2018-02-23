@@ -53,9 +53,6 @@ void MikaMicro::InitParameters()
 	GetParam(monoMode)->InitBool("Mono mode", true);
 	GetParam(glideSpeed)->InitDouble("Glide speed", 1.0, 1.0, 1000.0, .01, "", "", .1);
 	GetParam(masterVolume)->InitDouble("Master volume", 0.5, 0.0, 1.0, .01);
-
-	for (int i = 0; i < numParameters; i++)
-		parameters.push_back(GetParam(i)->Value());
 }
 
 void MikaMicro::InitGraphics()
