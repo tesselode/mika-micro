@@ -8,6 +8,8 @@
 
 enum ParameterList
 {
+	osc1Split,
+	osc2Split,
 	volEnvA,
 	volEnvD,
 	volEnvS,

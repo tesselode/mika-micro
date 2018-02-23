@@ -5,6 +5,7 @@
 enum OscillatorWaveform
 {
 	OscillatorWaveformSine,
+	OscillatorWaveformSaw,
 	numWaveforms
 };
 

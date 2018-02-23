@@ -10,9 +10,23 @@ public:
 	void SetSampleRate(double sr)
 	{
 		osc1a.SetSampleRate(sr);
+		osc1b.SetSampleRate(sr);
+		osc2a.SetSampleRate(sr);
+		osc2b.SetSampleRate(sr);
+		oscFm.SetSampleRate(sr);
 		volumeEnvelope.SetSampleRate(sr);
 	}
 
+	void SetOsc1Split(double s)
+	{
+		osc1SplitFactorA = 1.0 + s;
+		osc1SplitFactorB = 1.0 / osc1SplitFactorA;
+	};
+	void SetOsc2Split(double s)
+	{
+		osc2SplitFactorA = 1.0 + s;
+		osc2SplitFactorB = 1.0 / osc2SplitFactorA;
+	};
 	void SetVolumeEnvelopeAttack(double a) { volumeEnvelope.SetAttack(a); };
 	void SetVolumeEnvelopeDecay(double d) { volumeEnvelope.SetDecay(d); };
 	void SetVolumeEnvelopeSustain(double s) { volumeEnvelope.SetSustain(s); }
@@ -38,8 +52,17 @@ public:
 
 private:
 	Oscillator osc1a;
+	Oscillator osc1b;
+	Oscillator osc2a;
+	Oscillator osc2b;
+	Oscillator oscFm;
 
 	Envelope volumeEnvelope;
+
+	double osc1SplitFactorA = 1.0;
+	double osc1SplitFactorB = 1.0;
+	double osc2SplitFactorA = 1.0;
+	double osc2SplitFactorB = 1.0;
 
 	int note = 69;
 	double baseFrequency = 440.0;
@@ -49,6 +72,8 @@ private:
 		volumeEnvelope.Update();
 	}
 
+	double GetOsc1();
+	double GetOsc2();
 	double GetOscillators();
 };
 

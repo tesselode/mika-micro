@@ -9,5 +9,7 @@ double Oscillator::Next(double frequency, OscillatorWaveform waveform)
 	{
 	case OscillatorWaveformSine:
 		return sin(phase * twoPi);
+	case OscillatorWaveformSaw:
+		return 1 - 2 * phase;
 	}
 }
