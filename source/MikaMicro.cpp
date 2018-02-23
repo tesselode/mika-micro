@@ -5,8 +5,8 @@
 
 void MikaMicro::InitParameters()
 {
-	GetParam(osc1Coarse)->InitInt("Oscillator 1 coarse", 0, -24, 24, "semitones");
-	GetParam(osc1Fine)->InitDouble("Oscillator 1 fine", 0.0, -1.0, 1.0, .01, "semitones");
+	GetParam(osc1Coarse)->InitInt("Oscillator 1 coarse", -12, -24, 24, "semitones");
+	GetParam(osc1Fine)->InitDouble("Oscillator 1 fine", 0.1, -1.0, 1.0, .01, "semitones");
 	GetParam(osc1Split)->InitDouble("Oscillator 1 split", 0.0, 0.0, .025, .01);
 	GetParam(osc2Coarse)->InitInt("Oscillator 2 coarse", 0, -24, 24, "semitones");
 	GetParam(osc2Fine)->InitDouble("Oscillator 2 fine", 0.0, -1.0, 1.0, .01, "semitones");
@@ -122,16 +122,28 @@ void MikaMicro::OnParamChange(int paramIdx)
 
 	switch (paramIdx)
 	{
+	case osc1Coarse:
+	case osc1Fine:
+		for (auto &voice : voices)
+			voice.SetOsc1Tune(GetParam(osc1Coarse)->Value() + GetParam(osc1Fine)->Value());
+		break;
 	case osc1Split:
 		for (auto &voice : voices) voice.SetOsc1Split(value);
+		break;
+	case osc2Coarse:
+	case osc2Fine:
+		for (auto &voice : voices)
+			voice.SetOsc2Tune(GetParam(osc2Coarse)->Value() + GetParam(osc2Fine)->Value());
 		break;
 	case osc2Split:
 		for (auto &voice : voices) voice.SetOsc2Split(value);
 		break;
 	case fmCoarse:
 		for (auto &voice : voices) voice.SetFmCoarse(value);
+		break;
 	case fmFine:
 		for (auto &voice : voices) voice.SetFmFine(value);
+		break;
 	case volEnvA:
 		for (auto &voice : voices) voice.SetVolumeEnvelopeAttack(value);
 		break;

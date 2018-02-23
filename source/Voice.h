@@ -17,6 +17,8 @@ public:
 		volumeEnvelope.SetSampleRate(sr);
 	}
 
+	void SetOsc1Tune(double p) { osc1TuneFactor = pitchFactor(p); }
+	void SetOsc2Tune(double p) { osc2TuneFactor = pitchFactor(p); }
 	void SetOsc1Split(double s)
 	{
 		osc1SplitFactorA = 1.0 + s;
@@ -64,6 +66,8 @@ private:
 
 	Envelope volumeEnvelope;
 
+	double osc1TuneFactor = 1.0;
+	double osc2TuneFactor = 1.0;
 	double osc1SplitFactorA = 1.0;
 	double osc1SplitFactorB = 1.0;
 	double osc2SplitFactorA = 1.0;

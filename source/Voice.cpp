@@ -2,8 +2,8 @@
 
 double Voice::GetOscillators()
 {
-	double osc1BaseFrequency = baseFrequency;
-	double osc2BaseFrequency = baseFrequency;
+	double osc1BaseFrequency = baseFrequency * osc1TuneFactor;
+	double osc2BaseFrequency = baseFrequency * osc2TuneFactor;
 
 	// fm
 	double fmFactor = 1.0;
