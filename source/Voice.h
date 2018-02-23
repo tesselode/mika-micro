@@ -21,11 +21,13 @@ public:
 	{
 		osc1SplitFactorA = 1.0 + s;
 		osc1SplitFactorB = 1.0 / osc1SplitFactorA;
+		CalculateFrequencies();
 	};
 	void SetOsc2Split(double s)
 	{
 		osc2SplitFactorA = 1.0 + s;
 		osc2SplitFactorB = 1.0 / osc2SplitFactorA;
+		CalculateFrequencies();
 	};
 	void SetVolumeEnvelopeAttack(double a) { volumeEnvelope.SetAttack(a); };
 	void SetVolumeEnvelopeDecay(double d) { volumeEnvelope.SetDecay(d); };
@@ -38,7 +40,7 @@ public:
 	void SetNote(int n)
 	{
 		note = n;
-		baseFrequency = pitchToFrequency(note);
+		CalculateFrequencies();
 	}
 	void Start()
 	{
@@ -63,17 +65,20 @@ private:
 	double osc1SplitFactorB = 1.0;
 	double osc2SplitFactorA = 1.0;
 	double osc2SplitFactorB = 1.0;
+	double osc1aFrequency = 440.0;
+	double osc1bFrequency = 440.0;
+	double osc2aFrequency = 440.0;
+	double osc2bFrequency = 440.0;
 
 	int note = 69;
-	double baseFrequency = 440.0;
 
+	void CalculateFrequencies();
+	double GetOsc1();
+	double GetOsc2();
+	double GetOscillators();
 	void UpdateEnvelopes()
 	{
 		volumeEnvelope.Update();
 	}
-
-	double GetOsc1();
-	double GetOsc2();
-	double GetOscillators();
 };
 
