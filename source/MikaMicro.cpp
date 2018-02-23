@@ -52,7 +52,7 @@ void MikaMicro::InitParameters()
 	// master
 	GetParam(monoMode)->InitBool("Mono mode", true);
 	GetParam(glideSpeed)->InitDouble("Glide speed", 1.0, 1.0, 1000.0, .01, "", "", .1);
-	GetParam(masterVolume)->InitDouble("Master volume", 0.5, 0.0, 1.0, .01);
+	GetParam(masterVolume)->InitDouble("Master volume", 0.25, 0.0, 0.5, .01);
 }
 
 void MikaMicro::InitGraphics()
@@ -167,7 +167,7 @@ void MikaMicro::ProcessDoubleReplacing(double** inputs, double** outputs, int nF
 
 		double out = 0.0;
 		for (auto& voice : voices)
-			out += .5 * voice.Next(dt, lfoValue);
+			out += voice.Next(dt, lfoValue);
 		out *= parameters[masterVolume];
 
 		*out1 = out;
