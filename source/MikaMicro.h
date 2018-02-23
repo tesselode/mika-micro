@@ -16,6 +16,8 @@ enum ParameterList
 	osc2Split,
 	fmCoarse,
 	fmFine,
+	filterF,
+	filterResonance,
 	volEnvA,
 	volEnvD,
 	volEnvS,

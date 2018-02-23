@@ -46,6 +46,11 @@ double Voice::Next()
 	if (GetVolume() == 0.0) return 0.0;
 
 	auto out = GetOscillators();
+	if (filterF < 1.0)
+	{
+		for (int i = 0; i < 2; i++)
+			out = filter.Process(out, filterF);
+	}
 	out *= GetVolume();
 	return out;
 }

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Envelope.h"
+#include "Filter.h"
 #include "Oscillator.h"
 #include "Util.h"
 
@@ -15,6 +16,7 @@ public:
 		osc2b.SetSampleRate(sr);
 		oscFm.SetSampleRate(sr);
 		volumeEnvelope.SetSampleRate(sr);
+		filter.SetSampleRate(sr);
 	}
 
 	void SetOsc1Tune(double p) { osc1TuneFactor = pitchFactor(p); }
@@ -31,6 +33,8 @@ public:
 	};
 	void SetFmCoarse(int c) { fmCoarse = c; }
 	void SetFmFine(double f) { fmFine = f; }
+	void SetFilterF(double f) { filterF = f; }
+	void SetFilterResonance(double r) { filterResonance = r; }
 	void SetVolumeEnvelopeAttack(double a) { volumeEnvelope.SetAttack(a); };
 	void SetVolumeEnvelopeDecay(double d) { volumeEnvelope.SetDecay(d); };
 	void SetVolumeEnvelopeSustain(double s) { volumeEnvelope.SetSustain(s); }
@@ -66,12 +70,16 @@ private:
 
 	Envelope volumeEnvelope;
 
+	Filter filter;
+
 	double osc1TuneFactor = 1.0;
 	double osc2TuneFactor = 1.0;
 	double osc1SplitFactorA = 1.0;
 	double osc1SplitFactorB = 1.0;
 	double osc2SplitFactorA = 1.0;
 	double osc2SplitFactorB = 1.0;
+	double filterF = 1.0;
+	double filterResonance = 1.0;
 
 	int note = 69;
 	double baseFrequency = 440.0;

@@ -15,6 +15,9 @@ void MikaMicro::InitParameters()
 	GetParam(fmCoarse)->InitInt("FM coarse", -23, -24, 24);
 	GetParam(fmFine)->InitDouble("FM fine", 0.0, -1.0, 1.0, .01);
 
+	GetParam(filterF)->InitDouble("Filter cutoff", 1.0, .001, 1.0, .01);
+	GetParam(filterResonance)->InitDouble("Filter resonance", 1.0, 0.0, 1.0, .01);
+
 	GetParam(volEnvA)->InitDouble("Volume envelope attack", 0.5, 0.5, 1000.0, .01, "", "", .025);
 	GetParam(volEnvD)->InitDouble("Volume envelope decay", 998.0, 0.5, 1000.0, .01, "", "", .025);
 	GetParam(volEnvS)->InitDouble("Volume envelope sustain", 1.0, 0.0, 1.0, .01);
@@ -114,6 +117,7 @@ void MikaMicro::OnParamChange(int paramIdx)
 	// reverse parameters
 	switch (paramIdx)
 	{
+	case filterResonance:
 	case volEnvA:
 	case volEnvD:
 	case volEnvR:
@@ -143,6 +147,12 @@ void MikaMicro::OnParamChange(int paramIdx)
 		break;
 	case fmFine:
 		for (auto &voice : voices) voice.SetFmFine(value);
+		break;
+	case filterF:
+		for (auto &voice : voices) voice.SetFilterF(value);
+		break;
+	case filterResonance:
+		for (auto &voice : voices) voice.SetFilterResonance(value);
 		break;
 	case volEnvA:
 		for (auto &voice : voices) voice.SetVolumeEnvelopeAttack(value);
