@@ -5,7 +5,11 @@
 
 void MikaMicro::InitParameters()
 {
+	GetParam(osc1Coarse)->InitInt("Oscillator 1 coarse", 0, -24, 24, "semitones");
+	GetParam(osc1Fine)->InitDouble("Oscillator 1 fine", 0.0, -1.0, 1.0, .01, "semitones");
 	GetParam(osc1Split)->InitDouble("Oscillator 1 split", 0.0, 0.0, .025, .01);
+	GetParam(osc2Coarse)->InitInt("Oscillator 2 coarse", 0, -24, 24, "semitones");
+	GetParam(osc2Fine)->InitDouble("Oscillator 2 fine", 0.0, -1.0, 1.0, .01, "semitones");
 	GetParam(osc2Split)->InitDouble("Oscillator 2 split", 0.025, 0.0, .025, .01);
 
 	GetParam(fmCoarse)->InitInt("FM coarse", -23, -24, 24);

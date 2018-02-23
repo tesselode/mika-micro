@@ -21,13 +21,11 @@ public:
 	{
 		osc1SplitFactorA = 1.0 + s;
 		osc1SplitFactorB = 1.0 / osc1SplitFactorA;
-		CalculateFrequencies();
 	};
 	void SetOsc2Split(double s)
 	{
 		osc2SplitFactorA = 1.0 + s;
 		osc2SplitFactorB = 1.0 / osc2SplitFactorA;
-		CalculateFrequencies();
 	};
 	void SetFmCoarse(int c) { fmCoarse = c; }
 	void SetFmFine(double f) { fmFine = f; }
@@ -42,7 +40,7 @@ public:
 	void SetNote(int n)
 	{
 		note = n;
-		CalculateFrequencies();
+		baseFrequency = pitchToFrequency(note);
 	}
 	void Start()
 	{
@@ -70,17 +68,10 @@ private:
 	double osc1SplitFactorB = 1.0;
 	double osc2SplitFactorA = 1.0;
 	double osc2SplitFactorB = 1.0;
-	double oscFmFrequency = 440.0;
-	double osc1aFrequency = 440.0;
-	double osc1bFrequency = 440.0;
-	double osc2aFrequency = 440.0;
-	double osc2bFrequency = 440.0;
 
 	int note = 69;
+	double baseFrequency = 440.0;
 
-	void CalculateFrequencies();
-	double GetOsc1(double fmFactor);
-	double GetOsc2(double fmFactor);
 	double GetOscillators();
 	void UpdateEnvelopes()
 	{

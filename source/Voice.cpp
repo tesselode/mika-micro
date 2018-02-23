@@ -1,66 +1,43 @@
 #include "Voice.h"
 
-void Voice::CalculateFrequencies()
-{
-	auto baseFrequency = pitchToFrequency(note);
-	oscFmFrequency = baseFrequency;
-	osc1aFrequency = baseFrequency * osc1SplitFactorA;
-	osc1bFrequency = baseFrequency * osc1SplitFactorB;
-	osc2aFrequency = baseFrequency * osc2SplitFactorA;
-	osc2bFrequency = baseFrequency * osc2SplitFactorB;
-}
-
-double Voice::GetOsc1(double fmFactor)
-{
-	auto fa = osc1aFrequency;
-	auto fb = osc1bFrequency;
-	if (fmFactor != 1.0)
-	{
-		fa *= fmFactor;
-		fb *= fmFactor;
-	}
-	if (osc1SplitFactorA != 1.0)
-	{
-		auto out = 0.0;
-		out += osc1a.Next(fa, OscillatorWaveformSaw);
-		out += osc1b.Next(fb, OscillatorWaveformSaw);
-		return out;
-	}
-	return osc1a.Next(fa, OscillatorWaveformSaw);
-}
-
-double Voice::GetOsc2(double fmFactor)
-{
-	auto fa = osc2aFrequency;
-	auto fb = osc2bFrequency;
-	if (fmFactor != 1.0)
-	{
-		fa *= fmFactor;
-		fb *= fmFactor;
-	}
-	if (osc2SplitFactorA != 1.0)
-	{
-		auto out = 0.0;
-		out += osc2a.Next(fa, OscillatorWaveformSaw);
-		out += osc2b.Next(fb, OscillatorWaveformSaw);
-		return out;
-	}
-	return osc2a.Next(fa, OscillatorWaveformSaw);
-}
-
 double Voice::GetOscillators()
 {
+	double osc1BaseFrequency = baseFrequency;
+	double osc2BaseFrequency = baseFrequency;
+
+	// fm
 	double fmFactor = 1.0;
 	if (fmCoarse != 0)
 	{
 		double fmAmount = fabs(fmCoarse) + fmFine;
-		double fmValue = oscFm.Next(oscFmFrequency, OscillatorWaveformSine);
+		double fmValue = oscFm.Next(osc1BaseFrequency, OscillatorWaveformSine);
 		fmFactor = pitchFactor(fmAmount * fmValue);
 	}
-	auto out = 0.0;
-	out += GetOsc1(fmCoarse < 0 ? fmFactor : 1.0);
-	out += GetOsc2(fmCoarse > 0 ? fmFactor : 1.0);
-	return out;
+
+	// osc 1
+	if (fmCoarse < 0) osc1BaseFrequency *= fmFactor;
+	auto osc1Out = 0.0;
+	if (osc1SplitFactorA != 1.0)
+	{
+		osc1Out += osc1a.Next(osc1BaseFrequency * osc1SplitFactorA, OscillatorWaveformSaw);
+		osc1Out += osc1b.Next(osc1BaseFrequency * osc1SplitFactorB, OscillatorWaveformSaw);
+	}
+	else
+		osc1Out = osc1a.Next(osc1BaseFrequency, OscillatorWaveformSaw);
+
+	// osc 2
+	if (fmCoarse > 0) osc2BaseFrequency *= fmFactor;
+	auto osc2Out = 0.0;
+	if (osc2SplitFactorA != 1.0)
+	{
+		osc2Out += osc2a.Next(osc2BaseFrequency * osc2SplitFactorA, OscillatorWaveformSaw);
+		osc2Out += osc2b.Next(osc2BaseFrequency * osc2SplitFactorB, OscillatorWaveformSaw);
+	}
+	else
+		osc2Out = osc2a.Next(osc2BaseFrequency, OscillatorWaveformSaw);
+
+	// mix
+	return .5 * osc1Out + .5 * osc2Out;
 }
 
 double Voice::Next()
