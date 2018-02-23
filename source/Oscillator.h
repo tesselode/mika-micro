@@ -22,5 +22,7 @@ private:
 	double dt = 0.0;
 
 	double phase = 0.0;
+
+	double Blep(double t, double dt);
 };
 
