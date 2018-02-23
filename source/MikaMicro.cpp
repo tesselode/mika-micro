@@ -8,6 +8,9 @@ void MikaMicro::InitParameters()
 	GetParam(osc1Split)->InitDouble("Oscillator 1 split", 0.0, 0.0, .025, .01);
 	GetParam(osc2Split)->InitDouble("Oscillator 2 split", 0.025, 0.0, .025, .01);
 
+	GetParam(fmCoarse)->InitInt("FM coarse", -23, -24, 24);
+	GetParam(fmFine)->InitDouble("FM fine", 0.0, -1.0, 1.0, .01);
+
 	GetParam(volEnvA)->InitDouble("Volume envelope attack", 0.5, 0.5, 1000.0, .01, "", "", .025);
 	GetParam(volEnvD)->InitDouble("Volume envelope decay", 998.0, 0.5, 1000.0, .01, "", "", .025);
 	GetParam(volEnvS)->InitDouble("Volume envelope sustain", 1.0, 0.0, 1.0, .01);
@@ -121,6 +124,10 @@ void MikaMicro::OnParamChange(int paramIdx)
 	case osc2Split:
 		for (auto &voice : voices) voice.SetOsc2Split(value);
 		break;
+	case fmCoarse:
+		for (auto &voice : voices) voice.SetFmCoarse(value);
+	case fmFine:
+		for (auto &voice : voices) voice.SetFmFine(value);
 	case volEnvA:
 		for (auto &voice : voices) voice.SetVolumeEnvelopeAttack(value);
 		break;

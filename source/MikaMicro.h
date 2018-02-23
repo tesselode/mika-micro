@@ -10,6 +10,8 @@ enum ParameterList
 {
 	osc1Split,
 	osc2Split,
+	fmCoarse,
+	fmFine,
 	volEnvA,
 	volEnvD,
 	volEnvS,

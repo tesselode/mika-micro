@@ -29,6 +29,8 @@ public:
 		osc2SplitFactorB = 1.0 / osc2SplitFactorA;
 		CalculateFrequencies();
 	};
+	void SetFmCoarse(int c) { fmCoarse = c; }
+	void SetFmFine(double f) { fmFine = f; }
 	void SetVolumeEnvelopeAttack(double a) { volumeEnvelope.SetAttack(a); };
 	void SetVolumeEnvelopeDecay(double d) { volumeEnvelope.SetDecay(d); };
 	void SetVolumeEnvelopeSustain(double s) { volumeEnvelope.SetSustain(s); }
@@ -53,6 +55,9 @@ public:
 	double Next();
 
 private:
+	int fmCoarse = 0;
+	double fmFine = 0.0;
+
 	Oscillator osc1a;
 	Oscillator osc1b;
 	Oscillator osc2a;
@@ -65,6 +70,7 @@ private:
 	double osc1SplitFactorB = 1.0;
 	double osc2SplitFactorA = 1.0;
 	double osc2SplitFactorB = 1.0;
+	double oscFmFrequency = 440.0;
 	double osc1aFrequency = 440.0;
 	double osc1bFrequency = 440.0;
 	double osc2aFrequency = 440.0;
@@ -73,8 +79,8 @@ private:
 	int note = 69;
 
 	void CalculateFrequencies();
-	double GetOsc1();
-	double GetOsc2();
+	double GetOsc1(double fmFactor);
+	double GetOsc2(double fmFactor);
 	double GetOscillators();
 	void UpdateEnvelopes()
 	{
