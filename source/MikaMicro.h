@@ -39,15 +39,15 @@ enum ParameterList
 	lfoFrequency,
 	lfoDelay,
 	volEnvFm,
-	modEnvFm,
-	lfoFm,
 	volEnvCutoff,
+	modEnvFm,
 	modEnvCutoff,
+	lfoFm,
 	lfoCutoff,
 	monoMode,
 	glideSpeed,
 	masterVolume,
-	numParameters,
+	numParameters
 };
 
 struct HeldNote

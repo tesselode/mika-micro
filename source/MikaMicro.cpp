@@ -130,14 +130,14 @@ void MikaMicro::InitGraphics()
 }
 
 MikaMicro::MikaMicro(IPlugInstanceInfo instanceInfo)
-  :	IPLUG_CTOR(numParameters, 1, instanceInfo)
+  :	IPLUG_CTOR(numParameters, 128, instanceInfo)
 {
 	TRACE;
 
 	InitParameters();
 	InitGraphics();
 
-	MakeDefaultPreset((char *) "-", 1);
+	MakeDefaultPreset((char *) "-", 128);
 }
 
 MikaMicro::~MikaMicro() {}
