@@ -7,7 +7,8 @@ class Filter
 public:
 	void SetSampleRate(double sr) { dt = 44100.0 / sr; }
 
-	void SetResonance(double r) { resonance = r; }
+	void SetRes1(double r) { res1 = r; }
+	void SetRes2(double r) { res2 = r; }
 
 	double Process(double input, double targetF);
 
@@ -16,7 +17,8 @@ private:
 
 	double dt = 0.0;
 
-	double resonance = 0.0;
+	double res1 = 1.0;
+	double res2 = 1.0;
 
 	double f = 0.0;
 	double low = 0.0;

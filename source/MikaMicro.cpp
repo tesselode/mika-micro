@@ -16,7 +16,8 @@ void MikaMicro::InitParameters()
 	GetParam(fmFine)->InitDouble("FM fine", 0.0, -1.0, 1.0, .01);
 
 	GetParam(filterF)->InitDouble("Filter cutoff", 1.0, .001, 1.0, .01);
-	GetParam(filterResonance)->InitDouble("Filter resonance", 1.0, 0.0, 1.0, .01);
+	GetParam(filterRes1)->InitDouble("Filter resonance 1", 0.0, 0.0, 0.9, .01);
+	GetParam(filterRes2)->InitDouble("Filter resonance 2", 0.0, 0.0, 0.9, .01);
 
 	GetParam(volEnvA)->InitDouble("Volume envelope attack", 0.5, 0.5, 1000.0, .01, "", "", .025);
 	GetParam(volEnvD)->InitDouble("Volume envelope decay", 998.0, 0.5, 1000.0, .01, "", "", .025);
@@ -53,7 +54,8 @@ void MikaMicro::InitGraphics()
 
 	// filter
 	pGraphics->AttachControl(new IKnobMultiControl(this, 24 * 4, 64 * 4, filterF, &knob));
-	pGraphics->AttachControl(new IKnobMultiControl(this, 40 * 4, 64 * 4, filterResonance, &knob));
+	pGraphics->AttachControl(new IKnobMultiControl(this, 40 * 4, 64 * 4, filterRes1, &knob));
+	pGraphics->AttachControl(new IKnobMultiControl(this, 56 * 4, 64 * 4, filterRes2, &knob));
 	//pGraphics->AttachControl(new IKnobMultiControl(this, 72 * 4, 64 * 4, filterKeyTrack, &knob));
 
 	// modulation sources
@@ -182,7 +184,8 @@ void MikaMicro::OnParamChange(int paramIdx)
 	// reverse parameters
 	switch (paramIdx)
 	{
-	case filterResonance:
+	case filterRes1:
+	case filterRes2:
 	case volEnvA:
 	case volEnvD:
 	case volEnvR:
@@ -216,8 +219,11 @@ void MikaMicro::OnParamChange(int paramIdx)
 	case filterF:
 		for (auto &voice : voices) voice.SetFilterF(value);
 		break;
-	case filterResonance:
-		for (auto &voice : voices) voice.SetFilterResonance(value);
+	case filterRes1:
+		for (auto &voice : voices) voice.SetFilterRes1(value);
+		break;
+	case filterRes2:
+		for (auto &voice : voices) voice.SetFilterRes2(value);
 		break;
 	case volEnvA:
 		for (auto &voice : voices) voice.SetVolumeEnvelopeAttack(value);

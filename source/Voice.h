@@ -34,7 +34,8 @@ public:
 	void SetFmCoarse(int c) { fmCoarse = c; }
 	void SetFmFine(double f) { fmFine = f; }
 	void SetFilterF(double f) { filterF = f; }
-	void SetFilterResonance(double r) { filterResonance = r; }
+	void SetFilterRes1(double r) { filter.SetRes1(r); }
+	void SetFilterRes2(double r) { filter.SetRes2(r); }
 	void SetVolumeEnvelopeAttack(double a) { volumeEnvelope.SetAttack(a); };
 	void SetVolumeEnvelopeDecay(double d) { volumeEnvelope.SetDecay(d); };
 	void SetVolumeEnvelopeSustain(double s) { volumeEnvelope.SetSustain(s); }
@@ -79,7 +80,6 @@ private:
 	double osc2SplitFactorA = 1.0;
 	double osc2SplitFactorB = 1.0;
 	double filterF = 1.0;
-	double filterResonance = 1.0;
 
 	int note = 69;
 	double baseFrequency = 440.0;
