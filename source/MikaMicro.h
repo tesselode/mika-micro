@@ -14,6 +14,7 @@ enum ParameterList
 	osc2Coarse,
 	osc2Fine,
 	osc2Split,
+	oscMix,
 	fmCoarse,
 	fmFine,
 	filterF,

@@ -31,6 +31,7 @@ public:
 		osc2SplitFactorA = 1.0 + s;
 		osc2SplitFactorB = 1.0 / osc2SplitFactorA;
 	};
+	void SetOscMix(double m) { oscMix = m; }
 	void SetFmCoarse(int c) { fmCoarse = c; }
 	void SetFmFine(double f) { fmFine = f; }
 	void SetFilterF(double f) { filterF = f; }
@@ -49,14 +50,8 @@ public:
 		note = n;
 		baseFrequency = pitchToFrequency(note);
 	}
-	void Start()
-	{
-		volumeEnvelope.Start();
-	}
-	void Release()
-	{
-		volumeEnvelope.Release();
-	}
+	void Start();
+	void Release();
 	double Next();
 
 private:
@@ -79,6 +74,7 @@ private:
 	double osc1SplitFactorB = 1.0;
 	double osc2SplitFactorA = 1.0;
 	double osc2SplitFactorB = 1.0;
+	double oscMix = 0.0;
 	double filterF = 1.0;
 
 	int note = 69;

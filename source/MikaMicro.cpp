@@ -11,6 +11,7 @@ void MikaMicro::InitParameters()
 	GetParam(osc2Coarse)->InitInt("Oscillator 2 coarse", 0, -24, 24, "semitones");
 	GetParam(osc2Fine)->InitDouble("Oscillator 2 fine", 0.0, -1.0, 1.0, .01, "semitones");
 	GetParam(osc2Split)->InitDouble("Oscillator 2 split", 0.0, 0.0, .025, .01);
+	GetParam(oscMix)->InitDouble("Oscillator mix", 1.0, 0.0, 1.0, .01);
 
 	GetParam(fmCoarse)->InitInt("FM coarse", 0, -24, 24);
 	GetParam(fmFine)->InitDouble("FM fine", 0.0, -1.0, 1.0, .01);
@@ -46,7 +47,7 @@ void MikaMicro::InitGraphics()
 	pGraphics->AttachControl(new IKnobMultiControl(this, 56 * 4, 28 * 4, osc2Fine, &knob));
 	pGraphics->AttachControl(new IKnobMultiControl(this, 72 * 4, 28 * 4, osc2Split, &knob));
 	pGraphics->AttachControl(new IBitmapControl(this, 93.5 * 4, 17 * 4, &sliderBg));
-	//pGraphics->AttachControl(new IFaderControl(this, 92.5 * 4, 18 * 4, 20 * 4, oscMix, &slider));
+	pGraphics->AttachControl(new IFaderControl(this, 92.5 * 4, 18 * 4, 20 * 4, oscMix, &slider));
 
 	// fm
 	pGraphics->AttachControl(new IKnobMultiControl(this, 24 * 4, 44 * 4, fmCoarse, &knob));
@@ -184,6 +185,7 @@ void MikaMicro::OnParamChange(int paramIdx)
 	// reverse parameters
 	switch (paramIdx)
 	{
+	case oscMix:
 	case filterRes1:
 	case filterRes2:
 	case volEnvA:
@@ -209,6 +211,9 @@ void MikaMicro::OnParamChange(int paramIdx)
 		break;
 	case osc2Split:
 		for (auto &voice : voices) voice.SetOsc2Split(value);
+		break;
+	case oscMix:
+		for (auto &voice : voices) voice.SetOscMix(value);
 		break;
 	case fmCoarse:
 		for (auto &voice : voices) voice.SetFmCoarse(value);
