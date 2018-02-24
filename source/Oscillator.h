@@ -5,8 +5,11 @@
 enum OscillatorWaveform
 {
 	OscillatorWaveformSine,
+	OscillatorWaveformTriangle,
 	OscillatorWaveformSaw,
-	numWaveforms
+	OscillatorWaveformSquare,
+	OscillatorWaveformPulse,
+	numWaveforms,
 };
 
 class Oscillator
@@ -23,7 +26,10 @@ private:
 	double dt = 0.0;
 
 	double phase = 0.0;
+	double triCurrent = 0.0;
+	double triLast = 0.0;
 
 	double Blep(double t, double dt);
+	double GeneratePulse(double width, double phaseIncrement);
 };
 

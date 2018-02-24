@@ -6,9 +6,11 @@
 void MikaMicro::InitParameters()
 {
 	// oscillators
+	GetParam(osc1Wave)->InitEnum("Oscillator 1 waveform", OscillatorWaveformSaw, numWaveforms);
 	GetParam(osc1Coarse)->InitInt("Oscillator 1 coarse", 0, -24, 24, "semitones");
 	GetParam(osc1Fine)->InitDouble("Oscillator 1 fine", 0.0, -1.0, 1.0, .01, "semitones");
 	GetParam(osc1Split)->InitDouble("Oscillator 1 split", 0.0, 0.0, .025, .01);
+	GetParam(osc2Wave)->InitEnum("Oscillator 2 waveform", OscillatorWaveformSaw, numWaveforms);
 	GetParam(osc2Coarse)->InitInt("Oscillator 2 coarse", 0, -24, 24, "semitones");
 	GetParam(osc2Fine)->InitDouble("Oscillator 2 fine", 0.0, -1.0, 1.0, .01, "semitones");
 	GetParam(osc2Split)->InitDouble("Oscillator 2 split", 0.0, 0.0, .025, .01);
@@ -54,11 +56,11 @@ void MikaMicro::InitGraphics()
 	auto toggleSwitch = pGraphics->LoadIBitmap(TOGGLESWITCH_ID, TOGGLESWITCH_FN, 2);
 
 	// oscillators
-	//pGraphics->AttachControl(new ISwitchControl(this, 24 * 4, 12 * 4, osc1Wave, &waveformSwitch));
+	pGraphics->AttachControl(new ISwitchControl(this, 24 * 4, 12 * 4, osc1Wave, &waveformSwitch));
 	pGraphics->AttachControl(new IKnobMultiControl(this, 40 * 4, 12 * 4, osc1Coarse, &knob));
 	pGraphics->AttachControl(new IKnobMultiControl(this, 56 * 4, 12 * 4, osc1Fine, &knob));
 	pGraphics->AttachControl(new IKnobMultiControl(this, 72 * 4, 12 * 4, osc1Split, &knob));
-	//pGraphics->AttachControl(new ISwitchControl(this, 24 * 4, 28 * 4, osc2Wave, &waveformSwitch));
+	pGraphics->AttachControl(new ISwitchControl(this, 24 * 4, 28 * 4, osc2Wave, &waveformSwitch));
 	pGraphics->AttachControl(new IKnobMultiControl(this, 40 * 4, 28 * 4, osc2Coarse, &knob));
 	pGraphics->AttachControl(new IKnobMultiControl(this, 56 * 4, 28 * 4, osc2Fine, &knob));
 	pGraphics->AttachControl(new IKnobMultiControl(this, 72 * 4, 28 * 4, osc2Split, &knob));
@@ -215,6 +217,9 @@ void MikaMicro::OnParamChange(int paramIdx)
 
 	switch (paramIdx)
 	{
+	case osc1Wave:
+		for (auto &voice : voices) voice.SetOsc1Wave((OscillatorWaveform)(int)value);
+		break;
 	case osc1Coarse:
 	case osc1Fine:
 		for (auto &voice : voices)
@@ -222,6 +227,9 @@ void MikaMicro::OnParamChange(int paramIdx)
 		break;
 	case osc1Split:
 		for (auto &voice : voices) voice.SetOsc1Split(value);
+		break;
+	case osc2Wave:
+		for (auto &voice : voices) voice.SetOsc2Wave((OscillatorWaveform)(int)value);
 		break;
 	case osc2Coarse:
 	case osc2Fine:

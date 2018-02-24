@@ -51,11 +51,11 @@ double Voice::GetOscillators()
 		auto osc1Out = 0.0;
 		if (osc1SplitFactorA != 1.0)
 		{
-			osc1Out += osc1a.Next(osc1BaseFrequency * osc1SplitFactorA, OscillatorWaveformSaw);
-			osc1Out += osc1b.Next(osc1BaseFrequency * osc1SplitFactorB, OscillatorWaveformSaw);
+			osc1Out += osc1a.Next(osc1BaseFrequency * osc1SplitFactorA, osc1Wave);
+			osc1Out += osc1b.Next(osc1BaseFrequency * osc1SplitFactorB, osc1Wave);
 		}
 		else
-			osc1Out = osc1a.Next(osc1BaseFrequency, OscillatorWaveformSaw);
+			osc1Out = osc1a.Next(osc1BaseFrequency, osc1Wave);
 		out += osc1Out * (1.0 - oscMix);
 	}
 
@@ -67,11 +67,11 @@ double Voice::GetOscillators()
 		auto osc2Out = 0.0;
 		if (osc2SplitFactorA != 1.0)
 		{
-			osc2Out += osc2a.Next(osc2BaseFrequency * osc2SplitFactorA, OscillatorWaveformSaw);
-			osc2Out += osc2b.Next(osc2BaseFrequency * osc2SplitFactorB, OscillatorWaveformSaw);
+			osc2Out += osc2a.Next(osc2BaseFrequency * osc2SplitFactorA, osc2Wave);
+			osc2Out += osc2b.Next(osc2BaseFrequency * osc2SplitFactorB, osc2Wave);
 		}
 		else
-			osc2Out = osc2a.Next(osc2BaseFrequency, OscillatorWaveformSaw);
+			osc2Out = osc2a.Next(osc2BaseFrequency, osc2Wave);
 		out += osc2Out * oscMix;
 	}
 	
