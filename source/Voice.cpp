@@ -24,6 +24,7 @@ double Voice::GetFilterF()
 	double f = filterF;
 	if (volEnvCutoff != 0.0) f += volEnvCutoff * volumeEnvelope.Get();
 	if (modEnvCutoff != 0.0) f += modEnvCutoff * modEnvelope.Get();
+	if (filterKeyTrack != 0.0) f += filterKeyTrack * baseFrequency * .00005;
 	return f;
 }
 

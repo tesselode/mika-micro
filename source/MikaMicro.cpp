@@ -24,6 +24,7 @@ void MikaMicro::InitParameters()
 	GetParam(filterF)->InitDouble("Filter cutoff", 1.0, .001, 1.0, .01);
 	GetParam(filterRes1)->InitDouble("Filter resonance 1", 0.0, 0.0, 0.9, .01);
 	GetParam(filterRes2)->InitDouble("Filter resonance 2", 0.0, 0.0, 0.9, .01);
+	GetParam(filterKeyTrack)->InitDouble("Filter key tracking", 0.0, -1.0, 1.0, .01);
 
 	// modulation sources
 	GetParam(volEnvA)->InitDouble("Volume envelope attack", 0.5, 0.5, 1000.0, .01, "", "", .025);
@@ -75,7 +76,7 @@ void MikaMicro::InitGraphics()
 	pGraphics->AttachControl(new IKnobMultiControl(this, 24 * 4, 64 * 4, filterF, &knob));
 	pGraphics->AttachControl(new IKnobMultiControl(this, 40 * 4, 64 * 4, filterRes1, &knob));
 	pGraphics->AttachControl(new IKnobMultiControl(this, 56 * 4, 64 * 4, filterRes2, &knob));
-	//pGraphics->AttachControl(new IKnobMultiControl(this, 72 * 4, 64 * 4, filterKeyTrack, &knob));
+	pGraphics->AttachControl(new IKnobMultiControl(this, 72 * 4, 64 * 4, filterKeyTrack, &knob));
 
 	// modulation sources
 	pGraphics->AttachControl(new IBitmapControl(this, 120.5 * 4, 21 * 4, &sliderBg));
@@ -256,6 +257,9 @@ void MikaMicro::OnParamChange(int paramIdx)
 		break;
 	case filterRes2:
 		for (auto &voice : voices) voice.SetFilterRes2(value);
+		break;
+	case filterKeyTrack:
+		for (auto &voice : voices) voice.SetFilterKeyTrack(value);
 		break;
 	case volEnvA:
 		for (auto &voice : voices) voice.SetVolumeEnvelopeAttack(value);

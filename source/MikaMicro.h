@@ -23,6 +23,7 @@ enum ParameterList
 	filterF,
 	filterRes1,
 	filterRes2,
+	filterKeyTrack,
 	volEnvA,
 	volEnvD,
 	volEnvS,

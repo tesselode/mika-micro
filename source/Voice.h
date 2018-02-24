@@ -40,6 +40,7 @@ public:
 	void SetFilterF(double f) { filterF = f; }
 	void SetFilterRes1(double r) { filter.SetRes1(r); }
 	void SetFilterRes2(double r) { filter.SetRes2(r); }
+	void SetFilterKeyTrack(double t) { filterKeyTrack = t; }
 	void SetVolumeEnvelopeAttack(double a) { volumeEnvelope.SetAttack(a); };
 	void SetVolumeEnvelopeDecay(double d) { volumeEnvelope.SetDecay(d); };
 	void SetVolumeEnvelopeSustain(double s) { volumeEnvelope.SetSustain(s); }
@@ -90,6 +91,7 @@ private:
 	double osc2SplitFactorB = 1.0;
 	double oscMix = 0.0;
 	double filterF = 1.0;
+	double filterKeyTrack = 0.0;
 	double volEnvFm = 0.0;
 	double modEnvFm = 0.0;
 	double volEnvCutoff = 0.0;
