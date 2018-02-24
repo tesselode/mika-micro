@@ -5,6 +5,7 @@
 
 void MikaMicro::InitParameters()
 {
+	// oscillators
 	GetParam(osc1Coarse)->InitInt("Oscillator 1 coarse", 0, -24, 24, "semitones");
 	GetParam(osc1Fine)->InitDouble("Oscillator 1 fine", 0.0, -1.0, 1.0, .01, "semitones");
 	GetParam(osc1Split)->InitDouble("Oscillator 1 split", 0.0, 0.0, .025, .01);
@@ -13,17 +14,32 @@ void MikaMicro::InitParameters()
 	GetParam(osc2Split)->InitDouble("Oscillator 2 split", 0.0, 0.0, .025, .01);
 	GetParam(oscMix)->InitDouble("Oscillator mix", 1.0, 0.0, 1.0, .01);
 
+	// fm
 	GetParam(fmCoarse)->InitInt("FM coarse", 0, -24, 24);
 	GetParam(fmFine)->InitDouble("FM fine", 0.0, -1.0, 1.0, .01);
 
+	// filter
 	GetParam(filterF)->InitDouble("Filter cutoff", 1.0, .001, 1.0, .01);
 	GetParam(filterRes1)->InitDouble("Filter resonance 1", 0.0, 0.0, 0.9, .01);
 	GetParam(filterRes2)->InitDouble("Filter resonance 2", 0.0, 0.0, 0.9, .01);
 
+	// modulation sources
 	GetParam(volEnvA)->InitDouble("Volume envelope attack", 0.5, 0.5, 1000.0, .01, "", "", .025);
 	GetParam(volEnvD)->InitDouble("Volume envelope decay", 998.0, 0.5, 1000.0, .01, "", "", .025);
 	GetParam(volEnvS)->InitDouble("Volume envelope sustain", 1.0, 0.0, 1.0, .01);
 	GetParam(volEnvR)->InitDouble("Volume envelope release", 100.0, 0.5, 1000.0, .01, "", "", .025);
+	GetParam(modEnvA)->InitDouble("Modulation envelope attack", 998.0, 0.5, 1000.0, .01, "", "", .025);
+	GetParam(modEnvD)->InitDouble("Modulation envelope decay", 998.0, 0.5, 1000.0, .01, "", "", .025);
+	GetParam(modEnvS)->InitDouble("Modulation envelope sustain", 0.5, 0.0, 1.0, .01);
+	GetParam(modEnvR)->InitDouble("Modulation envelope release", 998.0, 0.5, 1000.0, .01, "", "", .025);
+
+	// modulation targets
+	GetParam(volEnvFm)->InitDouble("Volume envelope to FM amount", 0.0, -24.0, 24.0, .01, "semitones");
+	GetParam(modEnvFm)->InitDouble("Modulation envelope to FM amount", 0.0, -24.0, 24.0, .01, "semitones");
+	//GetParam(lfoFm)->InitDouble("Vibrato to FM amount", 0.0, -24.0, 24.0, .01, "semitones");
+	GetParam(volEnvCutoff)->InitDouble("Volume envelope to filter cutoff", 0.0, -1.0, 1.0, .01, "hz");
+	GetParam(modEnvCutoff)->InitDouble("Modulation envelope to filter cutoff", 0.0, -1.0, 1.0, .01, "hz");
+	//GetParam(lfoCutoff)->InitDouble("Vibrato to filter cutoff", 0.0, 0.0, 20000., .01, "hz", "", 2.0);
 }
 
 void MikaMicro::InitGraphics()
@@ -71,13 +87,13 @@ void MikaMicro::InitGraphics()
 	pGraphics->AttachControl(new IBitmapControl(this, 152.5 * 4, 21 * 4, &sliderBg));
 	//pGraphics->AttachControl(new IFaderControl(this, 151.5 * 4, 22 * 4, 20 * 4, volEnvV, &slider));
 	pGraphics->AttachControl(new IBitmapControl(this, 120.5 * 4, 57 * 4, &sliderBg));
-	//pGraphics->AttachControl(new IFaderControl(this, 119.5 * 4, 58 * 4, 20 * 4, modEnvA, &slider));
+	pGraphics->AttachControl(new IFaderControl(this, 119.5 * 4, 58 * 4, 20 * 4, modEnvA, &slider));
 	pGraphics->AttachControl(new IBitmapControl(this, 128.5 * 4, 57 * 4, &sliderBg));
-	//pGraphics->AttachControl(new IFaderControl(this, 127.5 * 4, 58 * 4, 20 * 4, modEnvD, &slider));
+	pGraphics->AttachControl(new IFaderControl(this, 127.5 * 4, 58 * 4, 20 * 4, modEnvD, &slider));
 	pGraphics->AttachControl(new IBitmapControl(this, 136.5 * 4, 57 * 4, &sliderBg));
-	//pGraphics->AttachControl(new IFaderControl(this, 135.5 * 4, 58 * 4, 20 * 4, modEnvS, &slider));
+	pGraphics->AttachControl(new IFaderControl(this, 135.5 * 4, 58 * 4, 20 * 4, modEnvS, &slider));
 	pGraphics->AttachControl(new IBitmapControl(this, 144.5 * 4, 57 * 4, &sliderBg));
-	//pGraphics->AttachControl(new IFaderControl(this, 143.5 * 4, 58 * 4, 20 * 4, modEnvR, &slider));
+	pGraphics->AttachControl(new IFaderControl(this, 143.5 * 4, 58 * 4, 20 * 4, modEnvR, &slider));
 	pGraphics->AttachControl(new IBitmapControl(this, 152.5 * 4, 57 * 4, &sliderBg));
 	//pGraphics->AttachControl(new IFaderControl(this, 151.5 * 4, 58 * 4, 20 * 4, modEnvV, &slider));
 	//pGraphics->AttachControl(new IKnobMultiControl(this, 170 * 4, 12 * 4, lfoAmount, &knob));
@@ -85,15 +101,15 @@ void MikaMicro::InitGraphics()
 	//pGraphics->AttachControl(new IKnobMultiControl(this, 202 * 4, 12 * 4, lfoDelay, &knob));
 
 	// targets
-	/*pGraphics->AttachControl(new IKnobMultiControl(this, 170 * 4, 52 * 4, volEnvFm, &knob));
+	pGraphics->AttachControl(new IKnobMultiControl(this, 170 * 4, 52 * 4, volEnvFm, &knob));
 	pGraphics->AttachControl(new IKnobMultiControl(this, 186 * 4, 52 * 4, modEnvFm, &knob));
-	pGraphics->AttachControl(new IKnobMultiControl(this, 202 * 4, 52 * 4, lfoFm, &knob));
+	//pGraphics->AttachControl(new IKnobMultiControl(this, 202 * 4, 52 * 4, lfoFm, &knob));
 	pGraphics->AttachControl(new IKnobMultiControl(this, 170 * 4, 68 * 4, volEnvCutoff, &knob));
 	pGraphics->AttachControl(new IKnobMultiControl(this, 186 * 4, 68 * 4, modEnvCutoff, &knob));
-	pGraphics->AttachControl(new IKnobMultiControl(this, 202 * 4, 68 * 4, lfoCutoff, &knob));
+	//pGraphics->AttachControl(new IKnobMultiControl(this, 202 * 4, 68 * 4, lfoCutoff, &knob));
 
 	// master
-	pGraphics->AttachControl(new ISwitchControl(this, 24 * 4, 90 * 4, monoMode, &toggleSwitch));
+	/*pGraphics->AttachControl(new ISwitchControl(this, 24 * 4, 90 * 4, monoMode, &toggleSwitch));
 	pGraphics->AttachControl(new IKnobMultiControl(this, 40 * 4, 90 * 4, glideSpeed, &knob));
 	pGraphics->AttachControl(new IKnobMultiControl(this, 56 * 4, 90 * 4, masterVolume, &knob));*/
 
@@ -191,6 +207,9 @@ void MikaMicro::OnParamChange(int paramIdx)
 	case volEnvA:
 	case volEnvD:
 	case volEnvR:
+	case modEnvA:
+	case modEnvD:
+	case modEnvR:
 		value = GetParam(paramIdx)->GetMax() + GetParam(paramIdx)->GetMin() - value;
 	}
 
@@ -241,6 +260,30 @@ void MikaMicro::OnParamChange(int paramIdx)
 		break;
 	case volEnvR:
 		for (auto &voice : voices) voice.SetVolumeEnvelopeRelease(value);
+		break;
+	case modEnvA:
+		for (auto &voice : voices) voice.SetModEnvelopeAttack(value);
+		break;
+	case modEnvD:
+		for (auto &voice : voices) voice.SetModEnvelopeDecay(value);
+		break;
+	case modEnvS:
+		for (auto &voice : voices) voice.SetModEnvelopeSustain(value);
+		break;
+	case modEnvR:
+		for (auto &voice : voices) voice.SetModEnvelopeRelease(value);
+		break;
+	case volEnvFm:
+		for (auto &voice : voices) voice.SetVolumeEnvelopeFm(value);
+		break;
+	case modEnvFm:
+		for (auto &voice : voices) voice.SetModEnvelopeFm(value);
+		break;
+	case volEnvCutoff:
+		for (auto &voice : voices) voice.SetVolumeEnvelopeCutoff(value);
+		break;
+	case modEnvCutoff:
+		for (auto &voice : voices) voice.SetModEnvelopeCutoff(value);
 		break;
 	}
 }

@@ -11,10 +11,20 @@ void Voice::Start()
 		oscFm.Reset();
 	}
 	volumeEnvelope.Start();
+	modEnvelope.Start();
 }
 void Voice::Release()
 {
 	volumeEnvelope.Release();
+	modEnvelope.Release();
+}
+
+double Voice::GetFilterF()
+{
+	double f = filterF;
+	if (volEnvCutoff != 0.0) f += volEnvCutoff * volumeEnvelope.Get();
+	if (modEnvCutoff != 0.0) f += modEnvCutoff * modEnvelope.Get();
+	return f;
 }
 
 double Voice::GetOscillators()
@@ -28,6 +38,8 @@ double Voice::GetOscillators()
 	if (fmCoarse != 0)
 	{
 		double fmAmount = fabs(fmCoarse) + fmFine;
+		if (volEnvFm) fmAmount += volEnvFm * volumeEnvelope.Get();
+		if (modEnvFm) fmAmount += modEnvFm * modEnvelope.Get();
 		double fmValue = oscFm.Next(osc1BaseFrequency, OscillatorWaveformSine);
 		fmFactor = pitchFactor(fmAmount * fmValue);
 	}
@@ -74,8 +86,8 @@ double Voice::Next()
 	auto out = GetOscillators();
 	if (filterF < 1.0)
 	{
-		for (int i = 0; i < 2; i++)
-			out = filter.Process(out, filterF);
+		auto f = GetFilterF();
+		for (int i = 0; i < 2; i++) out = filter.Process(out, f);
 	}
 	out *= GetVolume();
 	return out;

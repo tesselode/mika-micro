@@ -16,6 +16,7 @@ public:
 		osc2b.SetSampleRate(sr);
 		oscFm.SetSampleRate(sr);
 		volumeEnvelope.SetSampleRate(sr);
+		modEnvelope.SetSampleRate(sr);
 		filter.SetSampleRate(sr);
 	}
 
@@ -41,6 +42,14 @@ public:
 	void SetVolumeEnvelopeDecay(double d) { volumeEnvelope.SetDecay(d); };
 	void SetVolumeEnvelopeSustain(double s) { volumeEnvelope.SetSustain(s); }
 	void SetVolumeEnvelopeRelease(double r) { volumeEnvelope.SetRelease(r); }
+	void SetModEnvelopeAttack(double a) { modEnvelope.SetAttack(a); };
+	void SetModEnvelopeDecay(double d) { modEnvelope.SetDecay(d); };
+	void SetModEnvelopeSustain(double s) { modEnvelope.SetSustain(s); }
+	void SetModEnvelopeRelease(double r) { modEnvelope.SetRelease(r); }
+	void SetVolumeEnvelopeFm(double f) { volEnvFm = f; }
+	void SetModEnvelopeFm(double f) { modEnvFm = f; }
+	void SetVolumeEnvelopeCutoff(double c) { volEnvCutoff = c; }
+	void SetModEnvelopeCutoff(double c) { modEnvCutoff = c; }
 
 	double GetVolume() { return volumeEnvelope.Get(); }
 	bool IsReleased() { return volumeEnvelope.IsReleased(); }
@@ -65,6 +74,7 @@ private:
 	Oscillator oscFm;
 
 	Envelope volumeEnvelope;
+	Envelope modEnvelope;
 
 	Filter filter;
 
@@ -76,14 +86,20 @@ private:
 	double osc2SplitFactorB = 1.0;
 	double oscMix = 0.0;
 	double filterF = 1.0;
+	double volEnvFm = 0.0;
+	double modEnvFm = 0.0;
+	double volEnvCutoff = 0.0;
+	double modEnvCutoff = 0.0;
 
 	int note = 69;
 	double baseFrequency = 440.0;
 
+	double GetFilterF();
 	double GetOscillators();
 	void UpdateEnvelopes()
 	{
 		volumeEnvelope.Update();
+		modEnvelope.Update();
 	}
 };
 

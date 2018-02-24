@@ -24,6 +24,14 @@ enum ParameterList
 	volEnvD,
 	volEnvS,
 	volEnvR,
+	modEnvA,
+	modEnvD,
+	modEnvS,
+	modEnvR,
+	volEnvFm,
+	modEnvFm,
+	volEnvCutoff,
+	modEnvCutoff,
 	numParameters,
 };
 

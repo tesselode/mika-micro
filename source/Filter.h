@@ -20,7 +20,7 @@ private:
 	double res1 = 1.0;
 	double res2 = 1.0;
 
-	double f = 0.0;
+	double f = 1.0;
 	double low = 0.0;
 	double band = 0.0;
 };
