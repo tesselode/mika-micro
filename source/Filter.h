@@ -10,6 +10,7 @@ public:
 	void SetRes1(double r) { res1 = r; }
 	void SetRes2(double r) { res2 = r; }
 
+	void ResetF() { reset = true; }
 	double Process(double input, double targetF);
 
 private:
@@ -20,6 +21,7 @@ private:
 	double res1 = 1.0;
 	double res2 = 1.0;
 
+	bool reset = false;
 	double f = 1.0;
 	double low = 0.0;
 	double band = 0.0;

@@ -3,7 +3,10 @@
 double Filter::Process(double input, double targetF)
 {
 	targetF = targetF > 1.0 ? 1.0 : targetF < .001 ? .001 : targetF;
-	f = lerp(f, targetF, .001 * dt);
+	if (reset)
+		f = targetF;
+	else
+		f = lerp(f, targetF, .001 * dt);
 
 	double high = input - (low + band * res1);
 	band += f * high * dt;

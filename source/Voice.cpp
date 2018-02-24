@@ -13,6 +13,7 @@ void Voice::Start()
 		volumeEnvelope.Reset();
 		modEnvelope.Reset();
 		delayEnvelope.Reset();
+		filter.ResetF();
 	}
 	volumeEnvelope.Start();
 	modEnvelope.Start();
