@@ -12,6 +12,7 @@ public:
 
 	void SetSampleRate(double sr)
 	{
+		dt = 1.0 / sr;
 		osc1a.SetSampleRate(sr);
 		osc1b.SetSampleRate(sr);
 		osc2a.SetSampleRate(sr);
@@ -62,6 +63,7 @@ public:
 	void SetVolumeEnvelopeCutoff(double c) { volEnvCutoff = c; }
 	void SetModEnvelopeCutoff(double c) { modEnvCutoff = c; }
 	void SetLfoCutoff(double c) { lfoCutoff = c; }
+	void SetGlideSpeed(double s) { glideSpeed = s; }
 
 	double GetVolume() { return volumeEnvelope.Get(); }
 	bool IsReleased() { return volumeEnvelope.IsReleased(); }
@@ -69,7 +71,7 @@ public:
 	void SetNote(int n)
 	{
 		note = n;
-		baseFrequency = pitchToFrequency(note);
+		targetFrequency = pitchToFrequency(note);
 	}
 	void SetVelocity(double v)
 	{
@@ -81,8 +83,7 @@ public:
 	double Next(double lfoValue);
 
 private:
-	int fmCoarse = 0;
-	double fmFine = 0.0;
+	double dt = 0.0;
 
 	Oscillator osc1a;
 	Oscillator osc1b;
@@ -105,6 +106,8 @@ private:
 	double osc2SplitFactorA = 1.0;
 	double osc2SplitFactorB = 1.0;
 	double oscMix = 0.0;
+	int fmCoarse = 0;
+	double fmFine = 0.0;
 	double filterF = 1.0;
 	double filterKeyTrack = 0.0;
 	double lfoAmount = 0.0;
@@ -114,8 +117,10 @@ private:
 	double volEnvCutoff = 0.0;
 	double modEnvCutoff = 0.0;
 	double lfoCutoff = 0.0;
+	double glideSpeed = 1000.0;
 
 	int note = 69;
+	double targetFrequency = 440.0;
 	double baseFrequency = 440.0;
 
 	double GetFilterF(double lfoValue);

@@ -48,6 +48,11 @@ void MikaMicro::InitParameters()
 	GetParam(volEnvCutoff)->InitDouble("Volume envelope to filter cutoff", 0.0, -1.0, 1.0, .01, "hz");
 	GetParam(modEnvCutoff)->InitDouble("Modulation envelope to filter cutoff", 0.0, -1.0, 1.0, .01, "hz");
 	GetParam(lfoCutoff)->InitDouble("Vibrato to filter cutoff", 0.0, 0.0, 1., .01, "", "", 2.0);
+
+	// master
+	GetParam(monoMode)->InitBool("Mono mode", true);
+	GetParam(glideSpeed)->InitDouble("Glide speed", 1.0, 1.0, 1000.0, .01, "", "", .1);
+	GetParam(masterVolume)->InitDouble("Master volume", 0.25, 0.0, 0.5, .01);
 }
 
 void MikaMicro::InitGraphics()
@@ -117,9 +122,9 @@ void MikaMicro::InitGraphics()
 	pGraphics->AttachControl(new IKnobMultiControl(this, 202 * 4, 68 * 4, lfoCutoff, &knob));
 
 	// master
-	/*pGraphics->AttachControl(new ISwitchControl(this, 24 * 4, 90 * 4, monoMode, &toggleSwitch));
+	pGraphics->AttachControl(new ISwitchControl(this, 24 * 4, 90 * 4, monoMode, &toggleSwitch));
 	pGraphics->AttachControl(new IKnobMultiControl(this, 40 * 4, 90 * 4, glideSpeed, &knob));
-	pGraphics->AttachControl(new IKnobMultiControl(this, 56 * 4, 90 * 4, masterVolume, &knob));*/
+	pGraphics->AttachControl(new IKnobMultiControl(this, 56 * 4, 90 * 4, masterVolume, &knob));
 
 	AttachGraphics(pGraphics);
 }
@@ -146,29 +151,68 @@ void MikaMicro::PlayVoices(int s)
 
 		auto status = message->StatusMsg();
 		auto note = message->NoteNumber();
-		auto velocity = message->Velocity() * .0078125;
+		auto velocity = message->Velocity();
 		bool noteOff = status == IMidiMsg::kNoteOff || (status == IMidiMsg::kNoteOn && velocity == 0);
 
 		if (noteOff)
 		{
-			for (auto& voice : voices)
-				if (voice.GetNote() == note) voice.Release();
+			heldNotes.erase(
+				std::remove_if(
+					std::begin(heldNotes),
+					std::end(heldNotes),
+					[note](auto n) { return n.note == note; }),
+				std::end(heldNotes));
+
+			if (GetParam(monoMode)->Value())
+			{
+				if (heldNotes.empty())
+					voices[0].Release();
+				else
+				{
+					voices[0].SetNote(heldNotes.back().note);
+					voices[0].SetVelocity(heldNotes.back().velocity);
+				}
+			}
+			else
+			{
+				for (auto& voice : voices)
+					if (voice.GetNote() == note) voice.Release();
+			}
 		}
 		else if (status == IMidiMsg::kNoteOn)
 		{
-			// get the quietest voice, prioritizing voices that are released
-			auto voice = std::min_element(
-				std::begin(voices),
-				std::end(voices),
-				[](Voice a, Voice b)
+			if (GetParam(monoMode)->Value())
 			{
-				return a.IsReleased() == b.IsReleased() ? a.GetVolume() < b.GetVolume() : a.IsReleased();
-			});
-			voice->SetNote(note);
-			voice->SetVelocity(velocity);
-			voice->Start();
-		}
+				voices[0].SetNote(note);
+				voices[0].SetVelocity(velocity);
+				if (heldNotes.empty()) voices[0].Start();
+			}
+			else
+			{
+				// get the quietest voice, prioritizing voices that are released
+				auto voice = std::min_element(
+					std::begin(voices),
+					std::end(voices),
+					[](Voice a, Voice b)
+				{
+					return a.IsReleased() == b.IsReleased() ? a.GetVolume() < b.GetVolume() : a.IsReleased();
+				});
+				voice->SetNote(note);
+				voice->SetVelocity(velocity);
+				voice->Start();
+			}
 
+			heldNotes.push_back(HeldNote{ note = note, velocity = velocity });
+		}
+		else if (status == IMidiMsg::kPitchWheel)
+		{
+			/*for (auto& voice : voices)
+				voice.SetPitchBendFactor(pitchFactor(message->PitchWheel() * 2));*/
+		}
+		else if (status == IMidiMsg::kAllNotesOff)
+		{
+			for (auto& voice : voices) voice.Release();
+		}
 		midiQueue.Remove();
 	}
 }
@@ -222,6 +266,7 @@ void MikaMicro::OnParamChange(int paramIdx)
 	case modEnvD:
 	case modEnvR:
 	case lfoDelay:
+	case glideSpeed:
 		value = GetParam(paramIdx)->GetMax() + GetParam(paramIdx)->GetMin() - value;
 	}
 
@@ -323,6 +368,12 @@ void MikaMicro::OnParamChange(int paramIdx)
 		break;
 	case lfoCutoff:
 		for (auto &voice : voices) voice.SetLfoCutoff(value);
+		break;
+	case monoMode:
+		for (int i = 1; i < voices.size(); i++) voices[i].Release();
+		break;
+	case glideSpeed:
+		for (auto &voice : voices) voice.SetGlideSpeed(value);
 		break;
 	}
 }

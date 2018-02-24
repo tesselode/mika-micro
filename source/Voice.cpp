@@ -2,6 +2,7 @@
 
 void Voice::Start()
 {
+	baseFrequency = targetFrequency;
 	if (GetVolume() == 0.0)
 	{
 		osc1a.Reset();
@@ -17,6 +18,7 @@ void Voice::Start()
 	modEnvelope.Start();
 	delayEnvelope.Start();
 }
+
 void Voice::Release()
 {
 	volumeEnvelope.Release();
@@ -93,6 +95,8 @@ double Voice::Next(double lfoValue)
 	UpdateEnvelopes();
 	if (GetVolume() == 0.0) return 0.0;
 	lfoValue *= delayEnvelope.Get();
+	if (baseFrequency != targetFrequency)
+		baseFrequency = lerp(baseFrequency, targetFrequency, glideSpeed * dt);
 
 	auto out = GetOscillators(lfoValue);
 	if (filterF < 1.0)

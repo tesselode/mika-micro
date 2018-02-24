@@ -43,7 +43,16 @@ enum ParameterList
 	volEnvCutoff,
 	modEnvCutoff,
 	lfoCutoff,
+	monoMode,
+	glideSpeed,
+	masterVolume,
 	numParameters,
+};
+
+struct HeldNote
+{
+	int note;
+	int velocity;
 };
 
 class MikaMicro : public IPlug
@@ -59,8 +68,9 @@ public:
 
 private:
 	IMidiQueue midiQueue;
-	std::array<Voice, 8> voices;
+	std::vector<HeldNote> heldNotes;
 	Oscillator lfo;
+	std::array<Voice, 8> voices;
 
 	void InitParameters();
 	void InitGraphics();
