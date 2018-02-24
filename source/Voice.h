@@ -124,14 +124,16 @@ private:
 	double targetFrequency = 440.0;
 	double baseFrequency = 440.0;
 	double pitchBendFactor = 1.0;
+	double driftPhase = 0.0;
 
-	double GetFilterF(double lfoValue);
-	double GetOscillators(double lfoValue);
+	double GetFilterF(double lfoValue, double driftValue);
+	double GetOscillators(double lfoValue, double driftValue);
 	void UpdateEnvelopes()
 	{
 		volumeEnvelope.Update();
 		modEnvelope.Update();
 		delayEnvelope.Update();
 	}
+	double GetDriftValue();
 };
 

@@ -26,22 +26,24 @@ void Voice::Release()
 	delayEnvelope.Release();
 }
 
-double Voice::GetFilterF(double lfoValue)
+double Voice::GetFilterF(double lfoValue, double driftValue)
 {
 	double f = filterF;
 	if (filterKeyTrack != 0.0) f += filterKeyTrack * baseFrequency * pitchBendFactor * .00005;
 	if (volEnvCutoff != 0.0) f += volEnvCutoff * volumeEnvelope.Get();
 	if (modEnvCutoff != 0.0) f += modEnvCutoff * modEnvelope.Get();
 	if (lfoCutoff != 0.0) f += lfoCutoff * lfoValue;
+	f *= 1 + driftValue * .00005;
 	return f;
 }
 
-double Voice::GetOscillators(double lfoValue)
+double Voice::GetOscillators(double lfoValue, double driftValue)
 {
 	double out = 0.0;
 
 	double osc1BaseFrequency = baseFrequency * osc1TuneFactor * pitchBendFactor;
 	if (lfoAmount < 0.0) osc1BaseFrequency *= 1 + fabs(lfoAmount) * lfoValue;
+	osc1BaseFrequency *= 1 + driftValue;
 
 	// fm
 	double fmFactor = 1.0;
@@ -74,6 +76,7 @@ double Voice::GetOscillators(double lfoValue)
 	if (oscMix > 0.0)
 	{
 		double osc2BaseFrequency = baseFrequency * osc2TuneFactor * pitchBendFactor;
+		osc2BaseFrequency *= 1 + driftValue;
 		if (lfoAmount != 0.0) osc2BaseFrequency *= 1 + fabs(lfoAmount) * lfoValue;
 		if (fmCoarse > 0) osc2BaseFrequency *= fmFactor;
 		auto osc2Out = 0.0;
@@ -90,18 +93,27 @@ double Voice::GetOscillators(double lfoValue)
 	return out;
 }
 
+double Voice::GetDriftValue()
+{
+	driftPhase += -1.0 + 2.0 * xorshf96() / 4294967296.0;
+	driftPhase -= driftPhase * dt;
+	return .01 * fastSin(driftPhase * 10 * dt);
+}
+
 double Voice::Next(double lfoValue)
 {
 	UpdateEnvelopes();
 	if (GetVolume() == 0.0) return 0.0;
-	lfoValue *= delayEnvelope.Get();
+
 	if (baseFrequency != targetFrequency)
 		baseFrequency = lerp(baseFrequency, targetFrequency, glideSpeed * dt);
+	lfoValue *= delayEnvelope.Get();
+	auto driftValue = GetDriftValue();
 
-	auto out = GetOscillators(lfoValue);
+	auto out = GetOscillators(lfoValue, driftValue);
 	if (filterF < 1.0)
 	{
-		auto f = GetFilterF(lfoValue);
+		auto f = GetFilterF(lfoValue, driftValue);
 		for (int i = 0; i < 2; i++) out = filter.Process(out, f);
 	}
 	out *= GetVolume();
