@@ -151,7 +151,7 @@ void MikaMicro::PlayVoices(int s)
 
 		auto status = message->StatusMsg();
 		auto note = message->NoteNumber();
-		auto velocity = message->Velocity();
+		auto velocity = message->Velocity() * .0078125;
 		bool noteOff = status == IMidiMsg::kNoteOff || (status == IMidiMsg::kNoteOn && velocity == 0);
 
 		if (noteOff)
@@ -282,8 +282,6 @@ void MikaMicro::OnParamChange(int paramIdx)
 	switch (paramIdx)
 	{
 	case oscMix:
-	case filterRes1:
-	case filterRes2:
 	case volEnvA:
 	case volEnvD:
 	case volEnvR:

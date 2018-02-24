@@ -53,7 +53,7 @@ enum ParameterList
 struct HeldNote
 {
 	int note;
-	int velocity;
+	double velocity;
 };
 
 class MikaMicro : public IPlug
