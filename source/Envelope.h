@@ -27,12 +27,14 @@ public:
 	void SetDecay(double d) { decay = d; }
 	void SetSustain(double s) { sustain = s; }
 	void SetRelease(double r) { release = r; }
+	void SetVelocitySensitivity(double v) { velocitySensitivity = v; }
 
+	void SetVelocity(double v) { velocity = v; }
 	void Start() { stage = EnvelopeStageAttack; }
 	void Release() { stage = EnvelopeStageRelease; }
 	void Reset() { value = 0.0; }
 	void Update();
-	double Get() { return value; }
+	double Get() { return value * (1 - velocitySensitivity + velocity * velocitySensitivity); }
 	bool IsReleased() { return stage == EnvelopeStageRelease; }
 
 private:
@@ -42,8 +44,10 @@ private:
 	double decay = 0.0;
 	double sustain = 0.0;
 	double release = 0.0;
+	double velocitySensitivity = 0.0;
 
 	EnvelopeStage stage = EnvelopeStageRelease;
 	double value = 0.0;
+	double velocity = 0.0;
 };
 

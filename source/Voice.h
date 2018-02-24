@@ -48,6 +48,8 @@ public:
 	void SetVolumeEnvelopeDecay(double d) { volumeEnvelope.SetDecay(d); };
 	void SetVolumeEnvelopeSustain(double s) { volumeEnvelope.SetSustain(s); }
 	void SetVolumeEnvelopeRelease(double r) { volumeEnvelope.SetRelease(r); }
+	void SetVolumeEnvelopeVelocitySensitivity(double v) { volumeEnvelope.SetVelocitySensitivity(v); }
+	void SetModEnvelopeVelocitySensitivity(double v) { modEnvelope.SetVelocitySensitivity(v); }
 	void SetModEnvelopeAttack(double a) { modEnvelope.SetAttack(a); };
 	void SetModEnvelopeDecay(double d) { modEnvelope.SetDecay(d); };
 	void SetModEnvelopeSustain(double s) { modEnvelope.SetSustain(s); }
@@ -68,6 +70,11 @@ public:
 	{
 		note = n;
 		baseFrequency = pitchToFrequency(note);
+	}
+	void SetVelocity(double v)
+	{
+		volumeEnvelope.SetVelocity(v);
+		modEnvelope.SetVelocity(v);
 	}
 	void Start();
 	void Release();

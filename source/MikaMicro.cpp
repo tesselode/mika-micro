@@ -31,10 +31,12 @@ void MikaMicro::InitParameters()
 	GetParam(volEnvD)->InitDouble("Volume envelope decay", 998.0, 0.5, 1000.0, .01, "", "", .025);
 	GetParam(volEnvS)->InitDouble("Volume envelope sustain", 1.0, 0.0, 1.0, .01);
 	GetParam(volEnvR)->InitDouble("Volume envelope release", 100.0, 0.5, 1000.0, .01, "", "", .025);
+	GetParam(volEnvV)->InitDouble("Volume envelope velocity sensitivity", 0.0, 0.0, 1.0, .01);
 	GetParam(modEnvA)->InitDouble("Modulation envelope attack", 998.0, 0.5, 1000.0, .01, "", "", .025);
 	GetParam(modEnvD)->InitDouble("Modulation envelope decay", 998.0, 0.5, 1000.0, .01, "", "", .025);
 	GetParam(modEnvS)->InitDouble("Modulation envelope sustain", 0.5, 0.0, 1.0, .01);
 	GetParam(modEnvR)->InitDouble("Modulation envelope release", 998.0, 0.5, 1000.0, .01, "", "", .025);
+	GetParam(modEnvV)->InitDouble("Modulation envelope velocity sensitivity", 0.0, 0.0, 1.0, .01);
 	GetParam(lfoAmount)->InitDouble("Vibrato amount", 0.0, -0.1, 0.1, .01);
 	GetParam(lfoFrequency)->InitDouble("Vibrato frequency", 4.0, 0.1, 10.0, .01, "", "", 2.0);
 	GetParam(lfoDelay)->InitDouble("Vibrato delay", 0.1, 0.1, 1000.0, .01, "", "", .001);
@@ -91,7 +93,7 @@ void MikaMicro::InitGraphics()
 	pGraphics->AttachControl(new IBitmapControl(this, 144.5 * 4, 21 * 4, &sliderBg));
 	pGraphics->AttachControl(new IFaderControl(this, 143.5 * 4, 22 * 4, 20 * 4, volEnvR, &slider));
 	pGraphics->AttachControl(new IBitmapControl(this, 152.5 * 4, 21 * 4, &sliderBg));
-	//pGraphics->AttachControl(new IFaderControl(this, 151.5 * 4, 22 * 4, 20 * 4, volEnvV, &slider));
+	pGraphics->AttachControl(new IFaderControl(this, 151.5 * 4, 22 * 4, 20 * 4, volEnvV, &slider));
 	pGraphics->AttachControl(new IBitmapControl(this, 120.5 * 4, 57 * 4, &sliderBg));
 	pGraphics->AttachControl(new IFaderControl(this, 119.5 * 4, 58 * 4, 20 * 4, modEnvA, &slider));
 	pGraphics->AttachControl(new IBitmapControl(this, 128.5 * 4, 57 * 4, &sliderBg));
@@ -101,7 +103,7 @@ void MikaMicro::InitGraphics()
 	pGraphics->AttachControl(new IBitmapControl(this, 144.5 * 4, 57 * 4, &sliderBg));
 	pGraphics->AttachControl(new IFaderControl(this, 143.5 * 4, 58 * 4, 20 * 4, modEnvR, &slider));
 	pGraphics->AttachControl(new IBitmapControl(this, 152.5 * 4, 57 * 4, &sliderBg));
-	//pGraphics->AttachControl(new IFaderControl(this, 151.5 * 4, 58 * 4, 20 * 4, modEnvV, &slider));
+	pGraphics->AttachControl(new IFaderControl(this, 151.5 * 4, 58 * 4, 20 * 4, modEnvV, &slider));
 	pGraphics->AttachControl(new IKnobMultiControl(this, 170 * 4, 12 * 4, lfoAmount, &knob));
 	pGraphics->AttachControl(new IKnobMultiControl(this, 186 * 4, 12 * 4, lfoFrequency, &knob));
 	pGraphics->AttachControl(new IKnobMultiControl(this, 202 * 4, 12 * 4, lfoDelay, &knob));
@@ -144,7 +146,7 @@ void MikaMicro::PlayVoices(int s)
 
 		auto status = message->StatusMsg();
 		auto note = message->NoteNumber();
-		auto velocity = message->Velocity();
+		auto velocity = message->Velocity() * .0078125;
 		bool noteOff = status == IMidiMsg::kNoteOff || (status == IMidiMsg::kNoteOn && velocity == 0);
 
 		if (noteOff)
@@ -163,6 +165,7 @@ void MikaMicro::PlayVoices(int s)
 				return a.IsReleased() == b.IsReleased() ? a.GetVolume() < b.GetVolume() : a.IsReleased();
 			});
 			voice->SetNote(note);
+			voice->SetVelocity(velocity);
 			voice->Start();
 		}
 
@@ -279,6 +282,9 @@ void MikaMicro::OnParamChange(int paramIdx)
 	case volEnvR:
 		for (auto &voice : voices) voice.SetVolumeEnvelopeRelease(value);
 		break;
+	case volEnvV:
+		for (auto &voice : voices) voice.SetVolumeEnvelopeVelocitySensitivity(value);
+		break;
 	case modEnvA:
 		for (auto &voice : voices) voice.SetModEnvelopeAttack(value);
 		break;
@@ -290,6 +296,9 @@ void MikaMicro::OnParamChange(int paramIdx)
 		break;
 	case modEnvR:
 		for (auto &voice : voices) voice.SetModEnvelopeRelease(value);
+		break;
+	case modEnvV:
+		for (auto &voice : voices) voice.SetModEnvelopeVelocitySensitivity(value);
 		break;
 	case lfoAmount:
 		for (auto &voice : voices) voice.SetLfoAmount(value);
