@@ -222,7 +222,7 @@ double MikaMicro::GetVoices()
 	auto lfoValue = lfo.Next(GetParam(lfoFrequency)->Value(), OscillatorWaveformSine);
 	auto out = 0.0;
 	for (auto &voice : voices) out += voice.Next(lfoValue);
-	return out * .25;
+	return out * GetParam(masterVolume)->Value();
 }
 
 void MikaMicro::ProcessDoubleReplacing(double** inputs, double** outputs, int nFrames)
