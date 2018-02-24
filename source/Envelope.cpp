@@ -13,12 +13,18 @@ void Envelope::Update()
 		}
 		break;
 	case EnvelopeStageDecay:
-		value = lerp(value, sustain - .1, decay * dt);
-		value = value < sustain ? sustain : value;
+		if (value > sustain)
+		{
+			value = lerp(value, sustain - .1, decay * dt);
+			value = value < sustain ? sustain : value;
+		}
 		break;
 	case EnvelopeStageRelease:
-		value = lerp(value, -.1, release * dt);
-		value = value < 0 ? 0 : value;
+		if (value > 0.0)
+		{
+			value = lerp(value, -.1, release * dt);
+			value = value < 0 ? 0 : value;
+		}
 		break;
 	}
 }

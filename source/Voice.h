@@ -8,6 +8,8 @@
 class Voice
 {
 public:
+	Voice() : delayEnvelope(1000.0, 0.5, 1.0, 0.5) {};
+
 	void SetSampleRate(double sr)
 	{
 		osc1a.SetSampleRate(sr);
@@ -17,6 +19,7 @@ public:
 		oscFm.SetSampleRate(sr);
 		volumeEnvelope.SetSampleRate(sr);
 		modEnvelope.SetSampleRate(sr);
+		delayEnvelope.SetSampleRate(sr);
 		filter.SetSampleRate(sr);
 	}
 
@@ -49,10 +52,14 @@ public:
 	void SetModEnvelopeDecay(double d) { modEnvelope.SetDecay(d); };
 	void SetModEnvelopeSustain(double s) { modEnvelope.SetSustain(s); }
 	void SetModEnvelopeRelease(double r) { modEnvelope.SetRelease(r); }
+	void SetLfoAmount(double a) { lfoAmount = a; }
+	void SetLfoDelay(double d) { delayEnvelope.SetAttack(d); }
 	void SetVolumeEnvelopeFm(double f) { volEnvFm = f; }
 	void SetModEnvelopeFm(double f) { modEnvFm = f; }
+	void SetLfoFm(double f) { lfoFm = f; }
 	void SetVolumeEnvelopeCutoff(double c) { volEnvCutoff = c; }
 	void SetModEnvelopeCutoff(double c) { modEnvCutoff = c; }
+	void SetLfoCutoff(double c) { lfoCutoff = c; }
 
 	double GetVolume() { return volumeEnvelope.Get(); }
 	bool IsReleased() { return volumeEnvelope.IsReleased(); }
@@ -64,7 +71,7 @@ public:
 	}
 	void Start();
 	void Release();
-	double Next();
+	double Next(double lfoValue);
 
 private:
 	int fmCoarse = 0;
@@ -78,6 +85,7 @@ private:
 
 	Envelope volumeEnvelope;
 	Envelope modEnvelope;
+	Envelope delayEnvelope;
 
 	Filter filter;
 
@@ -92,20 +100,24 @@ private:
 	double oscMix = 0.0;
 	double filterF = 1.0;
 	double filterKeyTrack = 0.0;
+	double lfoAmount = 0.0;
 	double volEnvFm = 0.0;
 	double modEnvFm = 0.0;
+	double lfoFm = 0.0;
 	double volEnvCutoff = 0.0;
 	double modEnvCutoff = 0.0;
+	double lfoCutoff = 0.0;
 
 	int note = 69;
 	double baseFrequency = 440.0;
 
-	double GetFilterF();
-	double GetOscillators();
+	double GetFilterF(double lfoValue);
+	double GetOscillators(double lfoValue);
 	void UpdateEnvelopes()
 	{
 		volumeEnvelope.Update();
 		modEnvelope.Update();
+		delayEnvelope.Update();
 	}
 };
 

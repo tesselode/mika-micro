@@ -9,38 +9,46 @@ void Voice::Start()
 		osc2a.Reset();
 		osc2b.Reset();
 		oscFm.Reset();
+		volumeEnvelope.Reset();
+		modEnvelope.Reset();
+		delayEnvelope.Reset();
 	}
 	volumeEnvelope.Start();
 	modEnvelope.Start();
+	delayEnvelope.Start();
 }
 void Voice::Release()
 {
 	volumeEnvelope.Release();
 	modEnvelope.Release();
+	delayEnvelope.Release();
 }
 
-double Voice::GetFilterF()
+double Voice::GetFilterF(double lfoValue)
 {
 	double f = filterF;
+	if (filterKeyTrack != 0.0) f += filterKeyTrack * baseFrequency * .00005;
 	if (volEnvCutoff != 0.0) f += volEnvCutoff * volumeEnvelope.Get();
 	if (modEnvCutoff != 0.0) f += modEnvCutoff * modEnvelope.Get();
-	if (filterKeyTrack != 0.0) f += filterKeyTrack * baseFrequency * .00005;
+	if (lfoCutoff != 0.0) f += lfoCutoff * lfoValue;
 	return f;
 }
 
-double Voice::GetOscillators()
+double Voice::GetOscillators(double lfoValue)
 {
 	double out = 0.0;
 
 	double osc1BaseFrequency = baseFrequency * osc1TuneFactor;
+	if (lfoAmount < 0.0) osc1BaseFrequency *= 1 + fabs(lfoAmount) * lfoValue;
 
 	// fm
 	double fmFactor = 1.0;
 	if (fmCoarse != 0)
 	{
 		double fmAmount = fabs(fmCoarse) + fmFine;
-		if (volEnvFm) fmAmount += volEnvFm * volumeEnvelope.Get();
-		if (modEnvFm) fmAmount += modEnvFm * modEnvelope.Get();
+		if (volEnvFm != 0.0) fmAmount += volEnvFm * volumeEnvelope.Get();
+		if (modEnvFm != 0.0) fmAmount += modEnvFm * modEnvelope.Get();
+		if (lfoFm != 0.0) fmAmount += lfoFm * lfoValue;
 		double fmValue = oscFm.Next(osc1BaseFrequency, OscillatorWaveformSine);
 		fmFactor = pitchFactor(fmAmount * fmValue);
 	}
@@ -64,6 +72,7 @@ double Voice::GetOscillators()
 	if (oscMix > 0.0)
 	{
 		double osc2BaseFrequency = baseFrequency * osc2TuneFactor;
+		if (lfoAmount != 0.0) osc2BaseFrequency *= 1 + fabs(lfoAmount) * lfoValue;
 		if (fmCoarse > 0) osc2BaseFrequency *= fmFactor;
 		auto osc2Out = 0.0;
 		if (osc2SplitFactorA != 1.0)
@@ -79,15 +88,16 @@ double Voice::GetOscillators()
 	return out;
 }
 
-double Voice::Next()
+double Voice::Next(double lfoValue)
 {
 	UpdateEnvelopes();
 	if (GetVolume() == 0.0) return 0.0;
+	lfoValue *= delayEnvelope.Get();
 
-	auto out = GetOscillators();
+	auto out = GetOscillators(lfoValue);
 	if (filterF < 1.0)
 	{
-		auto f = GetFilterF();
+		auto f = GetFilterF(lfoValue);
 		for (int i = 0; i < 2; i++) out = filter.Process(out, f);
 	}
 	out *= GetVolume();

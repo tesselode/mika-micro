@@ -32,10 +32,15 @@ enum ParameterList
 	modEnvD,
 	modEnvS,
 	modEnvR,
+	lfoAmount,
+	lfoFrequency,
+	lfoDelay,
 	volEnvFm,
 	modEnvFm,
+	lfoFm,
 	volEnvCutoff,
 	modEnvCutoff,
+	lfoCutoff,
 	numParameters,
 };
 
@@ -53,6 +58,7 @@ public:
 private:
 	IMidiQueue midiQueue;
 	std::array<Voice, 8> voices;
+	Oscillator lfo;
 
 	void InitParameters();
 	void InitGraphics();
