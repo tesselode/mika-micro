@@ -29,7 +29,7 @@ void Voice::Release()
 double Voice::GetFilterF(double lfoValue)
 {
 	double f = filterF;
-	if (filterKeyTrack != 0.0) f += filterKeyTrack * baseFrequency * .00005;
+	if (filterKeyTrack != 0.0) f += filterKeyTrack * baseFrequency * pitchBendFactor * .00005;
 	if (volEnvCutoff != 0.0) f += volEnvCutoff * volumeEnvelope.Get();
 	if (modEnvCutoff != 0.0) f += modEnvCutoff * modEnvelope.Get();
 	if (lfoCutoff != 0.0) f += lfoCutoff * lfoValue;
@@ -40,7 +40,7 @@ double Voice::GetOscillators(double lfoValue)
 {
 	double out = 0.0;
 
-	double osc1BaseFrequency = baseFrequency * osc1TuneFactor;
+	double osc1BaseFrequency = baseFrequency * osc1TuneFactor * pitchBendFactor;
 	if (lfoAmount < 0.0) osc1BaseFrequency *= 1 + fabs(lfoAmount) * lfoValue;
 
 	// fm
@@ -73,7 +73,7 @@ double Voice::GetOscillators(double lfoValue)
 	// osc 2
 	if (oscMix > 0.0)
 	{
-		double osc2BaseFrequency = baseFrequency * osc2TuneFactor;
+		double osc2BaseFrequency = baseFrequency * osc2TuneFactor * pitchBendFactor;
 		if (lfoAmount != 0.0) osc2BaseFrequency *= 1 + fabs(lfoAmount) * lfoValue;
 		if (fmCoarse > 0) osc2BaseFrequency *= fmFactor;
 		auto osc2Out = 0.0;

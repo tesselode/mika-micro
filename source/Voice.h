@@ -78,6 +78,7 @@ public:
 		volumeEnvelope.SetVelocity(v);
 		modEnvelope.SetVelocity(v);
 	}
+	void SetPitchBendFactor(double f) { pitchBendFactor = f; }
 	void Start();
 	void Release();
 	double Next(double lfoValue);
@@ -122,6 +123,7 @@ private:
 	int note = 69;
 	double targetFrequency = 440.0;
 	double baseFrequency = 440.0;
+	double pitchBendFactor = 1.0;
 
 	double GetFilterF(double lfoValue);
 	double GetOscillators(double lfoValue);

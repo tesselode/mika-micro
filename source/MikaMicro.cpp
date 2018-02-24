@@ -206,8 +206,8 @@ void MikaMicro::PlayVoices(int s)
 		}
 		else if (status == IMidiMsg::kPitchWheel)
 		{
-			/*for (auto& voice : voices)
-				voice.SetPitchBendFactor(pitchFactor(message->PitchWheel() * 2));*/
+			auto f = pitchFactor(message->PitchWheel() * 2);
+			for (auto& voice : voices) voice.SetPitchBendFactor(f);
 		}
 		else if (status == IMidiMsg::kAllNotesOff)
 		{
