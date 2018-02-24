@@ -57,7 +57,7 @@ void MikaMicro::InitParameters()
 
 void MikaMicro::InitGraphics()
 {
-	IGraphics* pGraphics = MakeGraphics(this, GUI_WIDTH, GUI_HEIGHT, 120);
+	pGraphics = MakeGraphics(this, GUI_WIDTH, GUI_HEIGHT, 120);
 	pGraphics->AttachBackground(BG_ID, BG_FN);
 
 	auto knob = pGraphics->LoadIBitmap(KNOB_ID, KNOB_FN, 55);
@@ -247,6 +247,31 @@ void MikaMicro::Reset()
 	for (auto &voice : voices) voice.SetSampleRate(GetSampleRate());
 }
 
+void MikaMicro::GrayOutControls()
+{
+	auto fmEnabled = (GetParam(fmCoarse)->Value() < 0.0 && GetParam(oscMix)->Value() > 0.0) ||
+		(GetParam(fmCoarse)->Value() > 0.0 && GetParam(oscMix)->Value() < 1.0);
+	auto osc1Enabled = GetParam(oscMix)->Value() > 0.0;
+	auto osc2Enabled = GetParam(oscMix)->Value() < 1.0;
+	auto filterEnabled = GetParam(filterF)->Value() < 1.;
+	auto modEnvEnabled = GetParam(modEnvFm)->Value() != 0.0 || GetParam(modEnvCutoff)->Value() != 0.0;
+	auto vibratoEnabled = GetParam(lfoFm)->Value() != 0.0 || GetParam(lfoCutoff)->Value() != 0.0 ||
+		GetParam(lfoAmount)->Value() < 0.0 || (GetParam(lfoAmount)->Value() > 0.0 && osc2Enabled);
+
+	pGraphics->GetControl(1)->GrayOut(!osc1Enabled);
+	pGraphics->GetControl(2)->GrayOut(!(osc1Enabled || fmEnabled));
+	pGraphics->GetControl(3)->GrayOut(!(osc1Enabled || fmEnabled));
+	pGraphics->GetControl(4)->GrayOut(!osc1Enabled);
+	for (int i = 5; i < 9; i++) pGraphics->GetControl(i)->GrayOut(!osc2Enabled);
+	pGraphics->GetControl(12)->GrayOut(!fmEnabled);
+	for (int i = 14; i < 17; i++) pGraphics->GetControl(i)->GrayOut(!filterEnabled);
+	for (int i = 27; i < 37; i++) pGraphics->GetControl(i)->GrayOut(!modEnvEnabled);
+	for (int i = 38; i < 40; i++) pGraphics->GetControl(i)->GrayOut(!vibratoEnabled);
+	for (int i = 40; i < 43; i++) pGraphics->GetControl(i)->GrayOut(!fmEnabled);
+	for (int i = 43; i < 46; i++) pGraphics->GetControl(i)->GrayOut(!filterEnabled);
+	pGraphics->GetControl(47)->GrayOut(!GetParam(monoMode)->Value());
+}
+
 void MikaMicro::OnParamChange(int paramIdx)
 {
 	IMutexLock lock(this);
@@ -376,6 +401,8 @@ void MikaMicro::OnParamChange(int paramIdx)
 		for (auto &voice : voices) voice.SetGlideSpeed(value);
 		break;
 	}
+
+	GrayOutControls();
 }
 
 void MikaMicro::ProcessMidiMsg(IMidiMsg * message)

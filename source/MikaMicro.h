@@ -67,6 +67,7 @@ public:
 	void ProcessDoubleReplacing(double** inputs, double** outputs, int nFrames);
 
 private:
+	IGraphics * pGraphics;
 	IMidiQueue midiQueue;
 	std::vector<HeldNote> heldNotes;
 	Oscillator lfo;
@@ -76,6 +77,7 @@ private:
 	void InitGraphics();
 	void PlayVoices(int s);
 	double GetVoices();
+	void GrayOutControls();
 };
 
 #endif
