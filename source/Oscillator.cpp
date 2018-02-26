@@ -1,50 +1,48 @@
 #include "Oscillator.h"
 
-void Oscillator::Update()
-{
-	dt = frequency / sampleRate;
-	inverseDt = 1.0 / dt;
-	t += dt;
-	t = fmod(t, 1.0);
-}
-
-// polyBLEP oscillator
 // http://www.kvraudio.com/forum/viewtopic.php?t=375517
-
-double Oscillator::Blep(double t)
+double Oscillator::Blep(double t, double dt)
 {
 	if (t < dt)
 	{
-		t *= inverseDt;
+		t /= dt;
 		return t + t - t * t - 1.0;
 	}
 	else if (t > 1.0 - dt)
 	{
-		t = (t - 1.0) * inverseDt;
+		t = (t - 1.0) / dt;
 		return t * t + t + t + 1.0;
 	}
 	return 0.0;
 }
 
-double Oscillator::GeneratePulse(double width)
+double Oscillator::GeneratePulse(double width, double phaseIncrement)
 {
-	double v = 0.0;
-	v = t < width ? 1.0 : -1.0;
-	v += Blep(t);
-	v -= Blep(fmod(t + (1.0 - width), 1.0));
+	double v = phase < width ? 1.0 : -1.0;
+	v += Blep(phase, phaseIncrement);
+	v -= Blep(fmod(phase + (1.0 - width), 1.0), phaseIncrement);
 	return v;
 }
 
-double Oscillator::Get(Waveform waveform)
+double Oscillator::Next(double frequency, OscillatorWaveform waveform)
 {
-	if (waveform == Sine) return sin(t * twoPi);
-	if (waveform == Triangle)
+	double phaseIncrement = frequency * dt;
+	phase += phaseIncrement;
+	while (phase >= 1) phase -= 1;
+	
+	switch (waveform)
 	{
+	case OscillatorWaveformSine:
+		return sin(phase * twoPi);
+	case OscillatorWaveformTriangle:
 		triLast = triCurrent;
-		triCurrent = dt * GeneratePulse(.5) + (1 - dt) * triLast;
-		return triCurrent * 7;
+		triCurrent = phaseIncrement * GeneratePulse(.5, phaseIncrement) + (1 - phaseIncrement) * triLast;
+		return triCurrent * 5;
+	case OscillatorWaveformSaw:
+		return 1 - 2 * phase + Blep(phase, phaseIncrement);
+	case OscillatorWaveformSquare:
+		return GeneratePulse(.5, phaseIncrement);
+	case OscillatorWaveformPulse:
+		return GeneratePulse(.75, phaseIncrement);
 	}
-	if (waveform == Saw) return 1 - 2 * t + Blep(t);
-	if (waveform == Square) return GeneratePulse(.5);
-	if (waveform == Pulse) return GeneratePulse(.75);
 }

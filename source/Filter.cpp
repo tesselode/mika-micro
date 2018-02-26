@@ -1,17 +1,17 @@
 #include "Filter.h"
 
-double Filter::Process(double input, double cutoff)
+double Filter::Process(double input, double targetF)
 {
-	double smoothing = resonance < 0.0 ? -resonance : 0.0;
-	double res = resonance < 0.0 ? 0.0 : resonance;
-	cutoff = cutoff < 20.0 ? 20.0 : cutoff > 20000.0 ? 20000.0 : cutoff;
-	cutoff *= cutoffMultiplier;
+	targetF = targetF > 1.0 ? 1.0 : targetF < .001 ? .001 : targetF;
+	if (reset)
+		f = targetF;
+	else
+		f = lerp(f, targetF, .001 * dt);
+	double fSquared = f * f;
 
-	f += (cutoff - f) * .01; // cutoff smoothing
-	double fSquare = f * f;
-	velocity += fSquare * (input - (value + velocity * (1 - res)));
-	if (smoothing > 0.0) velocity -= velocity * smoothing;
-	value += velocity;
-	value = atan(value * .1) * 10;
-	return value * (1 + smoothing);
+	double high = input - (low + band * (1 - res1));
+	band += fSquared * high * dt;
+	low += band * dt * (fSquared * (1 - res2) + res2);
+	low = FastAtan(low * .1) * 10.0;
+	return low;
 }

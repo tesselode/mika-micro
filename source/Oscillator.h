@@ -1,41 +1,35 @@
 #pragma once
 
-#include <math.h>
+#include <cmath>
 
-enum Waveform
+enum OscillatorWaveform
 {
-	Sine,
-	Triangle,
-	Saw,
-	Square,
-	Pulse,
-	numWaveforms
+	OscillatorWaveformSine,
+	OscillatorWaveformTriangle,
+	OscillatorWaveformSaw,
+	OscillatorWaveformSquare,
+	OscillatorWaveformPulse,
+	numWaveforms,
 };
 
 class Oscillator
 {
 public:
-	void SetFrequency(double f) { frequency = f; }
-	void SetSampleRate(double sr) { sampleRate = sr; }
+	void SetSampleRate(double sr) { dt = 1.0 / sr; }
 
-	void Update();
-	void ResetPhase() { t = 0.0; }
-	double Get(Waveform waveform);
+	void Reset(double p = 0.0) { phase = p; }
+	double Next(double frequency, OscillatorWaveform waveform);
 
 private:
 	double twoPi = 4 * acos(0.0);
 
-	double Blep(double t);
-	double GeneratePulse(double width);
-
-	double frequency = 440.0;
-	double sampleRate = 44100.0;
-
-	double t = 0.0;
 	double dt = 0.0;
-	double inverseDt = 0.0;
 
+	double phase = 0.0;
 	double triCurrent = 0.0;
 	double triLast = 0.0;
+
+	double Blep(double t, double dt);
+	double GeneratePulse(double width, double phaseIncrement);
 };
 

@@ -1,22 +1,29 @@
 #pragma once
 
-#include <math.h>
+#include "Util.h"
 
 class Filter
 {
 public:
-	// accomodate for sample rate and convert from frequency to 0.0 - 1.0
-	void SetSampleRate(double sr) { cutoffMultiplier = 44100.0 / sr / 20000.0; }
-	void SetResonance(double r) { resonance = r; }
+	void SetSampleRate(double sr) { dt = 44100.0 / sr; }
 
-	double Process(double input, double cutoff);
+	void SetRes1(double r) { res1 = r; }
+	void SetRes2(double r) { res2 = r; }
+
+	void ResetF() { reset = true; }
+	double Process(double input, double targetF);
 
 private:
-	double cutoffMultiplier = 0.0;
-	double f = 1.0;
-	double resonance = 0.0;
+	double FastAtan(double x) { return x / (1.0 + .28 * (x * x)); }
 
-	double velocity = 0.0;
-	double value = 0.0;
+	double dt = 0.0;
+
+	double res1 = 1.0;
+	double res2 = 1.0;
+
+	bool reset = false;
+	double f = 1.0;
+	double low = 0.0;
+	double band = 0.0;
 };
 

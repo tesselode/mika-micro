@@ -1,10 +1,12 @@
 #pragma once
 
+#include "Util.h"
+
 enum EnvelopeStage
 {
 	EnvelopeStageAttack,
 	EnvelopeStageDecay,
-	EnvelopeStageRelease
+	EnvelopeStageRelease,
 };
 
 class Envelope
@@ -25,28 +27,27 @@ public:
 	void SetDecay(double d) { decay = d; }
 	void SetSustain(double s) { sustain = s; }
 	void SetRelease(double r) { release = r; }
-	void SetVelocityAmount(double a) { velocityAmount = a; }
+	void SetVelocitySensitivity(double v) { velocitySensitivity = v; }
 
-	bool IsReleased() { return stage == EnvelopeStageRelease; }
-
-	void SetVelocity(double v) { velocity = v / 128.0; }
+	void SetVelocity(double v) { velocity = v; }
 	void Start() { stage = EnvelopeStageAttack; }
 	void Release() { stage = EnvelopeStageRelease; }
 	void Reset() { value = 0.0; }
-	double Get() { return value * (1 - velocityAmount + velocityAmount * velocity); }
 	void Update();
+	double Get() { return value * (1 - velocitySensitivity + velocity * velocitySensitivity); }
+	bool IsReleased() { return stage == EnvelopeStageRelease; }
 
 private:
-	double dt = 44100;
+	double dt = 0.0;
 
-	double attack = 100.0;
-	double decay = 10.0;
-	double sustain = 0.5;
-	double release = 10.0;
-	double velocityAmount = 0.0;
-	double velocity = 0.0;
+	double attack = 0.0;
+	double decay = 0.0;
+	double sustain = 0.0;
+	double release = 0.0;
+	double velocitySensitivity = 0.0;
 
 	EnvelopeStage stage = EnvelopeStageRelease;
 	double value = 0.0;
+	double velocity = 0.0;
 };
 

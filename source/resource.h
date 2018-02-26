@@ -1,19 +1,19 @@
 #define PLUG_MFR "AndrewMinnich"
-#define PLUG_NAME "CynthiaMicro"
+#define PLUG_NAME "MikaMicro"
 
-#define PLUG_CLASS_NAME CynthiaMicro
+#define PLUG_CLASS_NAME MikaMicro
 
 #define BUNDLE_MFR "AndrewMinnich"
-#define BUNDLE_NAME "CynthiaMicro"
+#define BUNDLE_NAME "MikaMicro"
 
-#define PLUG_ENTRY CynthiaMicro_Entry
-#define PLUG_VIEW_ENTRY CynthiaMicro_ViewEntry
+#define PLUG_ENTRY MikaMicro_Entry
+#define PLUG_VIEW_ENTRY MikaMicro_ViewEntry
 
-#define PLUG_ENTRY_STR "CynthiaMicro_Entry"
-#define PLUG_VIEW_ENTRY_STR "CynthiaMicro_ViewEntry"
+#define PLUG_ENTRY_STR "MikaMicro_Entry"
+#define PLUG_VIEW_ENTRY_STR "MikaMicro_ViewEntry"
 
-#define VIEW_CLASS CynthiaMicro_View
-#define VIEW_CLASS_STR "CynthiaMicro_View"
+#define VIEW_CLASS MikaMicro_View
+#define VIEW_CLASS_STR "MikaMicro_View"
 
 // Format        0xMAJR.MN.BG - in HEX! so version 10.1.5 would be 0x000A0105
 #define PLUG_VER 0x00010000
@@ -21,7 +21,7 @@
 
 // http://service.steinberg.de/databases/plugin.nsf/plugIn?openForm
 // 4 chars, single quotes. At least one capital letter
-#define PLUG_UNIQUE_ID 'TesC'
+#define PLUG_UNIQUE_ID 'TesM'
 // make sure this is not the same as BUNDLE_MFR
 #define PLUG_MFR_ID 'Tesa'
 
@@ -34,7 +34,7 @@
 #endif
 
 #define PLUG_MFR_PT "AndrewMinnich\nAndrewMinnich\nAcme"
-#define PLUG_NAME_PT "CynthiaMicro\nIPEF"
+#define PLUG_NAME_PT "MikaMicro\nIPEF"
 #define PLUG_TYPE_PT "Effect"
 #define PLUG_DOES_AUDIOSUITE 1
 
@@ -56,18 +56,22 @@ instrument determined by PLUG _IS _INST
 // Unique IDs for each image resource.
 #define BG_ID 100
 #define KNOB_ID 101
-#define SWITCH_ID 102
-#define WAVEFORM_SWITCH_ID 103
+#define SLIDER_ID 102
+#define SLIDERBG_ID 103
+#define WAVEFORMSWITCH_ID 104
+#define TOGGLESWITCH_ID 105
 
 // Image resource locations for this plug.
 #define BG_FN "resources/img/bg.png"
 #define KNOB_FN "resources/img/knob.png"
-#define SWITCH_FN "resources/img/switch.png"
-#define WAVEFORM_SWITCH_FN "resources/img/waveforms.png"
+#define SLIDER_FN "resources/img/slider.png"
+#define SLIDERBG_FN "resources/img/sliderbg.png"
+#define WAVEFORMSWITCH_FN "resources/img/waveforms.png"
+#define TOGGLESWITCH_FN "resources/img/switch.png"
 
 // GUI default dimensions
-#define GUI_WIDTH 833
-#define GUI_HEIGHT 384
+#define GUI_WIDTH 224*4
+#define GUI_HEIGHT 112*4
 
 // on MSVC, you must define SA_API in the resource editor preprocessor macros as well as the c++ ones
 #if defined(SA_API)
@@ -75,9 +79,9 @@ instrument determined by PLUG _IS _INST
 #endif
 
 // vst3 stuff
-#define MFR_URL "www.tesselode.github.io"
+#define MFR_URL "tesselode.github.io"
 #define MFR_EMAIL "aminnich3@gmail.com"
-#define EFFECT_TYPE_VST3 "Fx"
+#define EFFECT_TYPE_VST3 "Instrument|Synth"
 
 /* "Fx|Analyzer"", "Fx|Delay", "Fx|Distortion", "Fx|Dynamics", "Fx|EQ", "Fx|Filter",
 "Fx", "Fx|Instrument", "Fx|InstrumentExternal", "Fx|Spatial", "Fx|Generator",

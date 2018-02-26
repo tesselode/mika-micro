@@ -1,109 +1,122 @@
 #include "Voice.h"
 
-void Voice::SetNote(int n)
+void Voice::Start()
 {
-	note = n;
-	targetFrequency = PitchToFrequency(note);
+	baseFrequency = targetFrequency;
+	if (GetVolume() == 0.0)
+	{
+		osc1a.Reset();
+		osc1b.Reset(osc1SplitFactorA < 1.0 ? 0.33 : 0.0);
+		osc2a.Reset();
+		osc2b.Reset(osc2SplitFactorA < 1.0 ? 0.33 : 0.0);
+		oscFm.Reset();
+		volumeEnvelope.Reset();
+		modEnvelope.Reset();
+		delayEnvelope.Reset();
+		filter.ResetF();
+	}
+	volumeEnvelope.Start();
+	modEnvelope.Start();
+	delayEnvelope.Start();
+}
+
+void Voice::Release()
+{
+	volumeEnvelope.Release();
+	modEnvelope.Release();
+	delayEnvelope.Release();
+}
+
+double Voice::GetFilterF(double lfoValue, double driftValue)
+{
+	double f = filterF;
+	if (filterKeyTrack != 0.0) f += filterKeyTrack * baseFrequency * pitchBendFactor * .00005;
+	if (volEnvCutoff != 0.0) f += volEnvCutoff * volumeEnvelope.Get();
+	if (modEnvCutoff != 0.0) f += modEnvCutoff * modEnvelope.Get();
+	if (lfoCutoff != 0.0) f += lfoCutoff * lfoValue;
+	f *= 1 + driftValue * .00005;
+	return f;
+}
+
+double Voice::GetOscillators(double lfoValue, double driftValue)
+{
+	double out = 0.0;
+
+	double osc1BaseFrequency = baseFrequency * osc1TuneFactor * pitchBendFactor;
+	if (lfoAmount < 0.0) osc1BaseFrequency *= 1 + fabs(lfoAmount) * lfoValue;
+	osc1BaseFrequency *= 1 + driftValue;
+
+	// fm
+	double fmFactor = 1.0;
+	if (fmCoarse != 0)
+	{
+		double fmAmount = fabs(fmCoarse) + fmFine;
+		if (volEnvFm != 0.0) fmAmount += volEnvFm * volumeEnvelope.Get();
+		if (modEnvFm != 0.0) fmAmount += modEnvFm * modEnvelope.Get();
+		if (lfoFm != 0.0) fmAmount += lfoFm * lfoValue;
+		double fmValue = oscFm.Next(osc1BaseFrequency, OscillatorWaveformSine);
+		fmFactor = pitchFactor(fmAmount * fmValue);
+	}
+
+	// osc 1
+	if (oscMix < 1.0)
+	{
+		if (fmCoarse < 0) osc1BaseFrequency *= fmFactor;
+		auto osc1Out = 0.0;
+		if (osc1SplitFactorA != 1.0)
+		{
+			osc1Out += osc1a.Next(osc1BaseFrequency * osc1SplitFactorA, osc1Wave);
+			osc1Out += osc1b.Next(osc1BaseFrequency * osc1SplitFactorB, osc1Wave);
+		}
+		else
+			osc1Out = osc1a.Next(osc1BaseFrequency, osc1Wave);
+		out += osc1Out * (1.0 - oscMix);
+	}
+
+	// osc 2
+	if (oscMix > 0.0)
+	{
+		double osc2BaseFrequency = baseFrequency * osc2TuneFactor * pitchBendFactor;
+		osc2BaseFrequency *= 1 + driftValue;
+		if (lfoAmount != 0.0) osc2BaseFrequency *= 1 + fabs(lfoAmount) * lfoValue;
+		if (fmCoarse > 0) osc2BaseFrequency *= fmFactor;
+		auto osc2Out = 0.0;
+		if (osc2SplitFactorA != 1.0)
+		{
+			osc2Out += osc2a.Next(osc2BaseFrequency * osc2SplitFactorA, osc2Wave);
+			osc2Out += osc2b.Next(osc2BaseFrequency * osc2SplitFactorB, osc2Wave);
+		}
+		else
+			osc2Out = osc2a.Next(osc2BaseFrequency, osc2Wave);
+		out += osc2Out * oscMix;
+	}
+	
+	return out;
+}
+
+double Voice::GetDriftValue()
+{
+	driftPhase += -1.0 + 2.0 * xorshf96() / 4294967296.0;
+	driftPhase -= driftPhase * dt;
+	return .01 * fastSin(driftPhase * 10 * dt);
 }
 
 double Voice::Next(double lfoValue)
 {
-	double out = 0.0;
+	UpdateEnvelopes();
+	if (GetVolume() == 0.0) return 0.0;
 
-	modEnvelope.Update();
-	gateEnvelope.Update();
-	lfoDelayEnvelope.Update();
-	if (GetVolume() == 0) return 0.0;
+	if (baseFrequency != targetFrequency)
+		baseFrequency = lerp(baseFrequency, targetFrequency, glideSpeed * dt);
+	lfoValue *= delayEnvelope.Get();
+	auto driftValue = GetDriftValue();
 
-	driftPhase += randomValue();
-	driftPhase -= driftPhase * dt;
-	double driftValue = .0025 * sin(driftPhase * .001);
-
-	frequency += (targetFrequency - frequency) * (glideSpeed * dt);
-
-	double fmValue = 0.0;
-
-	// fm
-	if (fmCoarse != 0.0)
+	auto out = GetOscillators(lfoValue, driftValue);
+	if (filterF < 1.0)
 	{
-		double oscFrequency = frequency * oscillator1Coarse * pitchBend;
-		oscFrequency *= 1 + driftValue;
-		if (lfoAmount > 0.0)
-		{
-			oscFrequency *= 1 + lfoAmount * lfoValue * lfoDelayEnvelope.Get();
-		}
-		oscFm.SetFrequency(oscFrequency);
-		oscFm.Update();
-		fmValue = oscFm.Get(Sine) * (fabs(fmCoarse) + fmFine + fmEnvelopeAmount * modEnvelope.Get());
+		auto f = GetFilterF(lfoValue, driftValue);
+		for (int i = 0; i < 2; i++) out = filter.Process(out, f);
 	}
-
-	// oscillator 1
-	if (oscillatorMix < 1.0)
-	{
-		double oscOut = 0.0;
-
-		double oscFrequency = frequency * oscillator1Coarse * pitchBend;
-		oscFrequency *= 1 + driftValue;
-		if (fmCoarse < 0.0) oscFrequency *= PitchFactor(fmValue);
-		if (lfoAmount > 0.0)
-		{
-			oscFrequency *= 1 + lfoAmount * lfoValue * lfoDelayEnvelope.Get();
-		}
-
-		if (oscillator1Split > 1.0)
-		{
-			osc1a.SetFrequency(oscFrequency / oscillator1Split);
-			osc1b.SetFrequency(oscFrequency * oscillator1Split);
-			osc1b.Update();
-			oscOut += osc1b.Get(oscillator1Wave);
-		}
-		else
-		{
-			osc1a.SetFrequency(oscFrequency);
-		}
-		osc1a.Update();
-		oscOut += osc1a.Get(oscillator1Wave);
-
-		out += oscOut * (1 - oscillatorMix);
-	}
-
-	// oscillator 2
-	if (oscillatorMix > 0.0)
-	{
-		double oscOut = 0.0;
-
-		double oscFrequency = frequency * oscillator2Coarse * pitchBend;
-		oscFrequency *= 1 + driftValue;
-		if (fmCoarse > 0.0) oscFrequency *= PitchFactor(fmValue);
-		oscFrequency *= 1 + lfoAmount * lfoValue * lfoDelayEnvelope.Get();
-
-		if (oscillator2Split > 1.0)
-		{
-			osc2a.SetFrequency(oscFrequency / oscillator2Split);
-			osc2b.SetFrequency(oscFrequency * oscillator2Split);
-			osc2b.Update();
-			oscOut += osc2b.Get(oscillator2Wave);
-		}
-		else
-		{
-			osc2a.SetFrequency(oscFrequency);
-		}
-		osc2a.Update();
-		oscOut += osc2a.Get(oscillator2Wave);
-
-		out += oscOut * oscillatorMix;
-	}
-	
-	if (filterCutoff < 20000.0)
-	{
-		double cutoff = filterCutoff;
-		cutoff *= 1 + driftValue;
-		cutoff += filterKeyTracking * (frequency - 440.0);
-		cutoff += filterEnvelopeAmount * modEnvelope.Get();
-		out = filter.Process(out, cutoff);
-	}
-
 	out *= GetVolume();
-
 	return out;
 }

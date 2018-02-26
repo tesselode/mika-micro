@@ -2,23 +2,29 @@
 
 void Envelope::Update()
 {
-	if (stage == EnvelopeStageAttack)
+	switch (stage)
 	{
-		value += (1.5 - value) * (attack * dt);
+	case EnvelopeStageAttack:
+		value = lerp(value, 1.1, attack * dt);
 		if (value >= 1.0)
 		{
 			value = 1.0;
 			stage = EnvelopeStageDecay;
 		}
-	}
-	else if (stage == EnvelopeStageDecay)
-	{
-		value += (sustain - .1 - value) * (decay * dt);
-		value = value < sustain ? sustain : value;
-	}
-	else if (stage == EnvelopeStageRelease)
-	{
-		value += (-.1 - value) * (release * dt);
-		value = value < 0 ? 0 : value;
+		break;
+	case EnvelopeStageDecay:
+		if (value > sustain)
+		{
+			value = lerp(value, sustain - .1, decay * dt);
+			value = value < sustain ? sustain : value;
+		}
+		break;
+	case EnvelopeStageRelease:
+		if (value > 0.0)
+		{
+			value = lerp(value, -.1, release * dt);
+			value = value < 0 ? 0 : value;
+		}
+		break;
 	}
 }

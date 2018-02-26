@@ -12,9 +12,9 @@
 
  App settings are stored in a .ini file. The location is as follows:
 
- Windows7: C:\Users\USERNAME\AppData\Local\CynthiaMicro\settings.ini
- Windows XP/Vista: C:\Documents and Settings\USERNAME\Local Settings\Application Data\CynthiaMicro\settings.ini
- OSX: /Users/USERNAME/Library/Application\ Support/CynthiaMicro/settings.ini
+ Windows7: C:\Users\USERNAME\AppData\Local\MikaMicro\settings.ini
+ Windows XP/Vista: C:\Documents and Settings\USERNAME\Local Settings\Application Data\MikaMicro\settings.ini
+ OSX: /Users/USERNAME/Library/Application\ Support/MikaMicro/settings.ini
 
 */
 
@@ -44,7 +44,7 @@
 #include <string>
 #include <vector>
 
-#include "../CynthiaMicro.h" // change this to match your iplug plugin .h file
+#include "../MikaMicro.h" // change this to match your iplug plugin .h file
 
 typedef unsigned short UInt16;
 
