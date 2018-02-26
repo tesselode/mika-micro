@@ -151,7 +151,7 @@ void MikaMicro::PlayVoices(int s)
 
 		auto status = message->StatusMsg();
 		auto note = message->NoteNumber();
-		auto velocity = message->Velocity() * .0078125;
+		auto velocity = pow(message->Velocity() * .0078125, 1.25);
 		bool noteOff = status == IMidiMsg::kNoteOff || (status == IMidiMsg::kNoteOn && velocity == 0);
 
 		if (noteOff)

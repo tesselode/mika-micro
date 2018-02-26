@@ -2,6 +2,7 @@
 #define __MIKAMICRO__
 
 #include <array>
+#include <cmath>
 #include "IPlug_include_in_plug_hdr.h"
 #include "IMidiQueue.h"
 #include "Oscillator.h"
