@@ -17,7 +17,7 @@ class Oscillator
 public:
 	void SetSampleRate(double sr) { dt = 1.0 / sr; }
 
-	void Reset() { phase = 0.0; }
+	void Reset(double p = 0.0) { phase = p; }
 	double Next(double frequency, OscillatorWaveform waveform);
 
 private:

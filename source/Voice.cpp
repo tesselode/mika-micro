@@ -6,9 +6,9 @@ void Voice::Start()
 	if (GetVolume() == 0.0)
 	{
 		osc1a.Reset();
-		osc1b.Reset();
+		osc1b.Reset(osc1SplitFactorA < 1.0 ? 0.33 : 0.0);
 		osc2a.Reset();
-		osc2b.Reset();
+		osc2b.Reset(osc2SplitFactorA < 1.0 ? 0.33 : 0.0);
 		oscFm.Reset();
 		volumeEnvelope.Reset();
 		modEnvelope.Reset();

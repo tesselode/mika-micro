@@ -9,11 +9,11 @@ void MikaMicro::InitParameters()
 	GetParam(osc1Wave)->InitEnum("Oscillator 1 waveform", OscillatorWaveformSaw, numWaveforms);
 	GetParam(osc1Coarse)->InitInt("Oscillator 1 coarse", 0, -24, 24, "semitones");
 	GetParam(osc1Fine)->InitDouble("Oscillator 1 fine", 0.0, -1.0, 1.0, .01, "semitones");
-	GetParam(osc1Split)->InitDouble("Oscillator 1 split", 0.0, 0.0, .025, .01);
+	GetParam(osc1Split)->InitDouble("Oscillator 1 split", 0.0, -.025, .025, .01);
 	GetParam(osc2Wave)->InitEnum("Oscillator 2 waveform", OscillatorWaveformSaw, numWaveforms);
 	GetParam(osc2Coarse)->InitInt("Oscillator 2 coarse", 0, -24, 24, "semitones");
 	GetParam(osc2Fine)->InitDouble("Oscillator 2 fine", 0.0, -1.0, 1.0, .01, "semitones");
-	GetParam(osc2Split)->InitDouble("Oscillator 2 split", 0.0, 0.0, .025, .01);
+	GetParam(osc2Split)->InitDouble("Oscillator 2 split", 0.0, -.025, .025, .01);
 	GetParam(oscMix)->InitDouble("Oscillator mix", 1.0, 0.0, 1.0, .01);
 
 	// fm
