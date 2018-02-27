@@ -99,11 +99,9 @@ double Voice::GetDriftValue()
 	double random = -1.0 + 2.0 * xorshf96() / 4294967296.0;
 	double driftAccel = random;
 	driftVelocity += driftAccel * 10000 * dt;
-	driftVelocity = lerp(driftVelocity, 0, 2 * dt);
+	driftVelocity -= driftVelocity * 2 * dt;
 	driftPhase += driftVelocity * dt;
-	while (driftPhase < -pi) driftPhase += 2 * pi;
-	while (driftPhase > pi) driftPhase -= 2 * pi;
-	return .0001 * fastSin(driftPhase);
+	return .0001 * sin(driftPhase);
 }
 
 double Voice::Next(double lfoValue)
