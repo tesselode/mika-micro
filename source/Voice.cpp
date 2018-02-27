@@ -101,7 +101,9 @@ double Voice::GetDriftValue()
 	driftVelocity += driftAccel * 10000 * dt;
 	driftVelocity = lerp(driftVelocity, 0, 2 * dt);
 	driftPhase += driftVelocity * dt;
-	return .0001 * sin(driftPhase);
+	while (driftPhase < -pi) driftPhase += 2 * pi;
+	while (driftPhase > pi) driftPhase -= 2 * pi;
+	return .0001 * fastSin(driftPhase);
 }
 
 double Voice::Next(double lfoValue)

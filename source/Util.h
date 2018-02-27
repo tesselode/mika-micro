@@ -27,10 +27,8 @@ inline unsigned long xorshf96()
 // http://lab.polygonal.de/2007/07/18/fast-and-accurate-sinecosine-approximation/
 inline double fastSin(double x)
 {
-	if (x < -3.14159265)
-		x += 6.28318531;
-	else if (x > 3.14159265)
-		x -= 6.28318531;
+	while (x < -3.14159265) x += 6.28318531;
+	while (x > 3.14159265) x -= 6.28318531;
 	if (x < 0)
 		return 1.27323954 * x + .405284735 * x * x;
 	else

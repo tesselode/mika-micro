@@ -1,5 +1,6 @@
 #pragma once
 
+#include <cmath>
 #include "Envelope.h"
 #include "Filter.h"
 #include "Oscillator.h"
@@ -84,6 +85,8 @@ public:
 	double Next(double lfoValue);
 
 private:
+	double pi = 2 * acos(0.0);
+
 	double dt = 0.0;
 
 	Oscillator osc1a;
