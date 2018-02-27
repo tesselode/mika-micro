@@ -124,6 +124,7 @@ private:
 	double targetFrequency = 440.0;
 	double baseFrequency = 440.0;
 	double pitchBendFactor = 1.0;
+	double driftVelocity = 0.0;
 	double driftPhase = 0.0;
 
 	double GetFilterF(double lfoValue, double driftValue);
