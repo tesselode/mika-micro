@@ -1,6 +1,6 @@
 # Mika Micro
 
-![](https://img.itch.zone/aW1hZ2UvMjEzODg4LzEwODIxNjYucG5n/original/Fq%2FxO%2B.png)
+![](images/screenshot.png)
 
 Mika Micro is a subtractive synthesizer plugin that aims to be fun and expressive with a minimal set of controls.
 
