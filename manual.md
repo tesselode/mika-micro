@@ -1,17 +1,25 @@
 # Mika Micro manual
 
-## Generators
+## Installation
+
+Place the .dll file in your VST plugins folder and set up your DAW to load plugins from that folder. If you don't have a VST plugins folder yet, choose any folder you like.
+
+## Usage
+
+To play Mika Micro, use your host to send MIDI input to the plugin. To change the sound, use your mouse to manipulate the controls. Switches can be operated by clicking them, and knobs and sliders can be operated by clicking and dragging them up or down. Every control can be reset to its default value by double clicking it.
+
+### Generators
 ![](images/generators.png)
 
 The left side of the synth is the **generators** section, responsible for creating and shaping synth sounds.
 
-### Oscillators
+#### Oscillators
 
 ![](images/oscillators.png)
 
 The oscillators are the basic building blocks of a sound in Mika Micro.
 
-#### Controls
+##### Controls
 Mika Micro has two oscillators, each with the same controls:
 - **Waveform**: choose what sound the oscillator will produce.
 - **Coarse**: sets the pitch of the oscillator in semitones.
@@ -20,41 +28,41 @@ Mika Micro has two oscillators, each with the same controls:
 
 The **mix** control on the right sets the volume balance between the two oscillators. If the control is set all the way to oscillator 1 or 2, the other oscillator will be disabled, saving CPU cycles.
 
-### FM
+#### FM
 
 ![](images/fm.png)
 
 You can use the FM section to modulate the frequency of either oscillator by the output of the FM oscillator, which outputs a sine wave at oscillator 1's frequency. If you don't know what that means, that's OK! Just play with the knobs and see what happens.
 
-#### Controls
+##### Controls
 - **Coarse**: sets the amount of frequency modulation to apply. Turn the knob to the left to modulate oscillator 1, or turn it to the right to modulate oscillator 2.
 - **Fine**: fine tunes the amount of frequency modulation.
 
-### Filter
+#### Filter
 
 ![](images/filter.png)
 
 When enabled, the filter removes high frequencies from the sound, resulting in a darker, more subdued sound. The resonance knobs add a "ringing" sound, which is a commonly used effect in electronic music.
 
-#### Controls
+##### Controls
 - **Cutoff**: sets the cutoff frequency. The farther to the left the knob is turned, the darker the sound. When this knob is turned all the way to the right, the filter will be bypassed completely, saving CPU cycles.
 - **Resonance 1**: creates a ringing sound around the cutoff frequency.
 - **Resonance 2**: a different style of resonance. This one's a little more unpredictable, but it generally accentuates the highs in a relatively wide range around the cutoff frequency.
 - **Key tracking**: adjusts the cutoff proportionally (right) or inversely (left) with the pitch of the voice. When turned all the way to the right, the filter will affect the timbre of every note equally.
 
-## Modulation
+### Modulation
 
 ![](images/modulation.png)
 
 The right half of the synth is the **modulation** section, responsible for creating movement in the synth. The three modulation sources - the **volume envelope**, the **mod envelope**, and **vibrato** - can all be linked to the FM amount or filter cutoff using the knobs in the **targets** section.
 
-### Envelopes
+#### Envelopes
 
 ![](images/envelopes.png)
 
 Mika Micro has two envelopes, which modulate parameters along a certain path every time a note is started. The **volume** envelope controls the volume of the sound, while the **modulation** envelope is not linked to any parameters by default.
 
-#### Controls
+##### Controls
 Both envelopes have the same controls:
 - **Attack**: the time it takes for the envelope to move from 0% to 100% when a note is played.
 - **Decay**: the time it takes for the envelope to move from 100% to the sustain level.
@@ -62,13 +70,13 @@ Both envelopes have the same controls:
 - **Release**: the time it takes for the envelope to move to 0% when the note is released.
 - **Velocity sensitivity**: the amount the total value of the envelope is scaled by the velocity the note is played at.
 
-### Vibrato
+#### Vibrato
 
 ![](images/vibrato.png)
 
 The vibrato section adds a vibrato effect to each voice.
 
-#### Controls
+##### Controls
 - **Amount**: the amount of vibrato to apply. Turn the knob to the left to apply vibrato to both oscillators 1 and 2. Turn it to the right to apply vibrato to oscillator 2 only.
 - **Speed**: sets the speed of the vibrato.
 - **Delay**: sets the amount of time it takes for the vibrato to activate fully after a note is played.
