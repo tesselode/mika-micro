@@ -80,3 +80,12 @@ The vibrato section adds a vibrato effect to each voice.
 - **Amount**: the amount of vibrato to apply. Turn the knob to the left to apply vibrato to both oscillators 1 and 2. Turn it to the right to apply vibrato to oscillator 2 only.
 - **Speed**: sets the speed of the vibrato.
 - **Delay**: sets the amount of time it takes for the vibrato to activate fully after a note is played.
+
+### Master
+
+![](images/master.png)
+
+The bottom bar has a few more controls:
+- **Mono**: enables or disables mono mode. When the synth is in mono mode, only one voice can be played at a time. If a key is pressed while another is already held down, the pitch of the voice will glide up to the new note. In poly mode, up to 8 voices can be played at once.
+- **Glide**: the speed at which the glides to new notes when in mono mode.
+- **Volume**: the volume of the final output signal.
