@@ -21,10 +21,10 @@ The oscillators are the basic building blocks of a sound in Mika Micro.
 
 ##### Controls
 Mika Micro has two oscillators, each with the same controls:
-- **Waveform**: choose what sound the oscillator will produce.
+- **Waveform**: choose what sound the oscillator will produce. The available waveforms are sine, triangle, saw, square, and pulse.
 - **Coarse**: sets the pitch of the oscillator in semitones.
-- **Fine**: fine tunes the pitch.
-- **Split**: when turned to the left or right, splits the oscillator into two slightly detuned oscillators, creating a thicker sound. When a new note is played, if the split control is turned to the left, the oscillators will start out of phase, creating a soft, gentle attack. If the split control is turned to the right, the oscillators will start in phase, creating a punchy, hard attack.
+- **Fine**: fine tunes the pitch in a range of -1 to +1 semitones.
+- **Split**: splits the oscillator into two slightly detuned oscillators, creating a thicker sound. When turned to the left, the oscillators will start out of phase, creating a soft, gentle attack. When turned to the right, the oscillators will start in phase, creating a punchy, hard attack.
 
 The **mix** control on the right sets the volume balance between the two oscillators. If the control is set all the way to oscillator 1 or 2, the other oscillator will be disabled, saving CPU cycles.
 
@@ -42,7 +42,7 @@ You can use the FM section to modulate the frequency of either oscillator by the
 
 ![](images/filter.png)
 
-When enabled, the filter removes high frequencies from the sound, resulting in a darker, more subdued sound. The resonance knobs add a "ringing" sound, which is a commonly used effect in electronic music.
+When enabled, the low pass filter removes high frequencies from the sound, resulting in a darker, more subdued sound. The resonance knobs add a "ringing" sound, which is a commonly used effect in electronic music.
 
 ##### Controls
 - **Cutoff**: sets the cutoff frequency. The farther to the left the knob is turned, the darker the sound. When this knob is turned all the way to the right, the filter will be bypassed completely, saving CPU cycles.
@@ -86,6 +86,6 @@ The vibrato section adds a vibrato effect to each voice.
 ![](images/master.png)
 
 The bottom bar has a few more controls:
-- **Mono**: enables or disables mono mode. When the synth is in mono mode, only one voice can be played at a time. If a key is pressed while another is already held down, the pitch of the voice will glide up to the new note. In poly mode, up to 8 voices can be played at once.
-- **Glide**: the speed at which the glides to new notes when in mono mode.
+- **Mono**: enables or disables mono mode. In mono mode, only one voice can be played at a time. In poly mode, up to 8 voices can be played at once.
+- **Glide**: In mono mode, if a key is pressed while another is already held down, the pitch of the voice will glide up to the new note. The glide knob sets the speed at which these glides occur.
 - **Volume**: the volume of the final output signal.
