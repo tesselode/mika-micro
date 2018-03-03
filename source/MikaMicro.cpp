@@ -217,11 +217,21 @@ void MikaMicro::PlayVoices(int s)
 	}
 }
 
+double MikaMicro::GetDriftValue()
+{
+	double random = -1.0 + 2.0 * xorshf96() / 4294967296.0;
+	driftVelocity += random * 10000 * dt;
+	driftVelocity -= driftVelocity * 2 * dt;
+	driftPhase += driftVelocity * dt;
+	return .0005 * sin(driftPhase);
+}
+
 double MikaMicro::GetVoices()
 {
 	auto lfoValue = lfo.Next(GetParam(lfoFrequency)->Value(), OscillatorWaveformSine);
+	auto driftValue = GetDriftValue();
 	auto out = 0.0;
-	for (auto &voice : voices) out += voice.Next(lfoValue);
+	for (auto &voice : voices) out += voice.Next(lfoValue, driftValue);
 	return out * GetParam(masterVolume)->Value();
 }
 
@@ -243,6 +253,7 @@ void MikaMicro::Reset()
 {
 	TRACE;
 	IMutexLock lock(this);
+	dt = 1.0 / GetSampleRate();
 	lfo.SetSampleRate(GetSampleRate());
 	for (auto &voice : voices) voice.SetSampleRate(GetSampleRate());
 }

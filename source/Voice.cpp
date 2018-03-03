@@ -128,16 +128,9 @@ void Voice::UpdateSplitAndWave()
 	}
 }
 
-double Voice::GetDriftValue()
-{
-	double random = -1.0 + 2.0 * xorshf96() / 4294967296.0;
-	driftVelocity += random * 10000 * dt;
-	driftVelocity -= driftVelocity * 2 * dt;
-	driftPhase += driftVelocity * dt;
-	return .0001 * sin(driftPhase);
-}
 
-double Voice::Next(double lfoValue)
+
+double Voice::Next(double lfoValue, double driftValue)
 {
 	oscMix = lerp(oscMix, targetOscMix, 100 * dt);
 	UpdateSplitAndWave();
@@ -147,7 +140,6 @@ double Voice::Next(double lfoValue)
 	if (baseFrequency != targetFrequency)
 		baseFrequency = lerp(baseFrequency, targetFrequency, glideSpeed * dt);
 	lfoValue *= delayEnvelope.Get();
-	auto driftValue = GetDriftValue();
 
 	auto out = GetOscillators(lfoValue, driftValue);
 	if (filterF < 1.0)

@@ -74,10 +74,14 @@ private:
 	std::vector<HeldNote> heldNotes;
 	Oscillator lfo;
 	std::array<Voice, 8> voices;
+	double driftVelocity = 0.0;
+	double driftPhase = 0.0;
+	double dt = 0.0;
 
 	void InitParameters();
 	void InitGraphics();
 	void PlayVoices(int s);
+	double GetDriftValue();
 	double GetVoices();
 	void GrayOutControls();
 };
