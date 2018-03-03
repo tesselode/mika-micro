@@ -140,6 +140,7 @@ double Voice::GetDriftValue()
 
 double Voice::Next(double lfoValue)
 {
+	oscMix = lerp(oscMix, targetOscMix, 100 * dt);
 	UpdateSplitAndWave();
 	UpdateEnvelopes();
 	if (GetVolume() == 0.0) return 0.0;

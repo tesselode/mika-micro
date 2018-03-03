@@ -53,7 +53,7 @@ public:
 		osc2SplitFactorA = 1.0 + s;
 		osc2SplitFactorB = 1.0 / osc2SplitFactorA;
 	};
-	void SetOscMix(double m) { oscMix = m; }
+	void SetOscMix(double m) { targetOscMix = m; }
 	void SetFmCoarse(int c) { fmCoarse = c; }
 	void SetFmFine(double f) { fmFine = f; }
 	void SetFilterF(double f) { filterF = f; }
@@ -129,6 +129,7 @@ private:
 	bool osc2SplitEnabledNext = false;
 	double osc2SplitFactorA = 1.0;
 	double osc2SplitFactorB = 1.0;
+	double targetOscMix = 0.0;
 	double oscMix = 0.0;
 	int fmCoarse = 0;
 	double fmFine = 0.0;
