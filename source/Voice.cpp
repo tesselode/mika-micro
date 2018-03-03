@@ -63,7 +63,7 @@ double Voice::GetOscillators(double lfoValue, double driftValue)
 	{
 		if (fmCoarse < 0) osc1BaseFrequency *= fmFactor;
 		auto osc1Out = 0.0;
-		if (osc1SplitFactorA != 1.0)
+		if (osc1SplitEnabled)
 		{
 			osc1Out += osc1a.Next(osc1BaseFrequency * osc1SplitFactorA, osc1Wave);
 			osc1Out += osc1b.Next(osc1BaseFrequency * osc1SplitFactorB, osc1Wave);
@@ -81,7 +81,7 @@ double Voice::GetOscillators(double lfoValue, double driftValue)
 		if (lfoAmount != 0.0) osc2BaseFrequency *= 1 + fabs(lfoAmount) * lfoValue;
 		if (fmCoarse > 0) osc2BaseFrequency *= fmFactor;
 		auto osc2Out = 0.0;
-		if (osc2SplitFactorA != 1.0)
+		if (osc2SplitEnabled)
 		{
 			osc2Out += osc2a.Next(osc2BaseFrequency * osc2SplitFactorA, osc2Wave);
 			osc2Out += osc2b.Next(osc2BaseFrequency * osc2SplitFactorB, osc2Wave);
@@ -92,6 +92,40 @@ double Voice::GetOscillators(double lfoValue, double driftValue)
 	}
 	
 	return out;
+}
+
+void Voice::UpdateSplitAndWave()
+{
+	// applies fade out and fade in for parameters that would make clicking sounds on change
+	double fadeSpeed = 100 * dt;
+	if (osc1WaveNext != OscillatorWaveformNone ||
+		osc2WaveNext != OscillatorWaveformNone ||
+		osc1SplitEnabled != osc1SplitEnabledNext ||
+		osc2SplitEnabled != osc2SplitEnabledNext)
+	{
+		fadeVolume -= fadeSpeed;
+		if (fadeVolume <= 0)
+		{
+			fadeVolume = 0;
+			if (osc1WaveNext != OscillatorWaveformNone)
+			{
+				osc1Wave = osc1WaveNext;
+				osc1WaveNext = OscillatorWaveformNone;
+			}
+			if (osc2WaveNext != OscillatorWaveformNone)
+			{
+				osc2Wave = osc2WaveNext;
+				osc2WaveNext = OscillatorWaveformNone;
+			}
+			osc1SplitEnabled = osc1SplitEnabledNext;
+			osc2SplitEnabled = osc2SplitEnabledNext;
+		}
+	}
+	else if (fadeVolume < 1.0)
+	{
+		fadeVolume += fadeSpeed;
+		if (fadeVolume > 1) fadeVolume = 1;
+	}
 }
 
 double Voice::GetDriftValue()
@@ -106,6 +140,7 @@ double Voice::GetDriftValue()
 
 double Voice::Next(double lfoValue)
 {
+	UpdateSplitAndWave();
 	UpdateEnvelopes();
 	if (GetVolume() == 0.0) return 0.0;
 
@@ -121,5 +156,6 @@ double Voice::Next(double lfoValue)
 		for (int i = 0; i < 2; i++) out = filter.Process(out, f);
 	}
 	out *= GetVolume();
+	out *= fadeVolume;
 	return out;
 }

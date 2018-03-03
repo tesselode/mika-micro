@@ -10,6 +10,7 @@ enum OscillatorWaveform
 	OscillatorWaveformSquare,
 	OscillatorWaveformPulse,
 	numWaveforms,
+	OscillatorWaveformNone,
 };
 
 class Oscillator
