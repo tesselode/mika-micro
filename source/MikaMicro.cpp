@@ -130,7 +130,9 @@ void MikaMicro::InitGraphics()
 }
 
 MikaMicro::MikaMicro(IPlugInstanceInfo instanceInfo)
-  :	IPLUG_CTOR(numParameters, 128, instanceInfo)
+  :	IPLUG_CTOR(numParameters, 128, instanceInfo),
+	gen(rd()),
+	dist(-1.0, 1.0)
 {
 	TRACE;
 
@@ -219,11 +221,10 @@ void MikaMicro::PlayVoices(int s)
 
 double MikaMicro::GetDriftValue()
 {
-	double random = -1.0 + 2.0 * xorshf96() / 4294967296.0;
-	driftVelocity += random * 10000 * dt;
+	driftVelocity += dist(gen) * 10000 * dt;
 	driftVelocity -= driftVelocity * 2 * dt;
 	driftPhase += driftVelocity * dt;
-	return .0005 * sin(driftPhase);
+	return .001 * sin(driftPhase);
 }
 
 double MikaMicro::GetVoices()
