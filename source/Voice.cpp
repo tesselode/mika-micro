@@ -101,7 +101,8 @@ void Voice::UpdateSplitAndWave()
 	if (osc1WaveNext != OscillatorWaveformNone ||
 		osc2WaveNext != OscillatorWaveformNone ||
 		osc1SplitEnabled != osc1SplitEnabledNext ||
-		osc2SplitEnabled != osc2SplitEnabledNext)
+		osc2SplitEnabled != osc2SplitEnabledNext ||
+		filterEnabled != filterEnabledNext)
 	{
 		fadeVolume -= fadeSpeed;
 		if (fadeVolume <= 0)
@@ -119,6 +120,7 @@ void Voice::UpdateSplitAndWave()
 			}
 			osc1SplitEnabled = osc1SplitEnabledNext;
 			osc2SplitEnabled = osc2SplitEnabledNext;
+			filterEnabled = filterEnabledNext;
 		}
 	}
 	else if (fadeVolume < 1.0)
@@ -148,7 +150,7 @@ double Voice::Next(double lfoValue, double driftValue)
 	// main processing
 	auto out = GetOscillators(lfoValue, driftValue);
 	out *= GetVolume();
-	if (filterF < 1.0)
+	if (filterEnabled)
 	{
 		auto f = GetFilterF(lfoValue, driftValue);
 		for (int i = 0; i < 2; i++) out = filter.Process(out, f);
