@@ -6,6 +6,7 @@
 #include "IPlug_include_in_plug_hdr.h"
 #include "IMidiQueue.h"
 #include "Oscillator.h"
+#include <random>
 #include <vector>
 #include "Voice.h"
 
@@ -74,10 +75,17 @@ private:
 	std::vector<HeldNote> heldNotes;
 	Oscillator lfo;
 	std::array<Voice, 8> voices;
+	std::random_device rd;
+	std::mt19937 gen;
+	std::uniform_real_distribution<> dist;
+	double driftVelocity = 0.0;
+	double driftPhase = 0.0;
+	double dt = 0.0;
 
 	void InitParameters();
 	void InitGraphics();
 	void PlayVoices(int s);
+	double GetDriftValue();
 	double GetVoices();
 	void GrayOutControls();
 };

@@ -96,7 +96,7 @@ public:
 	void SetPitchBendFactor(double f) { pitchBendFactor = f; }
 	void Start();
 	void Release();
-	double Next(double lfoValue);
+	double Next(double lfoValue, double driftValue);
 
 private:
 	double pi = 2 * acos(0.0);
@@ -148,8 +148,6 @@ private:
 	double targetFrequency = 440.0;
 	double baseFrequency = 440.0;
 	double pitchBendFactor = 1.0;
-	double driftVelocity = 0.0;
-	double driftPhase = 0.0;
 	double fadeVolume = 1.0;
 
 	double GetFilterF(double lfoValue, double driftValue);
@@ -161,6 +159,5 @@ private:
 		modEnvelope.Update();
 		delayEnvelope.Update();
 	}
-	double GetDriftValue();
 };
 

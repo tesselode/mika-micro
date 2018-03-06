@@ -128,16 +128,7 @@ void Voice::UpdateSplitAndWave()
 	}
 }
 
-double Voice::GetDriftValue()
-{
-	double random = -1.0 + 2.0 * xorshf96() / 4294967296.0;
-	driftVelocity += random * 10000 * dt;
-	driftVelocity -= driftVelocity * 2 * dt;
-	driftPhase += driftVelocity * dt;
-	return .0001 * sin(driftPhase);
-}
-
-double Voice::Next(double lfoValue)
+double Voice::Next(double lfoValue, double driftValue)
 {
 	// parameter smoothing
 	oscMix = lerp(oscMix, targetOscMix, 100 * dt);
@@ -153,9 +144,6 @@ double Voice::Next(double lfoValue)
 
 	// lfo delay
 	lfoValue *= delayEnvelope.Get();
-
-	// drift
-	auto driftValue = GetDriftValue();
 
 	// main processing
 	auto out = GetOscillators(lfoValue, driftValue);
