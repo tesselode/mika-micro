@@ -139,23 +139,32 @@ double Voice::GetDriftValue()
 
 double Voice::Next(double lfoValue)
 {
+	// parameter smoothing
 	oscMix = lerp(oscMix, targetOscMix, 100 * dt);
 	UpdateSplitAndWave();
-	UpdateEnvelopes();
-	if (GetVolume() == 0.0) return 0.0;
 
+	// skip processing if voice is silent
+	UpdateEnvelopes();
+	if (GetVolume() == 0.0 && filter.IsSilent()) return 0.0;
+
+	// mono glide
 	if (baseFrequency != targetFrequency)
 		baseFrequency = lerp(baseFrequency, targetFrequency, glideSpeed * dt);
+
+	// lfo delay
 	lfoValue *= delayEnvelope.Get();
+
+	// drift
 	auto driftValue = GetDriftValue();
 
+	// main processing
 	auto out = GetOscillators(lfoValue, driftValue);
+	out *= GetVolume();
 	if (filterF < 1.0)
 	{
 		auto f = GetFilterF(lfoValue, driftValue);
 		for (int i = 0; i < 2; i++) out = filter.Process(out, f);
 	}
-	out *= GetVolume();
 	out *= fadeVolume;
 	return out;
 }

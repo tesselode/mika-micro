@@ -10,6 +10,8 @@ public:
 	void SetRes1(double r) { res1 = r; }
 	void SetRes2(double r) { res2 = r; }
 
+	bool IsSilent() { return low == 0.0; }
+
 	void ResetF() { reset = true; }
 	double Process(double input, double targetF);
 
