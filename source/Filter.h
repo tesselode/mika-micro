@@ -7,8 +7,7 @@ class Filter
 public:
 	void SetSampleRate(double sr) { dt = 44100.0 / sr; }
 
-	void SetRes1(double r) { res1 = r; }
-	void SetRes2(double r) { res2 = r; }
+	void SetRes(double r) { res = r; }
 
 	bool IsSilent() { return low == 0.0; }
 
@@ -20,8 +19,7 @@ private:
 
 	double dt = 0.0;
 
-	double res1 = 1.0;
-	double res2 = 1.0;
+	double res = 1.0;
 
 	bool reset = false;
 	double f = 1.0;

@@ -46,8 +46,7 @@ When enabled, the low pass filter removes high frequencies from the sound, resul
 
 ##### Controls
 - **Cutoff**: sets the cutoff frequency. The farther to the left the knob is turned, the darker the sound. When this knob is turned all the way to the right, the filter will be bypassed completely, saving CPU cycles.
-- **Resonance 1**: creates a ringing sound around the cutoff frequency.
-- **Resonance 2**: a different style of resonance. This one's a little more unpredictable, but it generally accentuates the highs in a relatively wide range around the cutoff frequency.
+- **Resonance**: creates a ringing sound around the cutoff frequency.
 - **Key tracking**: adjusts the cutoff proportionally (right) or inversely (left) with the pitch of the voice. When turned all the way to the right, the filter will affect the timbre of every note equally.
 
 ### Modulation

@@ -6,9 +6,9 @@ double Filter::Process(double input, double targetF)
 	f = reset ? targetF : lerp(f, targetF, .001 * dt);
 	double fSquared = f * f;
 
-	double high = input - (low + band * (1 - res1));
+	double high = input - (low + band * (1 - res));
 	band += fSquared * high * dt;
-	low += band * dt * (fSquared * (1 - res2) + res2);
+	low += fSquared * band * dt;
 	low = FastAtan(low * .1) * 10.0;
 	return low;
 }

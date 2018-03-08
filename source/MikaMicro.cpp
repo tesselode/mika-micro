@@ -22,8 +22,7 @@ void MikaMicro::InitParameters()
 
 	// filter
 	GetParam(filterF)->InitDouble("Filter cutoff", 1.0, .001, 1.0, .01);
-	GetParam(filterRes1)->InitDouble("Filter resonance 1", 0.0, 0.0, 0.9, .01);
-	GetParam(filterRes2)->InitDouble("Filter resonance 2", 0.0, 0.0, 0.9, .01);
+	GetParam(filterRes)->InitDouble("Filter resonance 1", 0.0, 0.0, 0.9, .01);
 	GetParam(filterKeyTrack)->InitDouble("Filter key tracking", 0.0, -1.0, 1.0, .01);
 
 	// modulation sources
@@ -84,9 +83,8 @@ void MikaMicro::InitGraphics()
 
 	// filter
 	pGraphics->AttachControl(new IKnobMultiControl(this, 22 * 4, 62 * 4, filterF, &knob));
-	pGraphics->AttachControl(new IKnobMultiControl(this, 38 * 4, 62 * 4, filterRes1, &knob));
-	pGraphics->AttachControl(new IKnobMultiControl(this, 54 * 4, 62 * 4, filterRes2, &knob));
-	pGraphics->AttachControl(new IKnobMultiControl(this, 70 * 4, 62 * 4, filterKeyTrack, &knob));
+	pGraphics->AttachControl(new IKnobMultiControl(this, 38 * 4, 62 * 4, filterRes, &knob));
+	pGraphics->AttachControl(new IKnobMultiControl(this, 54 * 4, 62 * 4, filterKeyTrack, &knob));
 
 	// modulation sources
 	pGraphics->AttachControl(new IBitmapControl(this, 121.5 * 4, 22 * 4, &sliderBg));
@@ -276,12 +274,12 @@ void MikaMicro::GrayOutControls()
 	pGraphics->GetControl(4)->GrayOut(!osc1Enabled);
 	for (int i = 5; i < 9; i++) pGraphics->GetControl(i)->GrayOut(!osc2Enabled);
 	pGraphics->GetControl(12)->GrayOut(!fmEnabled);
-	for (int i = 14; i < 17; i++) pGraphics->GetControl(i)->GrayOut(!filterEnabled);
-	for (int i = 27; i < 37; i++) pGraphics->GetControl(i)->GrayOut(!modEnvEnabled);
-	for (int i = 38; i < 40; i++) pGraphics->GetControl(i)->GrayOut(!vibratoEnabled);
-	for (int i = 40; i < 43; i++) pGraphics->GetControl(i)->GrayOut(!fmEnabled);
-	for (int i = 43; i < 46; i++) pGraphics->GetControl(i)->GrayOut(!filterEnabled);
-	pGraphics->GetControl(47)->GrayOut(!GetParam(monoMode)->Value());
+	for (int i = 14; i < 16; i++) pGraphics->GetControl(i)->GrayOut(!filterEnabled);
+	for (int i = 26; i < 36; i++) pGraphics->GetControl(i)->GrayOut(!modEnvEnabled);
+	for (int i = 37; i < 39; i++) pGraphics->GetControl(i)->GrayOut(!vibratoEnabled);
+	for (int i = 39; i < 42; i++) pGraphics->GetControl(i)->GrayOut(!fmEnabled);
+	for (int i = 42; i < 45; i++) pGraphics->GetControl(i)->GrayOut(!filterEnabled);
+	pGraphics->GetControl(46)->GrayOut(!GetParam(monoMode)->Value());
 }
 
 void MikaMicro::OnParamChange(int paramIdx)
@@ -341,11 +339,8 @@ void MikaMicro::OnParamChange(int paramIdx)
 	case filterF:
 		for (auto &voice : voices) voice.SetFilterF(value);
 		break;
-	case filterRes1:
-		for (auto &voice : voices) voice.SetFilterRes1(value);
-		break;
-	case filterRes2:
-		for (auto &voice : voices) voice.SetFilterRes2(value);
+	case filterRes:
+		for (auto &voice : voices) voice.SetFilterRes(value);
 		break;
 	case filterKeyTrack:
 		for (auto &voice : voices) voice.SetFilterKeyTrack(value);
