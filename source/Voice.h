@@ -56,15 +56,14 @@ public:
 	void SetOscMix(double m) { targetOscMix = m; }
 	void SetFmCoarse(int c) { fmCoarse = c; }
 	void SetFmFine(double f) { fmFine = f; }
-	void SetFilterF(double f)
+	void SetFilterEnabled(double enabled)
 	{
-		filterF = f;
-		auto enabled = f < 1.0;
 		if (GetVolume() == 0.0)
 			filterEnabled = enabled;
 		else
 			filterEnabledNext = enabled;
 	}
+	void SetFilterF(double f) { filterF = f; }
 	void SetFilterRes(double r) { filter.SetRes(r); }
 	void SetFilterKeyTrack(double t) { filterKeyTrack = t; }
 	void SetVolumeEnvelopeAttack(double a) { volumeEnvelope.SetAttack(a); };

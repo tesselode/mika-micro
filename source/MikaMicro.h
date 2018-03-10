@@ -23,6 +23,7 @@ enum ParameterList
 	oscMix,
 	fmCoarse,
 	fmFine,
+	filterEnabled,
 	filterF,
 	filterRes,
 	filterKeyTrack,
