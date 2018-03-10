@@ -22,7 +22,7 @@ void MikaMicro::InitParameters()
 
 	// filter
 	GetParam(filterF)->InitDouble("Filter cutoff", 1.0, .001, 1.0, .01);
-	GetParam(filterRes)->InitDouble("Filter resonance 1", 0.0, 0.0, 0.9, .01);
+	GetParam(filterRes)->InitDouble("Filter resonance", 0.0, 0.0, 0.9, .01);
 	GetParam(filterKeyTrack)->InitDouble("Filter key tracking", 0.0, -1.0, 1.0, .01);
 
 	// modulation sources
