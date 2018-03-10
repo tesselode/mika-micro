@@ -50,7 +50,7 @@ double Voice::GetOscillators(double lfoValue, double driftValue)
 	double fmFactor = 1.0;
 	if (fmCoarse != 0)
 	{
-		double fmAmount = fabs(fmCoarse) + fmFine;
+		double fmAmount = fmCoarse + fmFine;
 		if (volEnvFm != 0.0) fmAmount += volEnvFm * volumeEnvelope.Get();
 		if (modEnvFm != 0.0) fmAmount += modEnvFm * modEnvelope.Get();
 		if (lfoFm != 0.0) fmAmount += lfoFm * lfoValue;
@@ -61,7 +61,7 @@ double Voice::GetOscillators(double lfoValue, double driftValue)
 	// osc 1
 	if (oscMix < 1.0)
 	{
-		if (fmCoarse < 0) osc1BaseFrequency *= fmFactor;
+		if (fmMode == 1) osc1BaseFrequency *= fmFactor;
 		auto osc1Out = 0.0;
 		if (osc1SplitEnabled)
 		{
@@ -79,7 +79,7 @@ double Voice::GetOscillators(double lfoValue, double driftValue)
 		double osc2BaseFrequency = baseFrequency * osc2TuneFactor * pitchBendFactor;
 		osc2BaseFrequency *= 1 + driftValue;
 		if (lfoAmount != 0.0) osc2BaseFrequency *= 1 + fabs(lfoAmount) * lfoValue;
-		if (fmCoarse > 0) osc2BaseFrequency *= fmFactor;
+		if (fmMode == 2) osc2BaseFrequency *= fmFactor;
 		auto osc2Out = 0.0;
 		if (osc2SplitEnabled)
 		{
