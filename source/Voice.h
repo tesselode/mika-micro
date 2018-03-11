@@ -65,7 +65,7 @@ public:
 		else
 			filterEnabledNext = enabled;
 	}
-	void SetFilterRes(double r) { filter.SetRes(r); }
+	void SetFilterRes(double r) { filter.SetResonance(r); }
 	void SetFilterKeyTrack(double t) { filterKeyTrack = t; }
 	void SetVolumeEnvelopeAttack(double a) { volumeEnvelope.SetAttack(a); };
 	void SetVolumeEnvelopeDecay(double d) { volumeEnvelope.SetDecay(d); };

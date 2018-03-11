@@ -6,7 +6,9 @@ double Filter::Process(double input, double targetF)
 	f = reset ? targetF : lerp(f, targetF, .001 * dt);
 	double fSquared = f * f;
 
-	double high = input - (low + band * (1 - res));
+	auto maxResonance = 1.0 - fSquared * fSquared * fSquared * fSquared * fSquared;
+	auto r = resonance > maxResonance ? maxResonance : resonance;
+	double high = input - (low + band * (1 - r));
 	band += fSquared * high * dt;
 	low += fSquared * band * dt;
 	low = FastAtan(low * .1) * 10.0;
