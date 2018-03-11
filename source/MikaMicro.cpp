@@ -157,10 +157,10 @@ void MikaMicro::PlayVoices(int s)
 		if (noteOff)
 		{
 			heldNotes.erase(
-				std::remove_if(
+				std::remove(
 					std::begin(heldNotes),
 					std::end(heldNotes),
-					[note](auto n) { return n.note == note; }),
+					note),
 				std::end(heldNotes));
 
 			if (GetParam(monoMode)->Value())
@@ -168,10 +168,7 @@ void MikaMicro::PlayVoices(int s)
 				if (heldNotes.empty())
 					voices[0].Release();
 				else
-				{
-					voices[0].SetNote(heldNotes.back().note);
-					voices[0].SetVelocity(heldNotes.back().velocity);
-				}
+					voices[0].SetNote(heldNotes.back());
 			}
 			else
 			{
@@ -184,8 +181,11 @@ void MikaMicro::PlayVoices(int s)
 			if (GetParam(monoMode)->Value())
 			{
 				voices[0].SetNote(note);
-				voices[0].SetVelocity(velocity);
-				if (heldNotes.empty()) voices[0].Start();
+				if (heldNotes.empty())
+				{
+					voices[0].SetVelocity(velocity);
+					voices[0].Start();
+				}
 			}
 			else
 			{
@@ -202,7 +202,7 @@ void MikaMicro::PlayVoices(int s)
 				voice->Start();
 			}
 
-			heldNotes.push_back(HeldNote{ note = note, velocity = velocity });
+			heldNotes.push_back(note);
 		}
 		else if (status == IMidiMsg::kPitchWheel)
 		{

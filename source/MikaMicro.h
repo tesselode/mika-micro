@@ -51,12 +51,6 @@ enum ParameterList
 	numParameters
 };
 
-struct HeldNote
-{
-	int note;
-	double velocity;
-};
-
 class MikaMicro : public IPlug
 {
 public:
@@ -71,7 +65,7 @@ public:
 private:
 	IGraphics * pGraphics;
 	IMidiQueue midiQueue;
-	std::vector<HeldNote> heldNotes;
+	std::vector<int> heldNotes;
 	Oscillator lfo;
 	std::array<Voice, 8> voices;
 	std::random_device rd;
