@@ -59,10 +59,8 @@ public:
 	void SetFmFine(double f) { fmFine = f; }
 	void SetFilterEnabled(double enabled)
 	{
-		if (GetVolume() == 0.0)
-			filterEnabled = enabled;
-		else
-			filterEnabledNext = enabled;
+		filterEnabledNext = enabled;
+		if (GetVolume() == 0.0) filterEnabled = enabled;
 	}
 	void SetFilterF(double f) { filterF = f; }
 	void SetFilterRes(double r) { filter.SetResonance(r); }
