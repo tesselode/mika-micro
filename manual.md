@@ -35,7 +35,8 @@ The **mix** control on the right sets the volume balance between the two oscilla
 You can use the FM section to modulate the frequency of either oscillator by the output of the FM oscillator, which outputs a sine wave at oscillator 1's frequency. If you don't know what that means, that's OK! Just play with the knobs and see what happens.
 
 ##### Controls
-- **Coarse**: sets the amount of frequency modulation to apply. Turn the knob to the left to modulate oscillator 1, or turn it to the right to modulate oscillator 2.
+- **Mode**: cycles between off, mode 1, and mode 2. In mode 1, oscillator 1's output is multiplied by the FM oscillator. In mode 2, oscillator 2's output is multiplied by the FM oscillator.
+- **Coarse**: sets the amount of frequency modulation to apply.
 - **Fine**: fine tunes the amount of frequency modulation.
 
 #### Filter
@@ -45,7 +46,8 @@ You can use the FM section to modulate the frequency of either oscillator by the
 When enabled, the low pass filter removes high frequencies from the sound, resulting in a darker, more subdued sound. The resonance knobs add a "ringing" sound, which is a commonly used effect in electronic music.
 
 ##### Controls
-- **Cutoff**: sets the cutoff frequency. The farther to the left the knob is turned, the darker the sound. When this knob is turned all the way to the right, the filter will be bypassed completely, saving CPU cycles.
+- **Enabled**: turns the filter on or off. 
+- **Cutoff**: sets the cutoff frequency. The farther to the left the knob is turned, the darker the sound.
 - **Resonance**: creates a ringing sound around the cutoff frequency.
 - **Key tracking**: adjusts the cutoff proportionally (right) or inversely (left) with the pitch of the voice. When turned all the way to the right, the filter will affect the timbre of every note equally.
 
