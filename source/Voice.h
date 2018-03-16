@@ -25,7 +25,7 @@ public:
 		filter.SetSampleRate(sr);
 	}
 
-	void SetOsc1Wave(OscillatorWaveform w)
+	void SetOsc1Wave(EWaveforms w)
 	{
 		if (GetVolume() == 0.0)
 			osc1Wave = w;
@@ -33,7 +33,7 @@ public:
 			osc1WaveNext = w;
 	}
 	void SetOsc1Tune(double p) { osc1TuneFactor = pitchFactor(p); }
-	void SetOsc2Wave(OscillatorWaveform w)
+	void SetOsc2Wave(EWaveforms w)
 	{
 		if (GetVolume() == 0.0)
 			osc2Wave = w;
@@ -121,10 +121,10 @@ private:
 
 	Filter filter;
 
-	OscillatorWaveform osc1Wave = OscillatorWaveformSaw;
-	OscillatorWaveform osc1WaveNext = OscillatorWaveformNone;
-	OscillatorWaveform osc2Wave = OscillatorWaveformSaw;
-	OscillatorWaveform osc2WaveNext = OscillatorWaveformNone;
+	EWaveforms osc1Wave = kWaveformSaw;
+	EWaveforms osc1WaveNext = kWaveformNone;
+	EWaveforms osc2Wave = kWaveformSaw;
+	EWaveforms osc2WaveNext = kWaveformNone;
 	double osc1TuneFactor = 1.0;
 	double osc2TuneFactor = 1.0;
 	bool osc1SplitEnabled = false;

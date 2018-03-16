@@ -4,22 +4,22 @@ void Envelope::Update()
 {
 	switch (stage)
 	{
-	case EnvelopeStageAttack:
+	case kEnvelopeStageAttack:
 		value = lerp(value, 1.1, attack * dt);
 		if (value >= 1.0)
 		{
 			value = 1.0;
-			stage = EnvelopeStageDecay;
+			stage = kEnvelopeStageDecay;
 		}
 		break;
-	case EnvelopeStageDecay:
+	case kEnvelopeStageDecay:
 		if (value > sustain)
 		{
 			value = lerp(value, sustain - .1, decay * dt);
 			value = value < sustain ? sustain : value;
 		}
 		break;
-	case EnvelopeStageRelease:
+	case kEnvelopeStageRelease:
 		if (value > 0.0)
 		{
 			value = lerp(value, -.1, release * dt);
