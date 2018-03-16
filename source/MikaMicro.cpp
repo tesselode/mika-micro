@@ -51,7 +51,7 @@ void MikaMicro::InitParameters()
 	GetParam(lfoCutoff)->InitDouble("Vibrato to filter cutoff", 0.0, 0.0, 1., .01, "", "", 2.0);
 
 	// master
-	GetParam(monoMode)->InitBool("Mono mode", true);
+	GetParam(voiceMode)->InitEnum("Voice mode", VoiceModeLegato, numVoiceModes);
 	GetParam(glideSpeed)->InitDouble("Glide speed", 1.0, 1.0, 1000.0, .01, "", "", .1);
 	GetParam(masterVolume)->InitDouble("Master volume", 0.25, 0.0, 0.5, .01);
 }
@@ -125,7 +125,7 @@ void MikaMicro::InitGraphics()
 	pGraphics->AttachControl(new IKnobMultiControl(this, 203 * 4, 66.5 * 4, lfoCutoff, &knob));
 
 	// master
-	pGraphics->AttachControl(new ISwitchControl(this, 6 * 4, 90 * 4, monoMode, &toggleSwitch));
+	pGraphics->AttachControl(new ISwitchControl(this, 6 * 4, 90 * 4, voiceMode, &fmModeSwitch));
 	pGraphics->AttachControl(new IKnobMultiControl(this, 22 * 4, 90 * 4, glideSpeed, &knob));
 	pGraphics->AttachControl(new IKnobMultiControl(this, 38 * 4, 90 * 4, masterVolume, &knob));
 
@@ -158,6 +158,8 @@ void MikaMicro::PlayVoices(int s)
 		auto note = message->NoteNumber();
 		auto velocity = pow(message->Velocity() * .0078125, 1.25);
 		bool noteOff = status == IMidiMsg::kNoteOff || (status == IMidiMsg::kNoteOn && velocity == 0);
+		auto currentVoiceMode = (EVoiceModes)(int)GetParam(voiceMode)->Value();
+		bool mono = currentVoiceMode == VoiceModeMono || currentVoiceMode == VoiceModeLegato;
 
 		if (noteOff)
 		{
@@ -168,31 +170,26 @@ void MikaMicro::PlayVoices(int s)
 					note),
 				std::end(heldNotes));
 
-			if (GetParam(monoMode)->Value())
+			switch (currentVoiceMode)
 			{
+			case VoiceModePoly:
+				for (auto& voice : voices)
+					if (voice.GetNote() == note) voice.Release();
+				break;
+			case VoiceModeMono:
+			case VoiceModeLegato:
 				if (heldNotes.empty())
 					voices[0].Release();
 				else
 					voices[0].SetNote(heldNotes.back());
-			}
-			else
-			{
-				for (auto& voice : voices)
-					if (voice.GetNote() == note) voice.Release();
+				break;
 			}
 		}
 		else if (status == IMidiMsg::kNoteOn)
 		{
-			if (GetParam(monoMode)->Value())
+			switch (currentVoiceMode)
 			{
-				voices[0].SetNote(note);
-				if (heldNotes.empty())
-				{
-					voices[0].SetVelocity(velocity);
-					voices[0].Start();
-				}
-			}
-			else
+			case VoiceModePoly:
 			{
 				// get the quietest voice, prioritizing voices that are released
 				auto voice = std::min_element(
@@ -204,7 +201,24 @@ void MikaMicro::PlayVoices(int s)
 				});
 				voice->SetNote(note);
 				voice->SetVelocity(velocity);
+				voice->ResetPitch();
 				voice->Start();
+				break;
+			}
+			case VoiceModeMono:
+				voices[0].SetNote(note);
+				voices[0].SetVelocity(velocity);
+				voices[0].Start();
+				break;
+			case VoiceModeLegato:
+				voices[0].SetNote(note);
+				if (heldNotes.empty())
+				{
+					voices[0].SetVelocity(velocity);
+					voices[0].ResetPitch();
+					voices[0].Start();
+				}
+				break;
 			}
 
 			heldNotes.push_back(note);
@@ -284,7 +298,7 @@ void MikaMicro::GrayOutControls()
 	for (int i = 39; i < 41; i++) pGraphics->GetControl(i)->GrayOut(!vibratoEnabled);
 	for (int i = 41; i < 44; i++) pGraphics->GetControl(i)->GrayOut(!fmEnabled);
 	for (int i = 44; i < 47; i++) pGraphics->GetControl(i)->GrayOut(!isFilterEnabled);
-	pGraphics->GetControl(48)->GrayOut(!GetParam(monoMode)->Value());
+	pGraphics->GetControl(48)->GrayOut(!GetParam(voiceMode)->Value());
 }
 
 void MikaMicro::OnParamChange(int paramIdx)
@@ -410,7 +424,7 @@ void MikaMicro::OnParamChange(int paramIdx)
 	case lfoCutoff:
 		for (auto &voice : voices) voice.SetLfoCutoff(value);
 		break;
-	case monoMode:
+	case voiceMode:
 		for (int i = 1; i < voices.size(); i++) voices[i].Release();
 		break;
 	case glideSpeed:

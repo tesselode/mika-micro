@@ -10,7 +10,7 @@
 #include <vector>
 #include "Voice.h"
 
-enum ParameterList
+enum EParameters
 {
 	osc1Wave,
 	osc1Coarse,
@@ -47,10 +47,18 @@ enum ParameterList
 	modEnvCutoff,
 	lfoFm,
 	lfoCutoff,
-	monoMode,
+	voiceMode,
 	glideSpeed,
 	masterVolume,
 	numParameters
+};
+
+enum EVoiceModes
+{
+	VoiceModePoly,
+	VoiceModeMono,
+	VoiceModeLegato,
+	numVoiceModes
 };
 
 class MikaMicro : public IPlug

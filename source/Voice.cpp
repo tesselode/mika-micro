@@ -2,7 +2,6 @@
 
 void Voice::Start()
 {
-	baseFrequency = targetFrequency;
 	if (GetVolume() == 0.0)
 	{
 		osc1a.Reset();

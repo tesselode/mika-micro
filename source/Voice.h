@@ -99,6 +99,7 @@ public:
 		modEnvelope.SetVelocity(v);
 	}
 	void SetPitchBendFactor(double f) { pitchBendFactor = f; }
+	void ResetPitch() { baseFrequency = targetFrequency; }
 	void Start();
 	void Release();
 	double Next(double lfoValue, double driftValue);
