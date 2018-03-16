@@ -2,7 +2,6 @@
 
 void Voice::Start()
 {
-	baseFrequency = targetFrequency;
 	if (GetVolume() == 0.0)
 	{
 		osc1a.Reset();
@@ -54,7 +53,7 @@ double Voice::GetOscillators(double lfoValue, double driftValue)
 		if (volEnvFm != 0.0) fmAmount += volEnvFm * volumeEnvelope.Get();
 		if (modEnvFm != 0.0) fmAmount += modEnvFm * modEnvelope.Get();
 		if (lfoFm != 0.0) fmAmount += lfoFm * lfoValue;
-		double fmValue = oscFm.Next(osc1BaseFrequency, OscillatorWaveformSine);
+		double fmValue = oscFm.Next(osc1BaseFrequency, kWaveformSine);
 		fmFactor = pitchFactor(fmAmount * fmValue);
 	}
 
@@ -98,8 +97,8 @@ void Voice::UpdateSplitAndWave()
 {
 	// applies fade out and fade in for parameters that would make clicking sounds on change
 	double fadeSpeed = 100 * dt;
-	if (osc1WaveNext != OscillatorWaveformNone ||
-		osc2WaveNext != OscillatorWaveformNone ||
+	if (osc1WaveNext != kWaveformNone ||
+		osc2WaveNext != kWaveformNone ||
 		osc1SplitEnabled != osc1SplitEnabledNext ||
 		osc2SplitEnabled != osc2SplitEnabledNext ||
 		filterEnabled != filterEnabledNext)
@@ -108,15 +107,15 @@ void Voice::UpdateSplitAndWave()
 		if (fadeVolume <= 0)
 		{
 			fadeVolume = 0;
-			if (osc1WaveNext != OscillatorWaveformNone)
+			if (osc1WaveNext != kWaveformNone)
 			{
 				osc1Wave = osc1WaveNext;
-				osc1WaveNext = OscillatorWaveformNone;
+				osc1WaveNext = kWaveformNone;
 			}
-			if (osc2WaveNext != OscillatorWaveformNone)
+			if (osc2WaveNext != kWaveformNone)
 			{
 				osc2Wave = osc2WaveNext;
-				osc2WaveNext = OscillatorWaveformNone;
+				osc2WaveNext = kWaveformNone;
 			}
 			osc1SplitEnabled = osc1SplitEnabledNext;
 			osc2SplitEnabled = osc2SplitEnabledNext;

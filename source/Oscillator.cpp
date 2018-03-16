@@ -24,7 +24,7 @@ double Oscillator::GeneratePulse(double width, double phaseIncrement)
 	return v;
 }
 
-double Oscillator::Next(double frequency, OscillatorWaveform waveform)
+double Oscillator::Next(double frequency, EWaveforms waveform)
 {
 	double phaseIncrement = frequency * dt;
 	phase += phaseIncrement;
@@ -32,19 +32,19 @@ double Oscillator::Next(double frequency, OscillatorWaveform waveform)
 	
 	switch (waveform)
 	{
-	case OscillatorWaveformSine:
+	case kWaveformSine:
 		return sin(phase * twoPi);
-	case OscillatorWaveformTriangle:
+	case kWaveformTriangle:
 		triLast = triCurrent;
 		triCurrent = phaseIncrement * GeneratePulse(.5, phaseIncrement) + (1 - phaseIncrement) * triLast;
 		return triCurrent * 5;
-	case OscillatorWaveformSaw:
+	case kWaveformSaw:
 		return 1 - 2 * phase + Blep(phase, phaseIncrement);
-	case OscillatorWaveformSquare:
+	case kWaveformSquare:
 		return GeneratePulse(.5, phaseIncrement);
-	case OscillatorWaveformPulse:
+	case kWaveformPulse:
 		return GeneratePulse(.75, phaseIncrement);
-	case OscillatorWaveformNoise:
+	case kWaveformNoise:
 		noiseValue += 19.0;
 		noiseValue *= noiseValue;
 		noiseValue -= (int)noiseValue;

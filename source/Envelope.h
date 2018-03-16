@@ -2,11 +2,11 @@
 
 #include "Util.h"
 
-enum EnvelopeStage
+enum EEnvelopeStages
 {
-	EnvelopeStageAttack,
-	EnvelopeStageDecay,
-	EnvelopeStageRelease,
+	kEnvelopeStageAttack,
+	kEnvelopeStageDecay,
+	kEnvelopeStageRelease,
 };
 
 class Envelope
@@ -30,12 +30,12 @@ public:
 	void SetVelocitySensitivity(double v) { velocitySensitivity = v; }
 
 	void SetVelocity(double v) { velocity = v; }
-	void Start() { stage = EnvelopeStageAttack; }
-	void Release() { stage = EnvelopeStageRelease; }
+	void Start() { stage = kEnvelopeStageAttack; }
+	void Release() { stage = kEnvelopeStageRelease; }
 	void Reset() { value = 0.0; }
 	void Update();
 	double Get() { return value * (1 - velocitySensitivity + velocity * velocitySensitivity); }
-	bool IsReleased() { return stage == EnvelopeStageRelease; }
+	bool IsReleased() { return stage == kEnvelopeStageRelease; }
 
 private:
 	double dt = 0.0;
@@ -46,7 +46,7 @@ private:
 	double release = 0.0;
 	double velocitySensitivity = 0.0;
 
-	EnvelopeStage stage = EnvelopeStageRelease;
+	EEnvelopeStages stage = kEnvelopeStageRelease;
 	double value = 0.0;
 	double velocity = 0.0;
 };

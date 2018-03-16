@@ -2,16 +2,16 @@
 
 #include <cmath>
 
-enum OscillatorWaveform
+enum EWaveforms
 {
-	OscillatorWaveformSine,
-	OscillatorWaveformTriangle,
-	OscillatorWaveformSaw,
-	OscillatorWaveformSquare,
-	OscillatorWaveformPulse,
-	OscillatorWaveformNoise,
-	numWaveforms,
-	OscillatorWaveformNone,
+	kWaveformSine,
+	kWaveformTriangle,
+	kWaveformSaw,
+	kWaveformSquare,
+	kWaveformPulse,
+	kWaveformNoise,
+	kNumWaveforms,
+	kWaveformNone
 };
 
 class Oscillator
@@ -20,7 +20,7 @@ public:
 	void SetSampleRate(double sr) { dt = 1.0 / sr; }
 
 	void Reset(double p = 0.0) { phase = p; }
-	double Next(double frequency, OscillatorWaveform waveform);
+	double Next(double frequency, EWaveforms waveform);
 
 private:
 	double twoPi = 4 * acos(0.0);
