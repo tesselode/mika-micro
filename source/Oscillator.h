@@ -9,6 +9,7 @@ enum OscillatorWaveform
 	OscillatorWaveformSaw,
 	OscillatorWaveformSquare,
 	OscillatorWaveformPulse,
+	OscillatorWaveformNoise,
 	numWaveforms,
 	OscillatorWaveformNone,
 };
@@ -29,6 +30,7 @@ private:
 	double phase = 0.0;
 	double triCurrent = 0.0;
 	double triLast = 0.0;
+	double noiseValue = 19.1919191919191919191919191919191919191919;
 
 	double Blep(double t, double dt);
 	double GeneratePulse(double width, double phaseIncrement);

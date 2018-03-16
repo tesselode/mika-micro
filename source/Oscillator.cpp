@@ -44,5 +44,10 @@ double Oscillator::Next(double frequency, OscillatorWaveform waveform)
 		return GeneratePulse(.5, phaseIncrement);
 	case OscillatorWaveformPulse:
 		return GeneratePulse(.75, phaseIncrement);
+	case OscillatorWaveformNoise:
+		noiseValue += 19.0;
+		noiseValue *= noiseValue;
+		noiseValue -= (int)noiseValue;
+		return noiseValue - .5;
 	}
 }
