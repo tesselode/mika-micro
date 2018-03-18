@@ -90,7 +90,7 @@ double Voice::GetOscillators(double lfoValue, double driftValue)
 		out += osc2Out * oscMix;
 	}
 	
-	return out;
+	return out / (1 + abs(.5 - oscMix)) * 1.5;
 }
 
 void Voice::UpdateSplitAndWave()
