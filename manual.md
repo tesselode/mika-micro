@@ -87,6 +87,6 @@ The vibrato section adds a vibrato effect to each voice.
 ![](images/master.png)
 
 The bottom bar has a few more controls:
-- **Mono**: enables or disables mono mode. In mono mode, only one voice can be played at a time. In poly mode, up to 8 voices can be played at once.
+- **Mono**: switches between mono 1 (retrigger), mono 2 (legato), and poly.
 - **Glide**: In mono mode, if a key is pressed while another is already held down, the pitch of the voice will glide up to the new note. The glide knob sets the speed at which these glides occur.
 - **Volume**: the volume of the final output signal.
