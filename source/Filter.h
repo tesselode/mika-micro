@@ -15,8 +15,6 @@ public:
 	double Process(double input, double targetF);
 
 private:
-	double FastAtan(double x) { return x / (1.0 + .28 * (x * x)); }
-
 	double dt = 0.0;
 
 	double resonance = 1.0;

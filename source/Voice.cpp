@@ -150,10 +150,7 @@ double Voice::Next(double lfoValue, double driftValue)
 	auto out = GetOscillators(lfoValue, driftValue);
 	out *= GetVolume();
 	if (filterEnabled)
-	{
-		auto f = GetFilterF(lfoValue, driftValue);
-		for (int i = 0; i < 2; i++) out = filter.Process(out, f);
-	}
+		out = filter.Process(out, GetFilterF(lfoValue, driftValue));
 	out *= fadeVolume;
 	return out;
 }
