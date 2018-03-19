@@ -51,7 +51,7 @@ double Voice::GetOscillators(double lfoValue, double driftValue)
 
 	// fm
 	double fmFactor = 1.0;
-	if (fmCoarse != 0)
+	if (fmMode != 0)
 	{
 		double fmAmount = fmCoarse + fmFine;
 		if (volEnvFm != 0.0) fmAmount += volEnvFm * volumeEnvelope.Get();
