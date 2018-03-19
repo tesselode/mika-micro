@@ -32,7 +32,11 @@ double Voice::GetFilterF(double lfoValue, double driftValue)
 	if (filterKeyTrack != 0.0) f += filterKeyTrack * baseFrequency * pitchBendFactor * .00005;
 	if (volEnvCutoff != 0.0) f += volEnvCutoff * volumeEnvelope.Get();
 	if (modEnvCutoff != 0.0) f += modEnvCutoff * modEnvelope.Get();
-	if (lfoCutoff != 0.0) f += lfoCutoff * lfoValue;
+	if (lfoCutoff != 0.0)
+	{
+		auto lc = lfoCutoff < 0.0 ? -lfoCutoff * lfoCutoff : lfoCutoff * lfoCutoff;
+		f += lc * lfoValue;
+	}
 	f *= 1 + driftValue * .00005;
 	return f;
 }

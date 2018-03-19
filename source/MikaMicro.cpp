@@ -48,7 +48,7 @@ void MikaMicro::InitParameters()
 	GetParam(kLfoFm)->InitDouble("Vibrato to FM amount", 0.0, -24.0, 24.0, .01, "semitones");
 	GetParam(kVolEnvCutoff)->InitDouble("Volume envelope to filter cutoff", 0.0, -1.0, 1.0, .01, "hz");
 	GetParam(kModEnvCutoff)->InitDouble("Modulation envelope to filter cutoff", 0.0, -1.0, 1.0, .01, "hz");
-	GetParam(kLfoCutoff)->InitDouble("Vibrato to filter cutoff", 0.0, 0.0, 1., .01, "", "", 2.0);
+	GetParam(kLfoCutoff)->InitDouble("Vibrato to filter cutoff", 0.0, -1.0, 1.0, .01);
 
 	// master
 	GetParam(kVoiceMode)->InitEnum("Voice mode", kVoiceModeLegato, kNumVoiceModes);
