@@ -21,7 +21,7 @@ The oscillators are the basic building blocks of a sound in Mika Micro.
 
 ##### Controls
 Mika Micro has two oscillators, each with the same controls:
-- **Waveform**: choose what sound the oscillator will produce. The available waveforms are sine, triangle, saw, square, and pulse.
+- **Waveform**: choose what sound the oscillator will produce. The available waveforms are sine, triangle, saw, square, pulse, and noise.
 - **Coarse**: sets the pitch of the oscillator in semitones.
 - **Fine**: fine tunes the pitch in a range of -1 to +1 semitones.
 - **Split**: splits the oscillator into two slightly detuned oscillators, creating a thicker sound. When turned to the left, the oscillators will start out of phase, creating a soft, gentle attack. When turned to the right, the oscillators will start in phase, creating a punchy, hard attack.
@@ -43,7 +43,7 @@ You can use the FM section to modulate the frequency of either oscillator by the
 
 ![](images/filter.png)
 
-When enabled, the low pass filter removes high frequencies from the sound, resulting in a darker, more subdued sound. The resonance knobs add a "ringing" sound, which is a commonly used effect in electronic music.
+When enabled, the low pass filter removes high frequencies from the sound, resulting in a darker, more subdued sound. The resonance knob adds a "ringing" sound, which is a commonly used effect in electronic music.
 
 ##### Controls
 - **Enabled**: turns the filter on or off. 
