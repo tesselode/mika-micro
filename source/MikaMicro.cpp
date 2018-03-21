@@ -142,10 +142,94 @@ MikaMicro::MikaMicro(IPlugInstanceInfo instanceInfo)
 	InitParameters();
 	InitGraphics();
 
+	MakePresetFromNamedParams("name", 38,
+		kOsc1Wave, 2,
+		kOsc1Coarse, 0,
+		kOsc1Fine, 0.000000,
+		kOsc1Split, 0.000000,
+		kOsc2Wave, 3,
+		kOsc2Coarse, -13,
+		kOsc2Fine, 0.000000,
+		kOsc2Split, 0.000000,
+		kOscMix, 0.458333,
+		kFmMode, 0,
+		kFmCoarse, 0,
+		kFmFine, 0.000000,
+		kFilterEnabled, false,
+		kFilterF, 1.000000,
+		kFilterRes, 0.000000,
+		kFilterKeyTrack, 0.000000,
+		kVolEnvA, 0.500000,
+		kVolEnvD, 998.000000,
+		kVolEnvS, 1.000000,
+		kVolEnvR, 925.000000,
+		kVolEnvV, 0.000000,
+		kModEnvA, 998.000000,
+		kModEnvD, 998.000000,
+		kModEnvS, 0.500000,
+		kModEnvR, 998.000000,
+		kModEnvV, 0.000000,
+		kLfoAmount, 0.000000,
+		kLfoFrequency, 4.000000,
+		kLfoDelay, 0.100000,
+		kVolEnvFm, 0.000000,
+		kVolEnvCutoff, 0.000000,
+		kModEnvFm, 0.000000,
+		kModEnvCutoff, 0.000000,
+		kLfoFm, 0.000000,
+		kLfoCutoff, 0.000000,
+		kVoiceMode, 2,
+		kGlideSpeed, 1.000000,
+		kMasterVolume, 0.250000);
+
 	MakeDefaultPreset((char *) "-", 128);
 }
 
-MikaMicro::~MikaMicro() {}
+MikaMicro::~MikaMicro()
+{
+	const char* paramEnumNames[] =
+	{
+		"kOsc1Wave",
+		"kOsc1Coarse",
+		"kOsc1Fine",
+		"kOsc1Split",
+		"kOsc2Wave",
+		"kOsc2Coarse",
+		"kOsc2Fine",
+		"kOsc2Split",
+		"kOscMix",
+		"kFmMode",
+		"kFmCoarse",
+		"kFmFine",
+		"kFilterEnabled",
+		"kFilterF",
+		"kFilterRes",
+		"kFilterKeyTrack",
+		"kVolEnvA",
+		"kVolEnvD",
+		"kVolEnvS",
+		"kVolEnvR",
+		"kVolEnvV",
+		"kModEnvA",
+		"kModEnvD",
+		"kModEnvS",
+		"kModEnvR",
+		"kModEnvV",
+		"kLfoAmount",
+		"kLfoFrequency",
+		"kLfoDelay",
+		"kVolEnvFm",
+		"kVolEnvCutoff",
+		"kModEnvFm",
+		"kModEnvCutoff",
+		"kLfoFm",
+		"kLfoCutoff",
+		"kVoiceMode",
+		"kGlideSpeed",
+		"kMasterVolume",
+	};
+	DumpPresetSrcCode("preset.txt", paramEnumNames);
+}
 
 void MikaMicro::PlayVoices(int s)
 {
