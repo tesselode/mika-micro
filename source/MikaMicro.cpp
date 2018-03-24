@@ -23,8 +23,8 @@ void MikaMicro::InitParameters()
 
 	// filter
 	GetParam(kFilterEnabled)->InitBool("Filter enabled", false);
-	GetParam(kFilterF)->InitDouble("Filter cutoff", 1.0, .001, 1.0, .01);
-	GetParam(kFilterRes)->InitDouble("Filter resonance", 0.0, 0.0, 1.0, .01);
+	GetParam(kFilterCutoff)->InitDouble("Filter cutoff", 20000.0, 20.0, 20000.0, .01, "hz");
+	GetParam(kFilterResonance)->InitDouble("Filter resonance", 0.0, 0.0, 1.0, .01);
 	GetParam(kFilterKeyTrack)->InitDouble("Filter key tracking", 0.0, -1.0, 1.0, .01);
 
 	// modulation sources
@@ -46,9 +46,9 @@ void MikaMicro::InitParameters()
 	GetParam(kVolEnvFm)->InitDouble("Volume envelope to FM amount", 0.0, -24.0, 24.0, .01, "semitones");
 	GetParam(kModEnvFm)->InitDouble("Modulation envelope to FM amount", 0.0, -24.0, 24.0, .01, "semitones");
 	GetParam(kLfoFm)->InitDouble("Vibrato to FM amount", 0.0, -24.0, 24.0, .01, "semitones");
-	GetParam(kVolEnvCutoff)->InitDouble("Volume envelope to filter cutoff", 0.0, -1.0, 1.0, .01, "hz");
-	GetParam(kModEnvCutoff)->InitDouble("Modulation envelope to filter cutoff", 0.0, -1.0, 1.0, .01, "hz");
-	GetParam(kLfoCutoff)->InitDouble("Vibrato to filter cutoff", 0.0, -1.0, 1.0, .01);
+	GetParam(kVolEnvCutoff)->InitDouble("Volume envelope to filter cutoff", 0.0, -20000.0, 20000.0, .01, "hz");
+	GetParam(kModEnvCutoff)->InitDouble("Modulation envelope to filter cutoff", 0.0, -20000.0, 20000.0, .01, "hz");
+	GetParam(kLfoCutoff)->InitDouble("Vibrato to filter cutoff", 0.0, -20000.0, 20000.0, .01);
 
 	// master
 	GetParam(kVoiceMode)->InitEnum("Voice mode", kVoiceModeLegato, kNumVoiceModes);
@@ -89,8 +89,8 @@ void MikaMicro::InitGraphics()
 
 	// filter
 	pGraphics->AttachControl(new ISwitchControl(this, 22 * 4, 62 * 4, kFilterEnabled, &toggleSwitch));
-	pGraphics->AttachControl(new IKnobMultiControl(this, 38 * 4, 62 * 4, kFilterF, &knobRight));
-	pGraphics->AttachControl(new IKnobMultiControl(this, 54 * 4, 62 * 4, kFilterRes, &knobLeft));
+	pGraphics->AttachControl(new IKnobMultiControl(this, 38 * 4, 62 * 4, kFilterCutoff, &knobRight));
+	pGraphics->AttachControl(new IKnobMultiControl(this, 54 * 4, 62 * 4, kFilterResonance, &knobLeft));
 	pGraphics->AttachControl(new IKnobMultiControl(this, 70 * 4, 62 * 4, kFilterKeyTrack, &knobMiddle));
 
 	// modulation sources
@@ -151,8 +151,8 @@ void MikaMicro::InitPresets()
 		kFmCoarse, 0,
 		kFmFine, 0.000000,
 		kFilterEnabled, true,
-		kFilterF, 0.219531,
-		kFilterRes, 0.960938,
+		kFilterCutoff, 0.219531,
+		kFilterResonance, 0.960938,
 		kFilterKeyTrack, 0.000000,
 		kVolEnvA, 0.500000,
 		kVolEnvD, 998.000000,
@@ -190,8 +190,8 @@ void MikaMicro::InitPresets()
 		kFmCoarse, 2,
 		kFmFine, 0.000000,
 		kFilterEnabled, false,
-		kFilterF, 1.000000,
-		kFilterRes, 0.000000,
+		kFilterCutoff, 1.000000,
+		kFilterResonance, 0.000000,
 		kFilterKeyTrack, 0.000000,
 		kVolEnvA, 0.500000,
 		kVolEnvD, 998.000000,
@@ -229,8 +229,8 @@ void MikaMicro::InitPresets()
 		kFmCoarse, 23,
 		kFmFine, 0.140625,
 		kFilterEnabled, true,
-		kFilterF, 0.847809,
-		kFilterRes, 0.945313,
+		kFilterCutoff, 0.847809,
+		kFilterResonance, 0.945313,
 		kFilterKeyTrack, 0.000000,
 		kVolEnvA, 0.500000,
 		kVolEnvD, 998.000000,
@@ -268,8 +268,8 @@ void MikaMicro::InitPresets()
 		kFmCoarse, 48,
 		kFmFine, -0.289063,
 		kFilterEnabled, false,
-		kFilterF, 1.000000,
-		kFilterRes, 0.000000,
+		kFilterCutoff, 1.000000,
+		kFilterResonance, 0.000000,
 		kFilterKeyTrack, 0.000000,
 		kVolEnvA, 0.500000,
 		kVolEnvD, 998.000000,
@@ -307,8 +307,8 @@ void MikaMicro::InitPresets()
 		kFmCoarse, 0,
 		kFmFine, 0.000000,
 		kFilterEnabled, true,
-		kFilterF, 0.449770,
-		kFilterRes, 0.000000,
+		kFilterCutoff, 0.449770,
+		kFilterResonance, 0.000000,
 		kFilterKeyTrack, 0.000000,
 		kVolEnvA, 969.681172,
 		kVolEnvD, 998.937107,
@@ -346,8 +346,8 @@ void MikaMicro::InitPresets()
 		kFmCoarse, 4,
 		kFmFine, 0.000000,
 		kFilterEnabled, true,
-		kFilterF, 0.422453,
-		kFilterRes, 0.953125,
+		kFilterCutoff, 0.422453,
+		kFilterResonance, 0.953125,
 		kFilterKeyTrack, 0.000000,
 		kVolEnvA, 983.502289,
 		kVolEnvD, 998.000000,
@@ -385,8 +385,8 @@ void MikaMicro::InitPresets()
 		kFmCoarse, 3,
 		kFmFine, 0.000000,
 		kFilterEnabled, false,
-		kFilterF, 0.832199,
-		kFilterRes, 0.000000,
+		kFilterCutoff, 0.832199,
+		kFilterResonance, 0.000000,
 		kFilterKeyTrack, 0.000000,
 		kVolEnvA, 0.500000,
 		kVolEnvD, 998.000000,
@@ -424,8 +424,8 @@ void MikaMicro::InitPresets()
 		kFmCoarse, 15,
 		kFmFine, 0.000000,
 		kFilterEnabled, false,
-		kFilterF, 1.000000,
-		kFilterRes, 0.000000,
+		kFilterCutoff, 1.000000,
+		kFilterResonance, 0.000000,
 		kFilterKeyTrack, 0.000000,
 		kVolEnvA, 0.500000,
 		kVolEnvD, 999.296328,
@@ -726,11 +726,11 @@ void MikaMicro::OnParamChange(int paramIdx)
 	case kFilterEnabled:
 		for (auto &voice : voices) voice.SetFilterEnabled(value);
 		break;
-	case kFilterF:
-		for (auto &voice : voices) voice.SetFilterF(value);
+	case kFilterCutoff:
+		for (auto &voice : voices) voice.SetFilterCutoff(value);
 		break;
-	case kFilterRes:
-		for (auto &voice : voices) voice.SetFilterRes(value);
+	case kFilterResonance:
+		for (auto &voice : voices) voice.SetFilterResonance(value);
 		break;
 	case kFilterKeyTrack:
 		for (auto &voice : voices) voice.SetFilterKeyTrack(value);

@@ -26,19 +26,23 @@ void Voice::Release()
 	delayEnvelope.Release();
 }
 
-double Voice::GetFilterF(double lfoValue, double driftValue)
+double Voice::GetFilterCutoff(double lfoValue, double driftValue)
 {
-	double f = filterF;
-	if (filterKeyTrack != 0.0) f += filterKeyTrack * baseFrequency * pitchBendFactor * .00005;
-	if (volEnvCutoff != 0.0) f += volEnvCutoff * volumeEnvelope.Get();
-	if (modEnvCutoff != 0.0) f += modEnvCutoff * modEnvelope.Get();
+	double c = filterCutoff * .33;
+	if (filterKeyTrack != 0.0) c += filterKeyTrack * baseFrequency * pitchBendFactor;
+	if (volEnvCutoff != 0.0) c += volEnvCutoff * volumeEnvelope.Get();
+	if (modEnvCutoff != 0.0) c += modEnvCutoff * modEnvelope.Get();
 	if (lfoCutoff != 0.0)
 	{
-		auto lc = lfoCutoff < 0.0 ? -lfoCutoff * lfoCutoff : lfoCutoff * lfoCutoff;
-		f += lc * lfoValue;
+		auto lc = abs(lfoCutoff);
+		lc *= .00005;
+		lc *= lc;
+		lc *= 20000.0;
+		if (lfoCutoff < 0) lc *= -1;
+		c += lc * lfoValue;
 	}
-	f *= 1 + driftValue * .00005;
-	return f;
+	c *= 1 + driftValue;
+	return c;
 }
 
 double Voice::GetOscillators(double lfoValue, double driftValue)
@@ -154,7 +158,7 @@ double Voice::Next(double lfoValue, double driftValue)
 	auto out = GetOscillators(lfoValue, driftValue);
 	out *= GetVolume();
 	if (filterEnabled)
-		out = filter.Process(out, GetFilterF(lfoValue, driftValue));
+		out = filter.Process(out, GetFilterCutoff(lfoValue, driftValue));
 	out *= fadeVolume;
 	return out;
 }

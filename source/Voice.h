@@ -62,8 +62,8 @@ public:
 		filterEnabledNext = enabled;
 		if (GetVolume() == 0.0) filterEnabled = enabled;
 	}
-	void SetFilterF(double f) { filterF = f; }
-	void SetFilterRes(double r) { filter.SetResonance(r); }
+	void SetFilterCutoff(double c) { filterCutoff = c; }
+	void SetFilterResonance(double r) { filter.SetResonance(r); }
 	void SetFilterKeyTrack(double t) { filterKeyTrack = t; }
 	void SetVolumeEnvelopeAttack(double a) { volumeEnvelope.SetAttack(a); };
 	void SetVolumeEnvelopeDecay(double d) { volumeEnvelope.SetDecay(d); };
@@ -142,7 +142,7 @@ private:
 	double fmFine = 0.0;
 	bool filterEnabled = false;
 	bool filterEnabledNext = false;
-	double filterF = 1.0;
+	double filterCutoff = 1.0;
 	double filterKeyTrack = 0.0;
 	double lfoAmount = 0.0;
 	double volEnvFm = 0.0;
@@ -159,7 +159,7 @@ private:
 	double pitchBendFactor = 1.0;
 	double fadeVolume = 1.0;
 
-	double GetFilterF(double lfoValue, double driftValue);
+	double GetFilterCutoff(double lfoValue, double driftValue);
 	double GetOscillators(double lfoValue, double driftValue);
 	void UpdateSplitAndWave();
 	void UpdateEnvelopes()

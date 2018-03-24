@@ -10,7 +10,7 @@ public:
 	void SetResonance(double r) { resonance = r; }
 	bool IsSilent() { return low == 0.0; }
 	void ResetF() { reset = true; }
-	double Process(double input, double targetF);
+	double Process(double input, double cutoff);
 
 private:
 	double pi = 2 * acos(0.0);
