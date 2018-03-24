@@ -28,7 +28,7 @@ void Voice::Release()
 
 double Voice::GetFilterCutoff(double lfoValue, double driftValue)
 {
-	double c = filterCutoff * .33;
+	double c = filterCutoff;
 	if (filterKeyTrack != 0.0) c += filterKeyTrack * baseFrequency * pitchBendFactor;
 	if (volEnvCutoff != 0.0) c += volEnvCutoff * volumeEnvelope.Get();
 	if (modEnvCutoff != 0.0) c += modEnvCutoff * modEnvelope.Get();

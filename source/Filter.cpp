@@ -2,6 +2,8 @@
 
 double Filter::Process(double input, double targetCutoff)
 {
+	targetCutoff *= .4; // cutoff actually goes a good amount beyond 20khz, so this compensates for that
+
 	// cutoff clamping
 	targetCutoff = targetCutoff > 20000.0 ? 20000.0 : targetCutoff < 20.0 ? 20.0 : targetCutoff;
 
