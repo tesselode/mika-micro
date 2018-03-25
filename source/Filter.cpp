@@ -8,7 +8,8 @@ double Filter::Process(double input, double targetCutoff)
 	targetCutoff = targetCutoff > 20000.0 ? 20000.0 : targetCutoff < 20.0 ? 20.0 : targetCutoff;
 
 	// cutoff smoothing
-	cutoff = reset ? targetCutoff : lerp(cutoff, targetCutoff, 20.0 * dt);
+	cutoff = reset ? targetCutoff : lerp(cutoff, targetCutoff, 100 * dt);
+	reset = false;
 
 	// calculate f
 	auto f = 2 * sin(pi * cutoff * dt);
