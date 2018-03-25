@@ -19,7 +19,7 @@ private:
 
 	double dt = 0.0;
 
-	double cutoff = 20000.0;
+	double cutoff = 8000.0;
 	bool reset = false;
 	double resonance = 0.0;
 	double low = 0.0;

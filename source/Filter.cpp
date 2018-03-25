@@ -2,10 +2,8 @@
 
 double Filter::Process(double input, double targetCutoff)
 {
-	targetCutoff *= .4; // cutoff actually goes a good amount beyond 20khz, so this compensates for that
-
 	// cutoff clamping
-	targetCutoff = targetCutoff > 20000.0 ? 20000.0 : targetCutoff < 20.0 ? 20.0 : targetCutoff;
+	targetCutoff = targetCutoff > 8000.0 ? 8000.0 : targetCutoff < 20.0 ? 20.0 : targetCutoff;
 
 	// cutoff smoothing
 	cutoff = reset ? targetCutoff : lerp(cutoff, targetCutoff, 100 * dt);

@@ -35,9 +35,9 @@ double Voice::GetFilterCutoff(double lfoValue, double driftValue)
 	if (lfoCutoff != 0.0)
 	{
 		auto lc = abs(lfoCutoff);
-		lc *= .00005;
+		lc *= .000125;
 		lc *= lc;
-		lc *= 20000.0;
+		lc *= 8000.0;
 		if (lfoCutoff < 0) lc *= -1;
 		c += lc * lfoValue;
 	}

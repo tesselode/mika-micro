@@ -23,7 +23,7 @@ void MikaMicro::InitParameters()
 
 	// filter
 	GetParam(kFilterEnabled)->InitBool("Filter enabled", false);
-	GetParam(kFilterCutoff)->InitDouble("Filter cutoff", 20000.0, 20.0, 20000.0, .01, "hz");
+	GetParam(kFilterCutoff)->InitDouble("Filter cutoff", 8000.0, 20.0, 8000.0, .01, "hz");
 	GetParam(kFilterResonance)->InitDouble("Filter resonance", 0.0, 0.0, 1.0, .01);
 	GetParam(kFilterKeyTrack)->InitDouble("Filter key tracking", 0.0, -1.0, 1.0, .01);
 
@@ -46,9 +46,9 @@ void MikaMicro::InitParameters()
 	GetParam(kVolEnvFm)->InitDouble("Volume envelope to FM amount", 0.0, -24.0, 24.0, .01, "semitones");
 	GetParam(kModEnvFm)->InitDouble("Modulation envelope to FM amount", 0.0, -24.0, 24.0, .01, "semitones");
 	GetParam(kLfoFm)->InitDouble("Vibrato to FM amount", 0.0, -24.0, 24.0, .01, "semitones");
-	GetParam(kVolEnvCutoff)->InitDouble("Volume envelope to filter cutoff", 0.0, -20000.0, 20000.0, .01, "hz");
-	GetParam(kModEnvCutoff)->InitDouble("Modulation envelope to filter cutoff", 0.0, -20000.0, 20000.0, .01, "hz");
-	GetParam(kLfoCutoff)->InitDouble("Vibrato to filter cutoff", 0.0, -20000.0, 20000.0, .01);
+	GetParam(kVolEnvCutoff)->InitDouble("Volume envelope to filter cutoff", 0.0, -8000.0, 8000.0, .01, "hz");
+	GetParam(kModEnvCutoff)->InitDouble("Modulation envelope to filter cutoff", 0.0, -8000.0, 8000.0, .01, "hz");
+	GetParam(kLfoCutoff)->InitDouble("Vibrato to filter cutoff", 0.0, -8000.0, 8000.0, .01);
 
 	// master
 	GetParam(kVoiceMode)->InitEnum("Voice mode", kVoiceModeLegato, kNumVoiceModes);
@@ -151,7 +151,7 @@ void MikaMicro::InitPresets()
 		kFmCoarse, 0,
 		kFmFine, 0.000000,
 		kFilterEnabled, true,
-		kFilterCutoff, 4500.0,
+		kFilterCutoff, 1800.0,
 		kFilterResonance, 0.960938,
 		kFilterKeyTrack, 0.000000,
 		kVolEnvA, 0.500000,
@@ -170,7 +170,7 @@ void MikaMicro::InitPresets()
 		kVolEnvFm, 0.000000,
 		kVolEnvCutoff, 0.000000,
 		kModEnvFm, 0.000000,
-		kModEnvCutoff, 13500.0,
+		kModEnvCutoff, 5400.0,
 		kLfoFm, 0.000000,
 		kLfoCutoff, 0.000000,
 		kVoiceMode, 2,
@@ -190,7 +190,7 @@ void MikaMicro::InitPresets()
 		kFmCoarse, 2,
 		kFmFine, 0.000000,
 		kFilterEnabled, false,
-		kFilterCutoff, 20000.0,
+		kFilterCutoff, 8000.0,
 		kFilterResonance, 0.000000,
 		kFilterKeyTrack, 0.000000,
 		kVolEnvA, 0.500000,
@@ -229,7 +229,7 @@ void MikaMicro::InitPresets()
 		kFmCoarse, 23,
 		kFmFine, 0.140625,
 		kFilterEnabled, true,
-		kFilterCutoff, 17000.0,
+		kFilterCutoff, 6800.0,
 		kFilterResonance, 0.945313,
 		kFilterKeyTrack, 0.000000,
 		kVolEnvA, 0.500000,
@@ -248,7 +248,7 @@ void MikaMicro::InitPresets()
 		kVolEnvFm, 0.000000,
 		kVolEnvCutoff, 0.000000,
 		kModEnvFm, 0.000000,
-		kModEnvCutoff, -20000.0,
+		kModEnvCutoff, -8000.0,
 		kLfoFm, 0.000000,
 		kLfoCutoff, 0.000000,
 		kVoiceMode, 2,
@@ -268,7 +268,7 @@ void MikaMicro::InitPresets()
 		kFmCoarse, 48,
 		kFmFine, -0.289063,
 		kFilterEnabled, false,
-		kFilterCutoff, 20000.0,
+		kFilterCutoff, 3200.0,
 		kFilterResonance, 0.000000,
 		kFilterKeyTrack, 0.000000,
 		kVolEnvA, 0.500000,
@@ -307,7 +307,7 @@ void MikaMicro::InitPresets()
 		kFmCoarse, 0,
 		kFmFine, 0.000000,
 		kFilterEnabled, true,
-		kFilterCutoff, 9000.0,
+		kFilterCutoff, 3600.0,
 		kFilterResonance, 0.000000,
 		kFilterKeyTrack, 0.000000,
 		kVolEnvA, 969.681172,
@@ -326,7 +326,7 @@ void MikaMicro::InitPresets()
 		kVolEnvFm, 0.000000,
 		kVolEnvCutoff, 0.000000,
 		kModEnvFm, 0.000000,
-		kModEnvCutoff, 10000.0,
+		kModEnvCutoff, 4000.0,
 		kLfoFm, 0.000000,
 		kLfoCutoff, 0.000000,
 		kVoiceMode, 0,
@@ -346,7 +346,7 @@ void MikaMicro::InitPresets()
 		kFmCoarse, 4,
 		kFmFine, 0.000000,
 		kFilterEnabled, true,
-		kFilterCutoff, 8500.0,
+		kFilterCutoff, 3400.0,
 		kFilterResonance, 0.9,
 		kFilterKeyTrack, 0.000000,
 		kVolEnvA, 983.502289,
@@ -385,7 +385,7 @@ void MikaMicro::InitPresets()
 		kFmCoarse, 3,
 		kFmFine, 0.000000,
 		kFilterEnabled, false,
-		kFilterCutoff, 16500.0,
+		kFilterCutoff, 6600.0,
 		kFilterResonance, 0.000000,
 		kFilterKeyTrack, 0.000000,
 		kVolEnvA, 0.500000,
@@ -424,7 +424,7 @@ void MikaMicro::InitPresets()
 		kFmCoarse, 0,
 		kFmFine, 0.000000,
 		kFilterEnabled, true,
-		kFilterCutoff, 3610.156250,
+		kFilterCutoff, 1444.0625,
 		kFilterResonance, 0.820313,
 		kFilterKeyTrack, 1.000000,
 		kVolEnvA, 0.500000,
@@ -463,7 +463,7 @@ void MikaMicro::InitPresets()
 		kFmCoarse, 31,
 		kFmFine, 0.289063,
 		kFilterEnabled, true,
-		kFilterCutoff, 3063.828125,
+		kFilterCutoff, 1250.0,
 		kFilterResonance, 0.525625,
 		kFilterKeyTrack, 0.000000,
 		kVolEnvA, 0.500000,
@@ -482,9 +482,9 @@ void MikaMicro::InitPresets()
 		kVolEnvFm, 0.000000,
 		kVolEnvCutoff, 0.000000,
 		kModEnvFm, 0.000000,
-		kModEnvCutoff, 8750.000000,
+		kModEnvCutoff, 3500.0,
 		kLfoFm, 0.000000,
-		kLfoCutoff, 1562.500000,
+		kLfoCutoff, 625.000000,
 		kVoiceMode, 0,
 		kGlideSpeed, 1.000000,
 		kMasterVolume, 0.216797);
@@ -502,7 +502,7 @@ void MikaMicro::InitPresets()
 		kFmCoarse, 15,
 		kFmFine, 0.000000,
 		kFilterEnabled, false,
-		kFilterCutoff, 20000.0,
+		kFilterCutoff, 8000.0,
 		kFilterResonance, 0.000000,
 		kFilterKeyTrack, 0.000000,
 		kVolEnvA, 0.500000,
