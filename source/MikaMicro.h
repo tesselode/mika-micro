@@ -70,6 +70,8 @@ public:
 	void Reset();
 	void OnParamChange(int paramIdx);
 	void ProcessMidiMsg(IMidiMsg *message);
+	void StopNote(EVoiceModes voiceMode, int note);
+	void StartNote(EVoiceModes voiceMode, int note, double velocity);
 	void ProcessDoubleReplacing(double** inputs, double** outputs, int nFrames);
 
 private:
@@ -89,7 +91,7 @@ private:
 	void InitGraphics();
 	void InitPresets();
 	void WritePresets();
-	void PlayVoices(int s);
+	void FlushMidiQueue(int s);
 	double GetDriftValue();
 	double GetVoices();
 	void GrayOutControls();

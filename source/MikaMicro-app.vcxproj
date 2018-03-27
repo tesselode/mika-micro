@@ -298,6 +298,7 @@
     <ClCompile Include="Filter.cpp" />
     <ClCompile Include="MikaMicro.cpp" />
     <ClCompile Include="Oscillator.cpp" />
+    <ClCompile Include="Presets.cpp" />
     <ClCompile Include="Voice.cpp" />
   </ItemGroup>
   <ItemGroup>

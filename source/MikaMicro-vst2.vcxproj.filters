@@ -9,6 +9,7 @@
     <ClCompile Include="Oscillator.cpp" />
     <ClCompile Include="Voice.cpp" />
     <ClCompile Include="Filter.cpp" />
+    <ClCompile Include="Presets.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MikaMicro.h" />

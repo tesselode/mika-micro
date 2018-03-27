@@ -156,91 +156,93 @@ void MikaMicro::ProcessMidiMsg(IMidiMsg * message)
 	midiQueue.Add(message);
 }
 
-void MikaMicro::PlayVoices(int s)
+void MikaMicro::StopNote(EVoiceModes voiceMode, int note)
+{
+	heldNotes.erase(
+		std::remove(
+			std::begin(heldNotes),
+			std::end(heldNotes),
+			note),
+		std::end(heldNotes));
+	switch (voiceMode)
+	{
+	case kVoiceModePoly:
+		for (auto& voice : voices)
+			if (voice.GetNote() == note) voice.Release();
+		break;
+	case kVoiceModeMono:
+	case kVoiceModeLegato:
+		if (heldNotes.empty())
+			voices[0].Release();
+		else
+			voices[0].SetNote(heldNotes.back());
+		break;
+	}
+}
+
+void MikaMicro::StartNote(EVoiceModes voiceMode, int note, double velocity)
+{
+	switch (voiceMode)
+	{
+	case kVoiceModePoly:
+	{
+		// get the quietest voice, prioritizing voices that are released
+		auto voice = std::min_element(
+			std::begin(voices),
+			std::end(voices),
+			[](Voice a, Voice b)
+		{
+			return a.IsReleased() == b.IsReleased() ? a.GetVolume() < b.GetVolume() : a.IsReleased();
+		});
+		voice->SetNote(note);
+		voice->SetVelocity(velocity);
+		voice->ResetPitch();
+		voice->Start();
+		break;
+	}
+	case kVoiceModeMono:
+		voices[0].SetNote(note);
+		voices[0].SetVelocity(velocity);
+		voices[0].Start();
+		break;
+	case kVoiceModeLegato:
+		voices[0].SetNote(note);
+		if (heldNotes.empty())
+		{
+			voices[0].SetVelocity(velocity);
+			voices[0].ResetPitch();
+			voices[0].Start();
+		}
+		break;
+	}
+	heldNotes.push_back(note);
+}
+
+void MikaMicro::FlushMidiQueue(int s)
 {
 	while (!midiQueue.Empty())
 	{
 		auto *message = midiQueue.Peek();
 		if (message->mOffset > s) break;
 
+		auto voiceMode = (EVoiceModes)(int)GetParam(kVoiceMode)->Value();
 		auto status = message->StatusMsg();
 		auto note = message->NoteNumber();
 		auto velocity = pow(message->Velocity() * .0078125, 1.25);
 		bool noteOff = status == IMidiMsg::kNoteOff || (status == IMidiMsg::kNoteOn && velocity == 0);
-		auto voiceMode = (EVoiceModes)(int)GetParam(kVoiceMode)->Value();
-		bool mono = voiceMode == kVoiceModeMono || voiceMode == kVoiceModeLegato;
 
 		if (noteOff)
-		{
-			heldNotes.erase(
-				std::remove(
-					std::begin(heldNotes),
-					std::end(heldNotes),
-					note),
-				std::end(heldNotes));
-
-			switch (voiceMode)
-			{
-			case kVoiceModePoly:
-				for (auto& voice : voices)
-					if (voice.GetNote() == note) voice.Release();
-				break;
-			case kVoiceModeMono:
-			case kVoiceModeLegato:
-				if (heldNotes.empty())
-					voices[0].Release();
-				else
-					voices[0].SetNote(heldNotes.back());
-				break;
-			}
-		}
+			StopNote(voiceMode, note);
 		else if (status == IMidiMsg::kNoteOn)
-		{
-			switch (voiceMode)
-			{
-			case kVoiceModePoly:
-			{
-				// get the quietest voice, prioritizing voices that are released
-				auto voice = std::min_element(
-					std::begin(voices),
-					std::end(voices),
-					[](Voice a, Voice b)
-				{
-					return a.IsReleased() == b.IsReleased() ? a.GetVolume() < b.GetVolume() : a.IsReleased();
-				});
-				voice->SetNote(note);
-				voice->SetVelocity(velocity);
-				voice->ResetPitch();
-				voice->Start();
-				break;
-			}
-			case kVoiceModeMono:
-				voices[0].SetNote(note);
-				voices[0].SetVelocity(velocity);
-				voices[0].Start();
-				break;
-			case kVoiceModeLegato:
-				voices[0].SetNote(note);
-				if (heldNotes.empty())
-				{
-					voices[0].SetVelocity(velocity);
-					voices[0].ResetPitch();
-					voices[0].Start();
-				}
-				break;
-			}
-
-			heldNotes.push_back(note);
-		}
+			StartNote(voiceMode, note, velocity);
 		else if (status == IMidiMsg::kPitchWheel)
 		{
 			auto f = pitchFactor(message->PitchWheel() * 2);
 			for (auto& voice : voices) voice.SetPitchBendFactor(f);
 		}
 		else if (status == IMidiMsg::kAllNotesOff)
-		{
 			for (auto& voice : voices) voice.Release();
-		}
+
 		midiQueue.Remove();
 	}
 }
@@ -269,7 +271,7 @@ void MikaMicro::ProcessDoubleReplacing(double** inputs, double** outputs, int nF
 
 	for (int s = 0; s < nFrames; ++s, ++out1, ++out2)
 	{
-		PlayVoices(s);
+		FlushMidiQueue(s);
 		auto out = GetVoices();
 		*out1 = out;
 		*out2 = out;
