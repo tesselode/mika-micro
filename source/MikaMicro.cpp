@@ -682,26 +682,29 @@ void MikaMicro::Reset()
 
 void MikaMicro::GrayOutControls()
 {
-	auto fmEnabled = (GetParam(kFmMode)->Value() == 1 && GetParam(kOscMix)->Value() > 0.0) ||
-		(GetParam(kFmMode)->Value() == 2 && GetParam(kOscMix)->Value() < 1.0);
 	auto osc1Enabled = GetParam(kOscMix)->Value() > 0.0;
 	auto osc2Enabled = GetParam(kOscMix)->Value() < 1.0;
-	auto isFilterEnabled = GetParam(kFilterEnabled)->Value();
+	auto osc1Noise = (EWaveforms)(int)GetParam(kOsc1Wave)->Value() == kWaveformNoise;
+	auto osc2Noise = (EWaveforms)(int)GetParam(kOsc2Wave)->Value() == kWaveformNoise;
+	auto fmEnabled = (GetParam(kFmMode)->Value() == 1 && osc1Enabled && !osc1Noise) ||
+		(GetParam(kFmMode)->Value() == 2 && osc2Enabled && !osc2Noise);
+	auto filterEnabled = GetParam(kFilterEnabled)->Value();
 	auto modEnvEnabled = GetParam(kModEnvFm)->Value() != 0.0 || GetParam(kModEnvCutoff)->Value() != 0.0;
 	auto vibratoEnabled = GetParam(kLfoFm)->Value() != 0.0 || GetParam(kLfoCutoff)->Value() != 0.0 ||
 		GetParam(kLfoAmount)->Value() < 0.0 || (GetParam(kLfoAmount)->Value() > 0.0 && osc2Enabled);
 
 	pGraphics->GetControl(1)->GrayOut(!osc1Enabled);
-	pGraphics->GetControl(2)->GrayOut(!(osc1Enabled || fmEnabled));
-	pGraphics->GetControl(3)->GrayOut(!(osc1Enabled || fmEnabled));
-	pGraphics->GetControl(4)->GrayOut(!osc1Enabled);
-	for (int i = 5; i < 9; i++) pGraphics->GetControl(i)->GrayOut(!osc2Enabled);
+	pGraphics->GetControl(2)->GrayOut(!((osc1Enabled && !osc1Noise) || fmEnabled));
+	pGraphics->GetControl(3)->GrayOut(!((osc1Enabled && !osc1Noise) || fmEnabled));
+	pGraphics->GetControl(4)->GrayOut(!(osc1Enabled && !osc1Noise));
+	pGraphics->GetControl(5)->GrayOut(!osc2Enabled);
+	for (int i = 6; i < 9; i++) pGraphics->GetControl(i)->GrayOut(!(osc2Enabled && !osc2Noise));
 	for (int i = 12; i < 14; i++) pGraphics->GetControl(i)->GrayOut(!fmEnabled);
-	for (int i = 15; i < 18; i++) pGraphics->GetControl(i)->GrayOut(!isFilterEnabled);
+	for (int i = 15; i < 18; i++) pGraphics->GetControl(i)->GrayOut(!filterEnabled);
 	for (int i = 28; i < 38; i++) pGraphics->GetControl(i)->GrayOut(!modEnvEnabled);
 	for (int i = 39; i < 41; i++) pGraphics->GetControl(i)->GrayOut(!vibratoEnabled);
 	for (int i = 41; i < 44; i++) pGraphics->GetControl(i)->GrayOut(!fmEnabled);
-	for (int i = 44; i < 47; i++) pGraphics->GetControl(i)->GrayOut(!isFilterEnabled);
+	for (int i = 44; i < 47; i++) pGraphics->GetControl(i)->GrayOut(!filterEnabled);
 	pGraphics->GetControl(48)->GrayOut(!GetParam(kVoiceMode)->Value());
 }
 
