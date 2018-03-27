@@ -551,6 +551,11 @@ MikaMicro::~MikaMicro()
 	}
 }
 
+void MikaMicro::ProcessMidiMsg(IMidiMsg * message)
+{
+	midiQueue.Add(message);
+}
+
 void MikaMicro::PlayVoices(int s)
 {
 	while (!midiQueue.Empty())
@@ -693,18 +698,29 @@ void MikaMicro::GrayOutControls()
 	auto vibratoEnabled = GetParam(kLfoFm)->Value() != 0.0 || GetParam(kLfoCutoff)->Value() != 0.0 ||
 		GetParam(kLfoAmount)->Value() < 0.0 || (GetParam(kLfoAmount)->Value() > 0.0 && osc2Enabled);
 
+	// oscillator 1
 	pGraphics->GetControl(1)->GrayOut(!osc1Enabled);
 	pGraphics->GetControl(2)->GrayOut(!((osc1Enabled && !osc1Noise) || fmEnabled));
 	pGraphics->GetControl(3)->GrayOut(!((osc1Enabled && !osc1Noise) || fmEnabled));
 	pGraphics->GetControl(4)->GrayOut(!(osc1Enabled && !osc1Noise));
+
+	// oscillator 2
 	pGraphics->GetControl(5)->GrayOut(!osc2Enabled);
 	for (int i = 6; i < 9; i++) pGraphics->GetControl(i)->GrayOut(!(osc2Enabled && !osc2Noise));
+
+	// fm
 	for (int i = 12; i < 14; i++) pGraphics->GetControl(i)->GrayOut(!fmEnabled);
+	for (int i = 41; i < 44; i++) pGraphics->GetControl(i)->GrayOut(!fmEnabled);
+
+	// filter
 	for (int i = 15; i < 18; i++) pGraphics->GetControl(i)->GrayOut(!filterEnabled);
+	for (int i = 44; i < 47; i++) pGraphics->GetControl(i)->GrayOut(!filterEnabled);
+
+	// mod sources
 	for (int i = 28; i < 38; i++) pGraphics->GetControl(i)->GrayOut(!modEnvEnabled);
 	for (int i = 39; i < 41; i++) pGraphics->GetControl(i)->GrayOut(!vibratoEnabled);
-	for (int i = 41; i < 44; i++) pGraphics->GetControl(i)->GrayOut(!fmEnabled);
-	for (int i = 44; i < 47; i++) pGraphics->GetControl(i)->GrayOut(!filterEnabled);
+	
+	// glide
 	pGraphics->GetControl(48)->GrayOut(!GetParam(kVoiceMode)->Value());
 }
 
@@ -840,9 +856,4 @@ void MikaMicro::OnParamChange(int paramIdx)
 	}
 
 	GrayOutControls();
-}
-
-void MikaMicro::ProcessMidiMsg(IMidiMsg * message)
-{
-	midiQueue.Add(message);
 }
