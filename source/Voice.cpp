@@ -68,9 +68,9 @@ double Voice::GetOscillators(double lfoValue, double driftValue)
 	// osc 1
 	if (oscMix < 1.0)
 	{
-		if (fmMode == 1) osc1BaseFrequency *= fmFactor;
+		if (fmMode == 1 && osc1Wave != kWaveformNoise) osc1BaseFrequency *= fmFactor;
 		auto osc1Out = 0.0;
-		if (osc1SplitEnabled)
+		if (osc1SplitEnabled && osc1Wave != kWaveformNoise)
 		{
 			osc1Out += osc1a.Next(osc1BaseFrequency * osc1SplitFactorA, osc1Wave);
 			osc1Out += osc1b.Next(osc1BaseFrequency * osc1SplitFactorB, osc1Wave);
@@ -86,9 +86,9 @@ double Voice::GetOscillators(double lfoValue, double driftValue)
 		double osc2BaseFrequency = baseFrequency * osc2TuneFactor * pitchBendFactor;
 		osc2BaseFrequency *= 1 + driftValue;
 		if (lfoAmount != 0.0) osc2BaseFrequency *= 1 + fabs(lfoAmount) * lfoValue;
-		if (fmMode == 2) osc2BaseFrequency *= fmFactor;
+		if (fmMode == 2 && osc2Wave != kWaveformNoise) osc2BaseFrequency *= fmFactor;
 		auto osc2Out = 0.0;
-		if (osc2SplitEnabled)
+		if (osc2SplitEnabled && osc2Wave != kWaveformNoise)
 		{
 			osc2Out += osc2a.Next(osc2BaseFrequency * osc2SplitFactorA, osc2Wave);
 			osc2Out += osc2b.Next(osc2BaseFrequency * osc2SplitFactorB, osc2Wave);
