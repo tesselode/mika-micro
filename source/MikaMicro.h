@@ -88,6 +88,7 @@ private:
 	void InitParameters();
 	void InitGraphics();
 	void InitPresets();
+	void WritePresets();
 	void PlayVoices(int s);
 	double GetDriftValue();
 	double GetVoices();
