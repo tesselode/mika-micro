@@ -281,6 +281,7 @@
     <ClInclude Include="Filter.h" />
     <ClInclude Include="MikaMicro.h" />
     <ClInclude Include="Oscillator.h" />
+    <ClInclude Include="PresetMenu.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="Util.h" />
     <ClInclude Include="Voice.h" />

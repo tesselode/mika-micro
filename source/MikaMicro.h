@@ -6,6 +6,7 @@
 #include "IPlug_include_in_plug_hdr.h"
 #include "IMidiQueue.h"
 #include "Oscillator.h"
+#include "PresetMenu.h"
 #include <random>
 #include <vector>
 #include "Voice.h"

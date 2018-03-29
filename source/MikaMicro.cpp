@@ -131,6 +131,8 @@ void MikaMicro::InitGraphics()
 	pGraphics->AttachControl(new IKnobMultiControl(this, 22 * 4, 90 * 4, kGlideSpeed, &knobLeft));
 	pGraphics->AttachControl(new IKnobMultiControl(this, 38 * 4, 90 * 4, kMasterVolume, &knobLeft));
 
+	//pGraphics->AttachControl(new PresetMenu(this, IRECT(0, 0, 100, 25)));
+
 	AttachGraphics(pGraphics);
 }
 
@@ -146,10 +148,7 @@ MikaMicro::MikaMicro(IPlugInstanceInfo instanceInfo)
 	InitPresets();
 }
 
-MikaMicro::~MikaMicro()
-{
-	if (false) WritePresets();
-}
+MikaMicro::~MikaMicro() { }
 
 void MikaMicro::ProcessMidiMsg(IMidiMsg * message)
 {

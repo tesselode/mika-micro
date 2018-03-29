@@ -53,6 +53,7 @@
     <ClInclude Include="Util.h" />
     <ClInclude Include="Envelope.h" />
     <ClInclude Include="Filter.h" />
+    <ClInclude Include="PresetMenu.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\WDL\rtaudiomidi\RtAudio.cpp">
