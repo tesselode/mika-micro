@@ -6,54 +6,54 @@
 void MikaMicro::InitParameters()
 {
 	// oscillators
-	GetParam(kOsc1Wave)->InitEnum("Oscillator 1 waveform", kWaveformSaw, kNumWaveforms);
-	GetParam(kOsc1Coarse)->InitInt("Oscillator 1 coarse", 0, -24, 24, "semitones");
-	GetParam(kOsc1Fine)->InitDouble("Oscillator 1 fine", 0.0, -1.0, 1.0, .01, "semitones");
-	GetParam(kOsc1Split)->InitDouble("Oscillator 1 split", 0.0, -.025, .025, .01);
-	GetParam(kOsc2Wave)->InitEnum("Oscillator 2 waveform", kWaveformSaw, kNumWaveforms);
-	GetParam(kOsc2Coarse)->InitInt("Oscillator 2 coarse", 0, -24, 24, "semitones");
-	GetParam(kOsc2Fine)->InitDouble("Oscillator 2 fine", 0.0, -1.0, 1.0, .01, "semitones");
-	GetParam(kOsc2Split)->InitDouble("Oscillator 2 split", 0.0, -.025, .025, .01);
-	GetParam(kOscMix)->InitDouble("Oscillator mix", 1.0, 0.0, 1.0, .01);
+	P(kOsc1Wave)->InitEnum("Oscillator 1 waveform", kWaveformSaw, kNumWaveforms);
+	P(kOsc1Coarse)->InitInt("Oscillator 1 coarse", 0, -24, 24, "semitones");
+	P(kOsc1Fine)->InitDouble("Oscillator 1 fine", 0.0, -1.0, 1.0, .01, "semitones");
+	P(kOsc1Split)->InitDouble("Oscillator 1 split", 0.0, -.025, .025, .01);
+	P(kOsc2Wave)->InitEnum("Oscillator 2 waveform", kWaveformSaw, kNumWaveforms);
+	P(kOsc2Coarse)->InitInt("Oscillator 2 coarse", 0, -24, 24, "semitones");
+	P(kOsc2Fine)->InitDouble("Oscillator 2 fine", 0.0, -1.0, 1.0, .01, "semitones");
+	P(kOsc2Split)->InitDouble("Oscillator 2 split", 0.0, -.025, .025, .01);
+	P(kOscMix)->InitDouble("Oscillator mix", 1.0, 0.0, 1.0, .01);
 
 	// fm
-	GetParam(kFmMode)->InitEnum("FM mode", 0, 3);
-	GetParam(kFmCoarse)->InitInt("FM coarse", 0, 0, 48);
-	GetParam(kFmFine)->InitDouble("FM fine", 0.0, -1.0, 1.0, .01);
+	P(kFmMode)->InitEnum("FM mode", 0, 3);
+	P(kFmCoarse)->InitInt("FM coarse", 0, 0, 48);
+	P(kFmFine)->InitDouble("FM fine", 0.0, -1.0, 1.0, .01);
 
 	// filter
-	GetParam(kFilterEnabled)->InitBool("Filter enabled", false);
-	GetParam(kFilterCutoff)->InitDouble("Filter cutoff", 8000.0, 20.0, 8000.0, .01, "hz");
-	GetParam(kFilterResonance)->InitDouble("Filter resonance", 0.0, 0.0, 1.0, .01);
-	GetParam(kFilterKeyTrack)->InitDouble("Filter key tracking", 0.0, -1.0, 1.0, .01);
+	P(kFilterEnabled)->InitBool("Filter enabled", false);
+	P(kFilterCutoff)->InitDouble("Filter cutoff", 8000.0, 20.0, 8000.0, .01, "hz");
+	P(kFilterResonance)->InitDouble("Filter resonance", 0.0, 0.0, 1.0, .01);
+	P(kFilterKeyTrack)->InitDouble("Filter key tracking", 0.0, -1.0, 1.0, .01);
 
 	// modulation sources
-	GetParam(kVolEnvA)->InitDouble("Volume envelope attack", 0.5, 0.5, 1000.0, .01, "", "", .025);
-	GetParam(kVolEnvD)->InitDouble("Volume envelope decay", 998.0, 0.5, 1000.0, .01, "", "", .025);
-	GetParam(kVolEnvS)->InitDouble("Volume envelope sustain", 1.0, 0.0, 1.0, .01);
-	GetParam(kVolEnvR)->InitDouble("Volume envelope release", 925.0, 0.5, 1000.0, .01, "", "", .025);
-	GetParam(kVolEnvV)->InitDouble("Volume envelope velocity sensitivity", 0.0, 0.0, 1.0, .01);
-	GetParam(kModEnvA)->InitDouble("Modulation envelope attack", 998.0, 0.5, 1000.0, .01, "", "", .025);
-	GetParam(kModEnvD)->InitDouble("Modulation envelope decay", 998.0, 0.5, 1000.0, .01, "", "", .025);
-	GetParam(kModEnvS)->InitDouble("Modulation envelope sustain", 0.5, 0.0, 1.0, .01);
-	GetParam(kModEnvR)->InitDouble("Modulation envelope release", 998.0, 0.5, 1000.0, .01, "", "", .025);
-	GetParam(kModEnvV)->InitDouble("Modulation envelope velocity sensitivity", 0.0, 0.0, 1.0, .01);
-	GetParam(kLfoAmount)->InitDouble("Vibrato amount", 0.0, -0.1, 0.1, .01);
-	GetParam(kLfoFrequency)->InitDouble("Vibrato frequency", 4.0, 0.1, 10.0, .01, "", "", 2.0);
-	GetParam(kLfoDelay)->InitDouble("Vibrato delay", 0.1, 0.1, 1000.0, .01, "", "", .001);
+	P(kVolEnvA)->InitDouble("Volume envelope attack", 0.5, 0.5, 1000.0, .01, "", "", .025);
+	P(kVolEnvD)->InitDouble("Volume envelope decay", 998.0, 0.5, 1000.0, .01, "", "", .025);
+	P(kVolEnvS)->InitDouble("Volume envelope sustain", 1.0, 0.0, 1.0, .01);
+	P(kVolEnvR)->InitDouble("Volume envelope release", 925.0, 0.5, 1000.0, .01, "", "", .025);
+	P(kVolEnvV)->InitDouble("Volume envelope velocity sensitivity", 0.0, 0.0, 1.0, .01);
+	P(kModEnvA)->InitDouble("Modulation envelope attack", 998.0, 0.5, 1000.0, .01, "", "", .025);
+	P(kModEnvD)->InitDouble("Modulation envelope decay", 998.0, 0.5, 1000.0, .01, "", "", .025);
+	P(kModEnvS)->InitDouble("Modulation envelope sustain", 0.5, 0.0, 1.0, .01);
+	P(kModEnvR)->InitDouble("Modulation envelope release", 998.0, 0.5, 1000.0, .01, "", "", .025);
+	P(kModEnvV)->InitDouble("Modulation envelope velocity sensitivity", 0.0, 0.0, 1.0, .01);
+	P(kLfoAmount)->InitDouble("Vibrato amount", 0.0, -0.1, 0.1, .01);
+	P(kLfoFrequency)->InitDouble("Vibrato frequency", 4.0, 0.1, 10.0, .01, "", "", 2.0);
+	P(kLfoDelay)->InitDouble("Vibrato delay", 0.1, 0.1, 1000.0, .01, "", "", .001);
 
 	// modulation targets
-	GetParam(kVolEnvFm)->InitDouble("Volume envelope to FM amount", 0.0, -24.0, 24.0, .01, "semitones");
-	GetParam(kModEnvFm)->InitDouble("Modulation envelope to FM amount", 0.0, -24.0, 24.0, .01, "semitones");
-	GetParam(kLfoFm)->InitDouble("Vibrato to FM amount", 0.0, -24.0, 24.0, .01, "semitones");
-	GetParam(kVolEnvCutoff)->InitDouble("Volume envelope to filter cutoff", 0.0, -8000.0, 8000.0, .01, "hz");
-	GetParam(kModEnvCutoff)->InitDouble("Modulation envelope to filter cutoff", 0.0, -8000.0, 8000.0, .01, "hz");
-	GetParam(kLfoCutoff)->InitDouble("Vibrato to filter cutoff", 0.0, -8000.0, 8000.0, .01);
+	P(kVolEnvFm)->InitDouble("Volume envelope to FM amount", 0.0, -24.0, 24.0, .01, "semitones");
+	P(kModEnvFm)->InitDouble("Modulation envelope to FM amount", 0.0, -24.0, 24.0, .01, "semitones");
+	P(kLfoFm)->InitDouble("Vibrato to FM amount", 0.0, -24.0, 24.0, .01, "semitones");
+	P(kVolEnvCutoff)->InitDouble("Volume envelope to filter cutoff", 0.0, -8000.0, 8000.0, .01, "hz");
+	P(kModEnvCutoff)->InitDouble("Modulation envelope to filter cutoff", 0.0, -8000.0, 8000.0, .01, "hz");
+	P(kLfoCutoff)->InitDouble("Vibrato to filter cutoff", 0.0, -8000.0, 8000.0, .01);
 
 	// master
-	GetParam(kVoiceMode)->InitEnum("Voice mode", kVoiceModeLegato, kNumVoiceModes);
-	GetParam(kGlideSpeed)->InitDouble("Glide speed", 1.0, 1.0, 1000.0, .01, "", "", .1);
-	GetParam(kMasterVolume)->InitDouble("Master volume", 0.25, 0.0, 0.5, .01);
+	P(kVoiceMode)->InitEnum("Voice mode", kVoiceModeLegato, kNumVoiceModes);
+	P(kGlideSpeed)->InitDouble("Glide speed", 1.0, 1.0, 1000.0, .01, "", "", .1);
+	P(kMasterVolume)->InitDouble("Master volume", 0.25, 0.0, 0.5, .01);
 }
 
 void MikaMicro::InitGraphics()
@@ -224,7 +224,7 @@ void MikaMicro::FlushMidiQueue(int s)
 		auto *message = midiQueue.Peek();
 		if (message->mOffset > s) break;
 
-		auto voiceMode = (EVoiceModes)(int)GetParam(kVoiceMode)->Value();
+		auto voiceMode = (EVoiceModes)(int)V(kVoiceMode);
 		auto status = message->StatusMsg();
 		auto note = message->NoteNumber();
 		auto velocity = pow(message->Velocity() * .0078125, 1.25);
@@ -256,11 +256,11 @@ double MikaMicro::GetDriftValue()
 
 double MikaMicro::GetVoices()
 {
-	auto lfoValue = lfo.Next(GetParam(kLfoFrequency)->Value(), kWaveformSine);
+	auto lfoValue = lfo.Next(V(kLfoFrequency), kWaveformSine);
 	auto driftValue = GetDriftValue();
 	auto out = 0.0;
 	for (auto &voice : voices) out += voice.Next(lfoValue, driftValue);
-	return out * GetParam(kMasterVolume)->Value();
+	return out * V(kMasterVolume);
 }
 
 void MikaMicro::ProcessDoubleReplacing(double** inputs, double** outputs, int nFrames)
@@ -288,16 +288,16 @@ void MikaMicro::Reset()
 
 void MikaMicro::GrayOutControls()
 {
-	auto osc1Enabled = GetParam(kOscMix)->Value() > 0.0;
-	auto osc2Enabled = GetParam(kOscMix)->Value() < 1.0;
-	auto osc1Noise = (EWaveforms)(int)GetParam(kOsc1Wave)->Value() == kWaveformNoise;
-	auto osc2Noise = (EWaveforms)(int)GetParam(kOsc2Wave)->Value() == kWaveformNoise;
-	auto fmEnabled = (GetParam(kFmMode)->Value() == 1 && osc1Enabled && !osc1Noise) ||
-		(GetParam(kFmMode)->Value() == 2 && osc2Enabled && !osc2Noise);
-	auto filterEnabled = GetParam(kFilterEnabled)->Value();
-	auto modEnvEnabled = GetParam(kModEnvFm)->Value() != 0.0 || GetParam(kModEnvCutoff)->Value() != 0.0;
-	auto vibratoEnabled = GetParam(kLfoFm)->Value() != 0.0 || GetParam(kLfoCutoff)->Value() != 0.0 ||
-		GetParam(kLfoAmount)->Value() < 0.0 || (GetParam(kLfoAmount)->Value() > 0.0 && osc2Enabled);
+	auto osc1Enabled = V(kOscMix) > 0.0;
+	auto osc2Enabled = V(kOscMix) < 1.0;
+	auto osc1Noise = (EWaveforms)(int)V(kOsc1Wave) == kWaveformNoise;
+	auto osc2Noise = (EWaveforms)(int)V(kOsc2Wave) == kWaveformNoise;
+	auto fmEnabled = (V(kFmMode) == 1 && osc1Enabled && !osc1Noise) ||
+		(V(kFmMode) == 2 && osc2Enabled && !osc2Noise);
+	auto filterEnabled = V(kFilterEnabled);
+	auto modEnvEnabled = V(kModEnvFm) != 0.0 || V(kModEnvCutoff) != 0.0;
+	auto vibratoEnabled = V(kLfoFm) != 0.0 || V(kLfoCutoff) != 0.0 ||
+		V(kLfoAmount) < 0.0 || (V(kLfoAmount) > 0.0 && osc2Enabled);
 
 	// oscillator 1
 	pGraphics->GetControl(1)->GrayOut(!osc1Enabled);
@@ -322,14 +322,14 @@ void MikaMicro::GrayOutControls()
 	for (int i = 39; i < 41; i++) pGraphics->GetControl(i)->GrayOut(!vibratoEnabled);
 	
 	// glide
-	pGraphics->GetControl(48)->GrayOut(!GetParam(kVoiceMode)->Value());
+	pGraphics->GetControl(48)->GrayOut(!V(kVoiceMode));
 }
 
 void MikaMicro::OnParamChange(int paramIdx)
 {
 	IMutexLock lock(this);
 
-	auto value = GetParam(paramIdx)->Value();
+	auto value = V(paramIdx);
 
 	// reverse parameters
 	switch (paramIdx)
@@ -343,7 +343,7 @@ void MikaMicro::OnParamChange(int paramIdx)
 	case kModEnvR:
 	case kLfoDelay:
 	case kGlideSpeed:
-		value = GetParam(paramIdx)->GetMax() + GetParam(paramIdx)->GetMin() - value;
+		value = P(paramIdx)->GetMax() + P(paramIdx)->GetMin() - value;
 	}
 
 	switch (paramIdx)
@@ -354,7 +354,7 @@ void MikaMicro::OnParamChange(int paramIdx)
 	case kOsc1Coarse:
 	case kOsc1Fine:
 		for (auto &voice : voices)
-			voice.SetOsc1Tune(GetParam(kOsc1Coarse)->Value() + GetParam(kOsc1Fine)->Value());
+			voice.SetOsc1Tune(V(kOsc1Coarse) + V(kOsc1Fine));
 		break;
 	case kOsc1Split:
 		for (auto &voice : voices) voice.SetOsc1Split(value);
@@ -365,7 +365,7 @@ void MikaMicro::OnParamChange(int paramIdx)
 	case kOsc2Coarse:
 	case kOsc2Fine:
 		for (auto &voice : voices)
-			voice.SetOsc2Tune(GetParam(kOsc2Coarse)->Value() + GetParam(kOsc2Fine)->Value());
+			voice.SetOsc2Tune(V(kOsc2Coarse) + V(kOsc2Fine));
 		break;
 	case kOsc2Split:
 		for (auto &voice : voices) voice.SetOsc2Split(value);

@@ -88,10 +88,11 @@ private:
 	double driftPhase = 0.0;
 	double dt = 0.0;
 
+	IParam* P(int parameter) { return GetParam(parameter); }
+	double V(int parameter) { return P(parameter)->Value(); }
 	void InitParameters();
 	void InitGraphics();
 	void InitPresets();
-	void WritePresets();
 	void FlushMidiQueue(int s);
 	double GetDriftValue();
 	double GetVoices();
