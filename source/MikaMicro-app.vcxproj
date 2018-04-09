@@ -279,6 +279,7 @@
     <ClInclude Include="app_wrapper\app_main.h" />
     <ClInclude Include="app_wrapper\app_resource.h" />
     <ClInclude Include="Envelope.h" />
+    <ClInclude Include="Filter.h" />
     <ClInclude Include="MikaMicro.h" />
     <ClInclude Include="Oscillator.h" />
     <ClInclude Include="Parameters.h" />
@@ -296,6 +297,7 @@
     <ClCompile Include="app_wrapper\app_dialog.cpp" />
     <ClCompile Include="app_wrapper\app_main.cpp" />
     <ClCompile Include="Envelope.cpp" />
+    <ClCompile Include="Filter.cpp" />
     <ClCompile Include="MikaMicro.cpp" />
     <ClCompile Include="Oscillator.cpp" />
     <ClCompile Include="Voice.cpp" />
