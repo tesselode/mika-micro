@@ -263,4 +263,20 @@ void MikaMicro::OnParamChange(int paramIdx)
 		parameters[paramIdx] = GetParam(paramIdx)->Value();
 		break;
 	}
+
+	switch (paramIdx)
+	{
+	case kOsc1Coarse:
+	case kOsc1Fine:
+	{
+		auto osc1PitchFactor = pitchFactor(parameters[kOsc1Coarse] + parameters[kOsc1Fine]);
+		for (auto &voice : voices) voice.SetOsc1PitchFactor(osc1PitchFactor);
+	}
+	case kOsc2Coarse:
+	case kOsc2Fine:
+	{
+		auto osc2PitchFactor = pitchFactor(parameters[kOsc2Coarse] + parameters[kOsc2Fine]);
+		for (auto &voice : voices) voice.SetOsc2PitchFactor(osc2PitchFactor);
+	}
+	}
 }

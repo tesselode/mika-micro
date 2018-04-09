@@ -10,6 +10,10 @@ class Voice
 {
 public:
 	Voice(std::array<double, kNumParameters> &parameters) : p(parameters) {}
+
+	void SetOsc1PitchFactor(double f) { osc1PitchFactor = f; }
+	void SetOsc2PitchFactor(double f) { osc2PitchFactor = f; }
+
 	void SetNote(int note);
 	int GetNote() { return note; }
 	double GetVolume() { return volEnv.Get(); }
@@ -30,5 +34,7 @@ private:
 	Envelope lfoEnv;
 	int note = 69;
 	double baseFrequency = 440.0;
+	double osc1PitchFactor = 1.0;
+	double osc2PitchFactor = 1.0;
 };
 
