@@ -2,6 +2,7 @@
 
 #include <array>
 #include "Envelope.h"
+#include "Filter.h"
 #include "Oscillator.h"
 #include "Parameters.h"
 #include "Util.h"
@@ -32,6 +33,7 @@ private:
 	Envelope volEnv;
 	Envelope modEnv;
 	Envelope lfoEnv;
+	Filter filter;
 	int note = 69;
 	double baseFrequency = 440.0;
 	double osc1PitchFactor = 1.0;

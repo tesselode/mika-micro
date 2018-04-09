@@ -80,5 +80,10 @@ double Voice::Next(double dt)
 	auto out = osc1Out * (1.0 - p[kOscMix]) + osc2Out * p[kOscMix];
 	out /= (1.0 + abs(.5 - p[kOscMix])) * 1.5;
 
+	out *= GetVolume();
+
+	// filter
+	out = filter.Process(dt, out, p[kFilterCutoff], p[kFilterResonance]);
+
 	return out;
 }
