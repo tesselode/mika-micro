@@ -5,6 +5,7 @@
 #include "IPlug_include_in_plug_hdr.h"
 #include "Oscillator.h"
 #include "Parameters.h"
+#include "Voice.h"
 
 class MikaMicro : public IPlug
 {
@@ -24,8 +25,7 @@ private:
 
 	double dt = 0.0;
 	IGraphics* pGraphics;
-	Oscillator osc;
-	Envelope env;
+	Voice voice;
 };
 
 #endif
