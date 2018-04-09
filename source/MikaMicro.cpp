@@ -137,19 +137,50 @@ void MikaMicro::InitGraphics()
 }
 
 MikaMicro::MikaMicro(IPlugInstanceInfo instanceInfo)
-  :	IPLUG_CTOR(kNumParameters, 128, instanceInfo),
-	voice(parameters)
+  :	IPLUG_CTOR(kNumParameters, 128, instanceInfo)
 {
 	TRACE;
 
 	InitParameters();
 	InitGraphics();
 	MakeDefaultPreset("-", 128);
-
-	voice.Start();
 }
 
 MikaMicro::~MikaMicro() {}
+
+void MikaMicro::FlushMidi(int sample)
+{
+	while (!midiQueue.Empty())
+	{
+		auto message = midiQueue.Peek();
+		if (message->mOffset > sample) break;
+
+		auto status = message->StatusMsg();
+		auto note = message->NoteNumber();
+		auto velocity = message->Velocity();
+
+		if (status == IMidiMsg::kNoteOff || (status == IMidiMsg::kNoteOn && velocity == 0))
+		{
+			for (auto &voice : voices)
+				if (voice.GetNote() == note) voice.Release();
+		}
+		else if (status == IMidiMsg::kNoteOn)
+		{
+			auto voice = std::min_element(
+				std::begin(voices),
+				std::end(voices),
+				[](Voice a, Voice b)
+			{
+				return a.IsReleased() == b.IsReleased() ? a.GetVolume() < b.GetVolume() : a.IsReleased();
+			}
+			);
+			voice->SetNote(note);
+			voice->Start();
+		}
+
+		midiQueue.Remove();
+	}
+}
 
 void MikaMicro::ProcessDoubleReplacing(double** inputs, double** outputs, int nFrames)
 {
@@ -158,7 +189,10 @@ void MikaMicro::ProcessDoubleReplacing(double** inputs, double** outputs, int nF
 
 	for (int s = 0; s < nFrames; ++s, ++out1, ++out2)
 	{
-		auto out = voice.Next(dt) * .25;
+		FlushMidi(s);
+		auto out = 0.0;
+		for (auto &voice : voices) out += voice.Next(dt);
+		out *= .25;
 
 		*out1 = out;
 		*out2 = out;
