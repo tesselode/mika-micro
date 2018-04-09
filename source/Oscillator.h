@@ -17,6 +17,7 @@ enum EWaveforms
 class Oscillator
 {
 public:
+	void Reset(double p = 0.0) { phase = p; }
 	double Next(double dt, double frequency, EWaveforms waveform);
 
 private:
