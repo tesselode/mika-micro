@@ -2,6 +2,7 @@
 #define __MIKAMICRO__
 
 #include "IPlug_include_in_plug_hdr.h"
+#include "Oscillator.h"
 #include "Parameters.h"
 
 class MikaMicro : public IPlug
@@ -20,7 +21,9 @@ private:
 	void InitGraphics();
 	void GrayOutControls();
 
+	double dt = 0.0;
 	IGraphics* pGraphics;
+	Oscillator osc;
 };
 
 #endif

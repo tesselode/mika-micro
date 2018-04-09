@@ -157,8 +157,10 @@ void MikaMicro::ProcessDoubleReplacing(double** inputs, double** outputs, int nF
 
 	for (int s = 0; s < nFrames; ++s, ++out1, ++out2)
 	{
-		*out1 = 0.0;
-		*out2 = 0.0;
+		auto out = osc.Next(dt, 440.0, kNoise) * .25;
+
+		*out1 = out;
+		*out2 = out;
 	}
 }
 
@@ -166,6 +168,7 @@ void MikaMicro::Reset()
 {
 	TRACE;
 	IMutexLock lock(this);
+	dt = 1.0 / GetSampleRate();
 }
 
 void MikaMicro::GrayOutControls()
