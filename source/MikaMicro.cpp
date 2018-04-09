@@ -208,10 +208,10 @@ void MikaMicro::Reset()
 
 void MikaMicro::GrayOutControls()
 {
-	/*auto osc1Enabled = GetParam(kOscMix)->Value() > 0.0;
+	auto osc1Enabled = GetParam(kOscMix)->Value() > 0.0;
 	auto osc2Enabled = GetParam(kOscMix)->Value() < 1.0;
-	auto osc1Noise = (EWaveforms)(int)GetParam(kOsc1Wave)->Value() == kWaveformNoise;
-	auto osc2Noise = (EWaveforms)(int)GetParam(kOsc2Wave)->Value() == kWaveformNoise;
+	auto osc1Noise = (EWaveforms)(int)GetParam(kOsc1Wave)->Value() == kNoise;
+	auto osc2Noise = (EWaveforms)(int)GetParam(kOsc2Wave)->Value() == kNoise;
 	auto fmEnabled = (GetParam(kFmMode)->Value() == 1 && osc1Enabled && !osc1Noise) ||
 		(GetParam(kFmMode)->Value() == 2 && osc2Enabled && !osc2Noise);
 	auto filterEnabled = GetParam(kFilterEnabled)->Value();
@@ -242,7 +242,7 @@ void MikaMicro::GrayOutControls()
 	for (int i = 39; i < 41; i++) pGraphics->GetControl(i)->GrayOut(!vibratoEnabled);
 
 	// glide
-	pGraphics->GetControl(48)->GrayOut(!GetParam(kVoiceMode)->Value());*/
+	pGraphics->GetControl(48)->GrayOut(!GetParam(kVoiceMode)->Value());
 }
 
 void MikaMicro::OnParamChange(int paramIdx)
