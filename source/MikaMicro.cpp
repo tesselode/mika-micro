@@ -184,18 +184,13 @@ void MikaMicro::FlushMidi(int sample)
 
 void MikaMicro::ProcessDoubleReplacing(double** inputs, double** outputs, int nFrames)
 {
-	double* out1 = outputs[0];
-	double* out2 = outputs[1];
-
-	for (int s = 0; s < nFrames; ++s, ++out1, ++out2)
+	for (int s = 0; s < nFrames; s++)
 	{
 		FlushMidi(s);
 		auto out = 0.0;
 		for (auto &voice : voices) out += voice.Next(dt);
 		out *= .25;
-
-		*out1 = out;
-		*out2 = out;
+		outputs[0][s] = outputs[1][s] = out;
 	}
 }
 
