@@ -51,6 +51,7 @@
     <ClInclude Include="Parameters.h" />
     <ClInclude Include="Oscillator.h" />
     <ClInclude Include="Util.h" />
+    <ClInclude Include="Envelope.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\WDL\rtaudiomidi\RtAudio.cpp">
@@ -79,6 +80,7 @@
       <Filter>app</Filter>
     </ClCompile>
     <ClCompile Include="Oscillator.cpp" />
+    <ClCompile Include="Envelope.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="MikaMicro.rc" />

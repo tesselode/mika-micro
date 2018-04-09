@@ -146,6 +146,8 @@ MikaMicro::MikaMicro(IPlugInstanceInfo instanceInfo)
 	InitParameters();
 	InitGraphics();
 	MakeDefaultPreset("-", 128);
+
+	env.Start();
 }
 
 MikaMicro::~MikaMicro() {}
@@ -157,7 +159,8 @@ void MikaMicro::ProcessDoubleReplacing(double** inputs, double** outputs, int nF
 
 	for (int s = 0; s < nFrames; ++s, ++out1, ++out2)
 	{
-		auto out = osc.Next(dt, 440.0, kNoise) * .25;
+		env.Update(dt, 1.0, 1.0, 0.5, 1.0);
+		auto out = osc.Next(dt, 440.0, kNoise) * env.Get() * .25;
 
 		*out1 = out;
 		*out2 = out;

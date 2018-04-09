@@ -1,6 +1,7 @@
 #ifndef __MIKAMICRO__
 #define __MIKAMICRO__
 
+#include "Envelope.h"
 #include "IPlug_include_in_plug_hdr.h"
 #include "Oscillator.h"
 #include "Parameters.h"
@@ -24,6 +25,7 @@ private:
 	double dt = 0.0;
 	IGraphics* pGraphics;
 	Oscillator osc;
+	Envelope env;
 };
 
 #endif
