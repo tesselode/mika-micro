@@ -5,13 +5,12 @@
 
 void MikaMicro::InitParameters()
 {
-	/*
 	// oscillators
-	GetParam(kOsc1Wave)->InitEnum("Oscillator 1 waveform", kWaveformSaw, kNumWaveforms);
+	GetParam(kOsc1Wave)->InitEnum("Oscillator 1 waveform", kSaw, kNumWaveforms);
 	GetParam(kOsc1Coarse)->InitInt("Oscillator 1 coarse", 0, -24, 24, "semitones");
 	GetParam(kOsc1Fine)->InitDouble("Oscillator 1 fine", 0.0, -1.0, 1.0, .01, "semitones");
 	GetParam(kOsc1Split)->InitDouble("Oscillator 1 split", 0.0, -.025, .025, .01);
-	GetParam(kOsc2Wave)->InitEnum("Oscillator 2 waveform", kWaveformSaw, kNumWaveforms);
+	GetParam(kOsc2Wave)->InitEnum("Oscillator 2 waveform", kSaw, kNumWaveforms);
 	GetParam(kOsc2Coarse)->InitInt("Oscillator 2 coarse", 0, -24, 24, "semitones");
 	GetParam(kOsc2Fine)->InitDouble("Oscillator 2 fine", 0.0, -1.0, 1.0, .01, "semitones");
 	GetParam(kOsc2Split)->InitDouble("Oscillator 2 split", 0.0, -.025, .025, .01);
@@ -52,10 +51,9 @@ void MikaMicro::InitParameters()
 	GetParam(kLfoCutoff)->InitDouble("Vibrato to filter cutoff", 0.0, -8000.0, 8000.0, .01);
 
 	// master
-	GetParam(kVoiceMode)->InitEnum("Voice mode", kVoiceModeLegato, kNumVoiceModes);
+	//GetParam(kVoiceMode)->InitEnum("Voice mode", kVoiceModeLegato, kNumVoiceModes);
 	GetParam(kGlideSpeed)->InitDouble("Glide speed", 1.0, 1.0, 1000.0, .01, "", "", .1);
 	GetParam(kMasterVolume)->InitDouble("Master volume", 0.25, 0.0, 0.5, .01);
-	*/
 }
 
 void MikaMicro::InitGraphics()
@@ -63,7 +61,7 @@ void MikaMicro::InitGraphics()
 	pGraphics = MakeGraphics(this, GUI_WIDTH, GUI_HEIGHT, 120);
 	pGraphics->AttachBackground(BG_ID, BG_FN);
 
-	/*auto knobLeft = pGraphics->LoadIBitmap(KNOBLEFT_ID, KNOBLEFT_FN, 100);
+	auto knobLeft = pGraphics->LoadIBitmap(KNOBLEFT_ID, KNOBLEFT_FN, 100);
 	auto knobMiddle = pGraphics->LoadIBitmap(KNOBMIDDLE_ID, KNOBMIDDLE_FN, 100);
 	auto knobRight = pGraphics->LoadIBitmap(KNOBRIGHT_ID, KNOBRIGHT_FN, 100);
 	auto slider = pGraphics->LoadIBitmap(SLIDER_ID, SLIDER_FN, 1);
@@ -133,13 +131,14 @@ void MikaMicro::InitGraphics()
 	pGraphics->AttachControl(new IKnobMultiControl(this, 22 * 4, 90 * 4, kGlideSpeed, &knobLeft));
 	pGraphics->AttachControl(new IKnobMultiControl(this, 38 * 4, 90 * 4, kMasterVolume, &knobLeft));
 
-	//pGraphics->AttachControl(new PresetMenu(this, IRECT(0, 0, 100, 25)));*/
+	//pGraphics->AttachControl(new PresetMenu(this, IRECT(0, 0, 100, 25)));
 
 	AttachGraphics(pGraphics);
 }
 
 MikaMicro::MikaMicro(IPlugInstanceInfo instanceInfo)
-  :	IPLUG_CTOR(0, 128, instanceInfo)
+  :	IPLUG_CTOR(kNumParameters, 128, instanceInfo),
+	voice(parameters)
 {
 	TRACE;
 
@@ -215,4 +214,24 @@ void MikaMicro::GrayOutControls()
 void MikaMicro::OnParamChange(int paramIdx)
 {
 	IMutexLock lock(this);
+
+	switch (paramIdx)
+	{
+	// reversed parameters
+	case kOscMix:
+	case kVolEnvA:
+	case kVolEnvD:
+	case kVolEnvR:
+	case kModEnvA:
+	case kModEnvD:
+	case kModEnvR:
+	case kLfoDelay:
+	case kGlideSpeed:
+		parameters[paramIdx] = GetParam(paramIdx)->GetMin() + GetParam(paramIdx)->GetMax() - GetParam(paramIdx)->Value();
+		break;
+	// normal parameters
+	default:
+		parameters[paramIdx] = GetParam(paramIdx)->Value();
+		break;
+	}
 }

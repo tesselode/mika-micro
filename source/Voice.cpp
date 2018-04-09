@@ -22,6 +22,6 @@ void Voice::Release()
 
 double Voice::Next(double dt)
 {
-	volEnv.Update(dt, 1.0, 1.0, 0.5, 1.0);
+	volEnv.Update(dt, p[kVolEnvA], p[kVolEnvD], p[kVolEnvS], p[kVolEnvR]);
 	return osc1a.Next(dt, 440.0, kSaw) * GetVolume();
 }

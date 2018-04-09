@@ -1,12 +1,15 @@
 #pragma once
 
+#include <array>
 #include "Envelope.h"
 #include "Oscillator.h"
+#include "Parameters.h"
 #include "Util.h"
 
 class Voice
 {
 public:
+	Voice(std::array<double, kNumParameters> &parameters) : p(parameters) {}
 	void SetNote(int note);
 	int GetNote() { return note; }
 	double GetVolume() { return volEnv.Get(); }
@@ -16,6 +19,7 @@ public:
 	double Next(double dt);
 
 private:
+	std::array<double, kNumParameters> &p;
 	Oscillator oscFm;
 	Oscillator osc1a;
 	Oscillator osc1b;

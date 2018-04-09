@@ -1,6 +1,7 @@
 #ifndef __MIKAMICRO__
 #define __MIKAMICRO__
 
+#include <array>
 #include "Envelope.h"
 #include "IPlug_include_in_plug_hdr.h"
 #include "Oscillator.h"
@@ -23,6 +24,7 @@ private:
 	void InitGraphics();
 	void GrayOutControls();
 
+	std::array<double, kNumParameters> parameters;
 	double dt = 0.0;
 	IGraphics* pGraphics;
 	Voice voice;
