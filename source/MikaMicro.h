@@ -31,6 +31,7 @@ private:
 	IMidiQueue midiQueue;
 	double dt = 0.0;
 	IGraphics* pGraphics;
+	Oscillator lfo;
 	std::array<Voice, 8> voices = {
 		Voice(parameters),
 		Voice(parameters),

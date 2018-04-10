@@ -21,7 +21,7 @@ public:
 	bool IsReleased() { return volEnv.IsReleased(); }
 	void Start();
 	void Release();
-	double Next(double dt);
+	double Next(double dt, double lfoValue);
 
 private:
 	std::array<double, kNumParameters> &p;

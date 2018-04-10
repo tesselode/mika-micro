@@ -187,8 +187,9 @@ void MikaMicro::ProcessDoubleReplacing(double** inputs, double** outputs, int nF
 	for (int s = 0; s < nFrames; s++)
 	{
 		FlushMidi(s);
+		auto lfoValue = lfo.Next(dt, parameters[kLfoFrequency], kSine);
 		auto out = 0.0;
-		for (auto &voice : voices) out += voice.Next(dt);
+		for (auto &voice : voices) out += voice.Next(dt, lfoValue);
 		out *= .25;
 		outputs[0][s] = outputs[1][s] = out;
 	}

@@ -14,6 +14,7 @@ class Envelope
 public:
 	void Start() { stage = kAttack; }
 	void Release() { stage = kRelease; }
+	void Reset() { value = 0.0; }
 	void Update(double dt, double a, double d, double s, double r);
 	double Get() { return value; }
 	bool IsReleased() { return stage == kRelease || stage == kIdle; }
