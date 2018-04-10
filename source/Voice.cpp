@@ -3,7 +3,7 @@
 void Voice::SetNote(int n)
 {
 	note = n;
-	baseFrequency = pitchToFrequency(note);
+	targetFrequency = pitchToFrequency(note);
 }
 
 void Voice::Start()
@@ -43,6 +43,9 @@ double Voice::Next(double dt, double lfoValue)
 	auto modEnvValue = modEnv.Get(p[kModEnvV], velocity);
 	lfoEnv.Update(dt, p[kLfoDelay], 0.5, 1.0, 0.5);
 	lfoValue *= lfoEnv.Get(0.0, velocity);
+
+	// mono glide
+	baseFrequency += (targetFrequency - baseFrequency) * p[kGlideSpeed] * dt;
 
 	// oscillator base frequencies
 	auto osc1Frequency = baseFrequency * osc1PitchFactor;

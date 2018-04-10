@@ -7,7 +7,16 @@
 #include "IMidiQueue.h"
 #include "Oscillator.h"
 #include "Parameters.h"
+#include <vector>
 #include "Voice.h"
+
+enum EVoiceModes
+{
+	kPoly,
+	kMono,
+	kLegato,
+	kNumVoiceModes
+};
 
 class MikaMicro : public IPlug
 {
@@ -29,6 +38,7 @@ private:
 
 	std::array<double, kNumParameters> parameters;
 	IMidiQueue midiQueue;
+	std::vector<int> heldNotes;
 	double dt = 0.0;
 	IGraphics* pGraphics;
 	Oscillator lfo;
