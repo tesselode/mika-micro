@@ -44,5 +44,6 @@ private:
 	double velocity = 0.0;
 	double osc1PitchFactor = 1.0;
 	double osc2PitchFactor = 1.0;
+	double oscMix = 0.0;
 };
 
