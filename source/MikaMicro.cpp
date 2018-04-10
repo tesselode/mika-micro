@@ -280,4 +280,6 @@ void MikaMicro::OnParamChange(int paramIdx)
 		for (auto &voice : voices) voice.SetOsc2PitchFactor(osc2PitchFactor);
 	}
 	}
+
+	GrayOutControls();
 }
