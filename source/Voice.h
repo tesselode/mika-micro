@@ -17,7 +17,8 @@ public:
 
 	void SetNote(int note);
 	int GetNote() { return note; }
-	double GetVolume() { return volEnv.Get(); }
+	void SetVelocity(double v) { velocity = v; }
+	double GetVolume() { return volEnv.Get(p[kVolEnvV], velocity); }
 	bool IsReleased() { return volEnv.IsReleased(); }
 	void Start();
 	void Release();
@@ -36,6 +37,7 @@ private:
 	Filter filter;
 	int note = 69;
 	double baseFrequency = 440.0;
+	double velocity = 0.0;
 	double osc1PitchFactor = 1.0;
 	double osc2PitchFactor = 1.0;
 };

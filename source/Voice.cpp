@@ -35,12 +35,14 @@ double Voice::Next(double dt, double lfoValue)
 {
 	// skip processing if voice is silent
 	volEnv.Update(dt, p[kVolEnvA], p[kVolEnvD], p[kVolEnvS], p[kVolEnvR]);
-	if (GetVolume() == 0.0) return 0.0;
+	auto volEnvValue = volEnv.Get(p[kVolEnvV], velocity);
+	if (volEnvValue == 0.0) return 0.0;
 
 	// update envelopes
 	modEnv.Update(dt, p[kModEnvA], p[kModEnvD], p[kModEnvS], p[kModEnvR]);
+	auto modEnvValue = modEnv.Get(p[kModEnvV], velocity);
 	lfoEnv.Update(dt, p[kLfoDelay], 0.5, 1.0, 0.5);
-	lfoValue *= lfoEnv.Get();
+	lfoValue *= lfoEnv.Get(0.0, velocity);
 
 	// oscillator base frequencies
 	auto osc1Frequency = baseFrequency * osc1PitchFactor;
@@ -55,8 +57,8 @@ double Voice::Next(double dt, double lfoValue)
 	case 2:
 	{
 		auto fmAmount = p[kFmCoarse] + p[kFmFine];
-		fmAmount += p[kVolEnvFm] * volEnv.Get();
-		fmAmount += p[kModEnvFm] * modEnv.Get();
+		fmAmount += p[kVolEnvFm] * volEnvValue;
+		fmAmount += p[kModEnvFm] * modEnvValue;
 		fmAmount += p[kLfoFm] * lfoValue;
 		auto fmValue = pitchFactor(oscFm.Next(dt, osc1Frequency, kSine) * fmAmount);
 		switch ((int)p[kFmMode])
@@ -100,8 +102,8 @@ double Voice::Next(double dt, double lfoValue)
 	if (p[kFilterEnabled])
 	{
 		auto cutoff = p[kFilterCutoff];
-		cutoff += p[kVolEnvCutoff] * volEnv.Get();
-		cutoff += p[kModEnvCutoff] * modEnv.Get();
+		cutoff += p[kVolEnvCutoff] * volEnvValue;
+		cutoff += p[kModEnvCutoff] * modEnvValue;
 		cutoff += lfoValue * copysign((p[kLfoCutoff] * .000125) * (p[kLfoCutoff] * .000125) * 8000.0, p[kLfoCutoff]);
 		out = filter.Process(dt, out, cutoff, p[kFilterResonance]);
 	}

@@ -157,7 +157,7 @@ void MikaMicro::FlushMidi(int sample)
 
 		auto status = message->StatusMsg();
 		auto note = message->NoteNumber();
-		auto velocity = message->Velocity();
+		auto velocity = pow(message->Velocity() * .0078125, 1.25);
 
 		if (status == IMidiMsg::kNoteOff || (status == IMidiMsg::kNoteOn && velocity == 0))
 		{
@@ -175,6 +175,7 @@ void MikaMicro::FlushMidi(int sample)
 			}
 			);
 			voice->SetNote(note);
+			voice->SetVelocity(velocity);
 			voice->Start();
 		}
 
