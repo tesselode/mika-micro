@@ -18,6 +18,7 @@ public:
 	void SetNote(int note);
 	int GetNote() { return note; }
 	void SetVelocity(double v) { velocity = v; }
+	void SetPitchBendFactor(double f) { pitchBendFactor = f; }
 	void ResetPitch() { baseFrequency = targetFrequency; }
 	double GetVolume() { return volEnv.Get(p[kVolEnvV], velocity); }
 	bool IsReleased() { return volEnv.IsReleased(); }

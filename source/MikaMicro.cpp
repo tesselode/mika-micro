@@ -230,7 +230,11 @@ void MikaMicro::FlushMidi(int sample)
 			heldNotes.push_back(note);
 			break;
 		case IMidiMsg::kPitchWheel:
+		{
+			auto pitchBendFactor = pitchFactor(message->PitchWheel() * 2.0);
+			for (auto &voice : voices) voice.SetPitchBendFactor(pitchBendFactor);
 			break;
+		}
 		case IMidiMsg::kAllNotesOff:
 			break;
 		}
