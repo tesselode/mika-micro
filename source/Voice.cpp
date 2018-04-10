@@ -36,7 +36,7 @@ double Voice::Next(double dt, double lfoValue, double driftValue)
 	// skip processing if voice is silent
 	volEnv.Update(dt, p[kVolEnvA], p[kVolEnvD], p[kVolEnvS], p[kVolEnvR]);
 	auto volEnvValue = volEnv.Get(p[kVolEnvV], velocity);
-	if (volEnvValue == 0.0) return 0.0;
+	if (volEnvValue == 0.0 && filter.IsSilent()) return 0.0;
 
 	// update envelopes
 	modEnv.Update(dt, p[kModEnvA], p[kModEnvD], p[kModEnvS], p[kModEnvR]);
@@ -109,6 +109,7 @@ double Voice::Next(double dt, double lfoValue, double driftValue)
 		cutoff += p[kVolEnvCutoff] * volEnvValue;
 		cutoff += p[kModEnvCutoff] * modEnvValue;
 		cutoff += lfoValue * copysign((p[kLfoCutoff] * .000125) * (p[kLfoCutoff] * .000125) * 8000.0, p[kLfoCutoff]);
+		cutoff += p[kFilterKeyTrack] * baseFrequency * pitchBendFactor;
 		out = filter.Process(dt, out, cutoff, p[kFilterResonance]);
 	}
 
