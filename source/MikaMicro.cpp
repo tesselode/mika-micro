@@ -328,6 +328,13 @@ void MikaMicro::OnParamChange(int paramIdx)
 	case kGlideSpeed:
 		parameters[paramIdx] = GetParam(paramIdx)->GetMin() + GetParam(paramIdx)->GetMax() - GetParam(paramIdx)->Value();
 		break;
+	// curved parameters
+	case kLfoCutoff:
+	{
+		auto v = GetParam(paramIdx)->Value();
+		parameters[paramIdx] = copysign((v * .000125) * (v * .000125) * 8000.0, v);
+		break;
+	}
 	// normal parameters
 	default:
 		parameters[paramIdx] = GetParam(paramIdx)->Value();

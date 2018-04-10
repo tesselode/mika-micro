@@ -112,7 +112,7 @@ double Voice::Next(double dt, double lfoValue, double driftValue)
 		cutoff *= 1.0 + driftValue;
 		cutoff += p[kVolEnvCutoff] * volEnvValue;
 		cutoff += p[kModEnvCutoff] * modEnvValue;
-		cutoff += lfoValue * copysign((p[kLfoCutoff] * .000125) * (p[kLfoCutoff] * .000125) * 8000.0, p[kLfoCutoff]);
+		cutoff += lfoValue * p[kLfoCutoff];
 		cutoff += p[kFilterKeyTrack] * baseFrequency * pitchBendFactor;
 		out = filter.Process(dt, out, cutoff, p[kFilterResonance]);
 	}
