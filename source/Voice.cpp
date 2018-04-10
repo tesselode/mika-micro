@@ -38,6 +38,7 @@ double Voice::Next(double dt, double lfoValue)
 	if (GetVolume() == 0.0) return 0.0;
 
 	// update envelopes
+	modEnv.Update(dt, p[kModEnvA], p[kModEnvD], p[kModEnvS], p[kModEnvR]);
 	lfoEnv.Update(dt, p[kLfoDelay], 0.5, 1.0, 0.5);
 	lfoValue *= lfoEnv.Get();
 
@@ -54,7 +55,9 @@ double Voice::Next(double dt, double lfoValue)
 	case 2:
 	{
 		auto fmAmount = p[kFmCoarse] + p[kFmFine];
-		fmAmount += lfoValue * p[kLfoFm];
+		fmAmount += p[kVolEnvFm] * volEnv.Get();
+		fmAmount += p[kModEnvFm] * modEnv.Get();
+		fmAmount += p[kLfoFm] * lfoValue;
 		auto fmValue = pitchFactor(oscFm.Next(dt, osc1Frequency, kSine) * fmAmount);
 		switch ((int)p[kFmMode])
 		{
@@ -97,6 +100,8 @@ double Voice::Next(double dt, double lfoValue)
 	if (p[kFilterEnabled])
 	{
 		auto cutoff = p[kFilterCutoff];
+		cutoff += p[kVolEnvCutoff] * volEnv.Get();
+		cutoff += p[kModEnvCutoff] * modEnv.Get();
 		cutoff += lfoValue * copysign((p[kLfoCutoff] * .000125) * (p[kLfoCutoff] * .000125) * 8000.0, p[kLfoCutoff]);
 		out = filter.Process(dt, out, cutoff, p[kFilterResonance]);
 	}
