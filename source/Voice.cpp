@@ -31,7 +31,7 @@ void Voice::Release()
 	lfoEnv.Release();
 }
 
-double Voice::Next(double dt, double lfoValue)
+double Voice::Next(double dt, double lfoValue, double driftValue)
 {
 	// skip processing if voice is silent
 	volEnv.Update(dt, p[kVolEnvA], p[kVolEnvD], p[kVolEnvS], p[kVolEnvR]);
@@ -48,9 +48,9 @@ double Voice::Next(double dt, double lfoValue)
 	baseFrequency += (targetFrequency - baseFrequency) * p[kGlideSpeed] * dt;
 
 	// oscillator base frequencies
-	auto osc1Frequency = baseFrequency * osc1PitchFactor;
+	auto osc1Frequency = baseFrequency * osc1PitchFactor * (1.0 + driftValue);
 	if (p[kLfoAmount] < 0.0) osc1Frequency *= 1.0 + abs(p[kLfoAmount]) * lfoValue;
-	auto osc2Frequency = baseFrequency * osc2PitchFactor;
+	auto osc2Frequency = baseFrequency * osc2PitchFactor * (1.0 + driftValue);
 	osc2Frequency *= 1.0 + abs(p[kLfoAmount]) * lfoValue;
 
 	// fm
@@ -105,6 +105,7 @@ double Voice::Next(double dt, double lfoValue)
 	if (p[kFilterEnabled])
 	{
 		auto cutoff = p[kFilterCutoff];
+		cutoff *= 1.0 + driftValue;
 		cutoff += p[kVolEnvCutoff] * volEnvValue;
 		cutoff += p[kModEnvCutoff] * modEnvValue;
 		cutoff += lfoValue * copysign((p[kLfoCutoff] * .000125) * (p[kLfoCutoff] * .000125) * 8000.0, p[kLfoCutoff]);

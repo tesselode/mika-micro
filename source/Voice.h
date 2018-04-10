@@ -23,7 +23,7 @@ public:
 	bool IsReleased() { return volEnv.IsReleased(); }
 	void Start();
 	void Release();
-	double Next(double dt, double lfoValue);
+	double Next(double dt, double lfoValue, double driftValue);
 
 private:
 	std::array<double, kNumParameters> &p;

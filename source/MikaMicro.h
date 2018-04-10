@@ -7,6 +7,7 @@
 #include "IMidiQueue.h"
 #include "Oscillator.h"
 #include "Parameters.h"
+#include <random>
 #include <vector>
 #include "Voice.h"
 
@@ -34,6 +35,7 @@ private:
 	void InitParameters();
 	void InitGraphics();
 	void FlushMidi(int sample);
+	double GetDriftValue();
 	void GrayOutControls();
 
 	std::array<double, kNumParameters> parameters;
@@ -42,6 +44,11 @@ private:
 	double dt = 0.0;
 	IGraphics* pGraphics;
 	Oscillator lfo;
+	std::random_device rd;
+	std::mt19937 gen;
+	std::uniform_real_distribution<> dist;
+	double driftVelocity = 0.0;
+	double driftPhase = 0.0;
 	std::array<Voice, 8> voices = {
 		Voice(parameters),
 		Voice(parameters),
