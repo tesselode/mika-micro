@@ -18,6 +18,7 @@ void Voice::Start()
 		volEnv.Reset();
 		modEnv.Reset();
 		lfoEnv.Reset();
+		filter.Reset();
 	}
 	volEnv.Start();
 	modEnv.Start();
