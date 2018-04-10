@@ -38,8 +38,6 @@ double Voice::Next(double dt)
 	// fm
 	switch ((int)p[kFmMode])
 	{
-	case 0:
-		break;
 	case 1:
 	case 2:
 	{
