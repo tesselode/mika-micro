@@ -83,7 +83,8 @@ double Voice::Next(double dt)
 	out *= GetVolume();
 
 	// filter
-	out = filter.Process(dt, out, p[kFilterCutoff], p[kFilterResonance]);
+	if (p[kFilterEnabled])
+		out = filter.Process(dt, out, p[kFilterCutoff], p[kFilterResonance]);
 
 	return out;
 }
