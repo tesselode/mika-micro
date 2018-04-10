@@ -85,6 +85,7 @@
     <ClCompile Include="Envelope.cpp" />
     <ClCompile Include="Voice.cpp" />
     <ClCompile Include="Filter.cpp" />
+    <ClCompile Include="Presets.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="MikaMicro.rc" />

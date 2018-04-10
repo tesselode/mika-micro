@@ -33,6 +33,7 @@ public:
 
 private:
 	void InitParameters();
+	void InitPresets();
 	void InitGraphics();
 	void FlushMidi(int sample);
 	double GetDriftValue();
