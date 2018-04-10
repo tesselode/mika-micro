@@ -236,6 +236,7 @@ void MikaMicro::FlushMidi(int sample)
 			break;
 		}
 		case IMidiMsg::kAllNotesOff:
+			for (auto &voice : voices) voice.Release();
 			break;
 		}
 
