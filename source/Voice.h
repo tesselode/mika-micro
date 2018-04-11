@@ -46,5 +46,6 @@ private:
 	double osc1bMix = 0.0;
 	double osc2PitchFactor = 1.0;
 	double osc2bMix = 0.0;
+	double filterMix = 0.0;
 };
 

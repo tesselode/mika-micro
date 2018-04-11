@@ -109,7 +109,8 @@ double Voice::Next(double dt, double lfoValue, double driftValue)
 	out *= GetVolume();
 
 	// filter
-	if (p[kFilterEnabled])
+	filterMix += ((p[kFilterEnabled] ? 1.0 : 0.0) - filterMix) * 100.0 * dt;
+	if (filterMix > .01)
 	{
 		auto cutoff = p[kFilterCutoff];
 		cutoff *= 1.0 + driftValue;
@@ -117,7 +118,8 @@ double Voice::Next(double dt, double lfoValue, double driftValue)
 		cutoff += p[kModEnvCutoff] * modEnvValue;
 		cutoff += lfoValue * p[kLfoCutoff];
 		cutoff += p[kFilterKeyTrack] * baseFrequency * pitchBendFactor;
-		out = filter.Process(dt, out, cutoff, p[kFilterResonance]);
+		auto filterOut = filter.Process(dt, out, cutoff, p[kFilterResonance]);
+		out = out * (1.0 - filterMix) + filterOut * filterMix;
 	}
 
 	return out;
