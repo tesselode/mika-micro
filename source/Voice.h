@@ -18,12 +18,22 @@ public:
 		osc1b.SetWaveform(waveform);
 	}
 	void SetOsc1PitchFactor(double f) { osc1PitchFactor = f; }
+	void SetOsc1Split(double s)
+	{
+		osc1SplitFactorA = 1.0 + s;
+		osc1SplitFactorB = 1.0 / osc1SplitFactorA;
+	}
 	void SetOsc2Wave(EWaveforms waveform)
 	{
 		osc2a.SetWaveform(waveform);
 		osc2b.SetWaveform(waveform);
 	}
 	void SetOsc2PitchFactor(double f) { osc2PitchFactor = f; }
+	void SetOsc2Split(double s)
+	{
+		osc2SplitFactorA = 1.0 + s;
+		osc2SplitFactorB = 1.0 / osc2SplitFactorA;
+	}
 
 	void SetNote(int note);
 	int GetNote() { return note; }
@@ -53,8 +63,12 @@ private:
 	double pitchBendFactor = 1.0;
 	double velocity = 0.0;
 	double osc1PitchFactor = 1.0;
+	double osc1SplitFactorA = 1.0;
+	double osc1SplitFactorB = 1.0;
 	double osc1bMix = 0.0;
 	double osc2PitchFactor = 1.0;
+	double osc2SplitFactorA = 1.0;
+	double osc2SplitFactorB = 1.0;
 	double osc2bMix = 0.0;
 	double filterMix = 0.0;
 };

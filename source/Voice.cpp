@@ -88,18 +88,18 @@ double Voice::Next(double dt, double lfoValue, double driftValue)
 	auto osc1Out = 0.0;
 	if (p[kOscMix] < .99)
 	{
-		osc1Out += osc1a.Next(dt, osc1Frequency * (1.0 + p[kOsc1Split]));
+		osc1Out += osc1a.Next(dt, osc1Frequency * osc1SplitFactorA);
 		if (osc1bMix > .01)
-			osc1Out += osc1bMix * osc1b.Next(dt, osc1Frequency / (1.0 + p[kOsc1Split]));
+			osc1Out += osc1bMix * osc1b.Next(dt, osc1Frequency * osc1SplitFactorB);
 	}
 
 	// oscillator 2
 	auto osc2Out = 0.0;
 	if (p[kOscMix] > .01)
 	{
-		osc2Out += osc2a.Next(dt, osc2Frequency * (1.0 + p[kOsc2Split]));
+		osc2Out += osc2a.Next(dt, osc2Frequency * osc2SplitFactorA);
 		if (osc2bMix > .01)
-			osc2Out += osc2bMix * osc2b.Next(dt, osc2Frequency / (1.0 + p[kOsc2Split]));
+			osc2Out += osc2bMix * osc2b.Next(dt, osc2Frequency * osc2SplitFactorB);
 	}
 
 	// oscillator mix

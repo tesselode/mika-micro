@@ -365,6 +365,9 @@ void MikaMicro::OnParamChange(int paramIdx)
 		for (auto &voice : voices) voice.SetOsc1PitchFactor(osc1PitchFactor);
 		break;
 	}
+	case kOsc1Split:
+		for (auto &voice : voices) voice.SetOsc1Split(parameters[kOsc1Split]);
+		break;
 	case kOsc2Wave:
 		for (auto &voice : voices) voice.SetOsc2Wave((EWaveforms)(int)parameters[kOsc2Wave]);
 		break;
@@ -375,6 +378,9 @@ void MikaMicro::OnParamChange(int paramIdx)
 		for (auto &voice : voices) voice.SetOsc2PitchFactor(osc2PitchFactor);
 		break;
 	}
+	case kOsc2Split:
+		for (auto &voice : voices) voice.SetOsc2Split(parameters[kOsc2Split]);
+		break;
 	case kVoiceMode:
 		for (int i = 1; i < std::size(voices); i++) voices[i].Release();
 		break;
