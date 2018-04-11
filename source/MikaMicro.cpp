@@ -264,7 +264,7 @@ void MikaMicro::ProcessDoubleReplacing(double** inputs, double** outputs, int nF
 	{
 		FlushMidi(s);
 		SmoothParameters();
-		auto lfoValue = lfo.Next(dt, parameters[kLfoFrequency], kSine);
+		auto lfoValue = lfo.Next(dt, parameters[kLfoFrequency]);
 		auto driftValue = GetDriftValue();
 		auto out = 0.0;
 		for (auto &voice : voices) out += voice.Next(dt, lfoValue, driftValue);
@@ -355,6 +355,9 @@ void MikaMicro::OnParamChange(int paramIdx)
 
 	switch (paramIdx)
 	{
+	case kOsc1Wave:
+		for (auto &voice : voices) voice.SetOsc1Wave((EWaveforms)(int)parameters[kOsc1Wave]);
+		break;
 	case kOsc1Coarse:
 	case kOsc1Fine:
 	{
@@ -362,6 +365,9 @@ void MikaMicro::OnParamChange(int paramIdx)
 		for (auto &voice : voices) voice.SetOsc1PitchFactor(osc1PitchFactor);
 		break;
 	}
+	case kOsc2Wave:
+		for (auto &voice : voices) voice.SetOsc2Wave((EWaveforms)(int)parameters[kOsc2Wave]);
+		break;
 	case kOsc2Coarse:
 	case kOsc2Fine:
 	{

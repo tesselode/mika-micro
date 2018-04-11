@@ -70,7 +70,7 @@ double Voice::Next(double dt, double lfoValue, double driftValue)
 		fmAmount += p[kVolEnvFm] * volEnvValue;
 		fmAmount += p[kModEnvFm] * modEnvValue;
 		fmAmount += p[kLfoFm] * lfoValue;
-		auto fmValue = pitchFactor(oscFm.Next(dt, osc1Frequency, kSine) * fmAmount);
+		auto fmValue = pitchFactor(oscFm.Next(dt, osc1Frequency) * fmAmount);
 		switch ((int)p[kFmMode])
 		{
 		case 1:
@@ -88,18 +88,18 @@ double Voice::Next(double dt, double lfoValue, double driftValue)
 	auto osc1Out = 0.0;
 	if (p[kOscMix] < .99)
 	{
-		osc1Out += osc1a.Next(dt, osc1Frequency * (1.0 + p[kOsc1Split]), (EWaveforms)(int)p[kOsc1Wave]);
+		osc1Out += osc1a.Next(dt, osc1Frequency * (1.0 + p[kOsc1Split]));
 		if (osc1bMix > .01)
-			osc1Out += osc1bMix * osc1b.Next(dt, osc1Frequency / (1.0 + p[kOsc1Split]), (EWaveforms)(int)p[kOsc1Wave]);
+			osc1Out += osc1bMix * osc1b.Next(dt, osc1Frequency / (1.0 + p[kOsc1Split]));
 	}
 
 	// oscillator 2
 	auto osc2Out = 0.0;
 	if (p[kOscMix] > .01)
 	{
-		osc2Out += osc2a.Next(dt, osc2Frequency * (1.0 + p[kOsc2Split]), (EWaveforms)(int)p[kOsc2Wave]);
+		osc2Out += osc2a.Next(dt, osc2Frequency * (1.0 + p[kOsc2Split]));
 		if (osc2bMix > .01)
-			osc2Out += osc2bMix * osc2b.Next(dt, osc2Frequency / (1.0 + p[kOsc2Split]), (EWaveforms)(int)p[kOsc2Wave]);
+			osc2Out += osc2bMix * osc2b.Next(dt, osc2Frequency / (1.0 + p[kOsc2Split]));
 	}
 
 	// oscillator mix

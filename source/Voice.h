@@ -12,7 +12,17 @@ class Voice
 public:
 	Voice(std::array<double, kNumParameters> &parameters) : p(parameters) {}
 
+	void SetOsc1Wave(EWaveforms waveform)
+	{
+		osc1a.SetWaveform(waveform);
+		osc1b.SetWaveform(waveform);
+	}
 	void SetOsc1PitchFactor(double f) { osc1PitchFactor = f; }
+	void SetOsc2Wave(EWaveforms waveform)
+	{
+		osc2a.SetWaveform(waveform);
+		osc2b.SetWaveform(waveform);
+	}
 	void SetOsc2PitchFactor(double f) { osc2PitchFactor = f; }
 
 	void SetNote(int note);

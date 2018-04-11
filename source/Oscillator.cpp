@@ -24,12 +24,8 @@ double Oscillator::GeneratePulse(double width)
 	return v;
 }
 
-double Oscillator::Next(double dt, double frequency, EWaveforms waveform)
+double Oscillator::Get(EWaveforms waveform)
 {
-	phaseIncrement = frequency * dt;
-	phase += phaseIncrement;
-	while (phase > 1.0) phase -= 1.0;
-
 	switch (waveform)
 	{
 	case kSine:
@@ -50,5 +46,21 @@ double Oscillator::Next(double dt, double frequency, EWaveforms waveform)
 		noiseValue *= noiseValue;
 		noiseValue -= (int)noiseValue;
 		return noiseValue - .5;
+	default:
+		return 0.0;
 	}
+}
+
+double Oscillator::Next(double dt, double frequency)
+{
+	phaseIncrement = frequency * dt;
+	phase += phaseIncrement;
+	while (phase > 1.0) phase -= 1.0;
+
+	auto out = 0.0;
+	previousWaveformMix -= previousWaveformMix * 100.0 * dt;
+	if (previousWaveformMix > .01) out += previousWaveformMix * Get(previousWaveform);
+	currentWaveformMix += (1.0 - currentWaveformMix) * 100.0 * dt;
+	out += currentWaveformMix * Get(currentWaveform);
+	return out;
 }
