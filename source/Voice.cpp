@@ -13,8 +13,10 @@ void Voice::Start()
 		oscFm.Reset();
 		osc1a.Reset();
 		osc1b.Reset(p[kOsc1Split] < 0.0 ? .33 : 0.0);
+		osc1bMix = p[kOsc1Split] != 0.0 ? 1.0 : 0.0;
 		osc2a.Reset();
 		osc2b.Reset(p[kOsc2Split] < 0.0 ? .33 : 0.0);
+		osc2bMix = p[kOsc2Split] != 0.0 ? 1.0 : 0.0;
 		volEnv.Reset();
 		modEnv.Reset();
 		lfoEnv.Reset();
@@ -54,6 +56,10 @@ double Voice::Next(double dt, double lfoValue, double driftValue)
 	auto osc2Frequency = baseFrequency * osc2PitchFactor * pitchBendFactor * (1.0 + driftValue);
 	osc2Frequency *= 1.0 + abs(p[kLfoAmount]) * lfoValue;
 
+	// oscillator split smoothing
+	osc1bMix += ((p[kOsc1Split] != 0.0 ? 1.0 : 0.0) - osc1bMix) * 100.0 * dt;
+	osc2bMix += ((p[kOsc2Split] != 0.0 ? 1.0 : 0.0) - osc2bMix) * 100.0 * dt;
+
 	// fm
 	switch ((int)p[kFmMode])
 	{
@@ -83,8 +89,8 @@ double Voice::Next(double dt, double lfoValue, double driftValue)
 	if (p[kOscMix] < .99)
 	{
 		osc1Out += osc1a.Next(dt, osc1Frequency * (1.0 + p[kOsc1Split]), (EWaveforms)(int)p[kOsc1Wave]);
-		if (p[kOsc1Split] != 0.0)
-			osc1Out += osc1b.Next(dt, osc1Frequency / (1.0 + p[kOsc1Split]), (EWaveforms)(int)p[kOsc1Wave]);
+		if (osc1bMix > .01)
+			osc1Out += osc1bMix * osc1b.Next(dt, osc1Frequency / (1.0 + p[kOsc1Split]), (EWaveforms)(int)p[kOsc1Wave]);
 	}
 
 	// oscillator 2
@@ -92,8 +98,8 @@ double Voice::Next(double dt, double lfoValue, double driftValue)
 	if (p[kOscMix] > .01)
 	{
 		osc2Out += osc2a.Next(dt, osc2Frequency * (1.0 + p[kOsc2Split]), (EWaveforms)(int)p[kOsc2Wave]);
-		if (p[kOsc2Split] != 0.0)
-			osc2Out += osc2b.Next(dt, osc2Frequency / (1.0 + p[kOsc2Split]), (EWaveforms)(int)p[kOsc2Wave]);
+		if (osc2bMix > .01)
+			osc2Out += osc2bMix * osc2b.Next(dt, osc2Frequency / (1.0 + p[kOsc2Split]), (EWaveforms)(int)p[kOsc2Wave]);
 	}
 
 	// oscillator mix

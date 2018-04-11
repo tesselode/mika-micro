@@ -43,6 +43,8 @@ private:
 	double pitchBendFactor = 1.0;
 	double velocity = 0.0;
 	double osc1PitchFactor = 1.0;
+	double osc1bMix = 0.0;
 	double osc2PitchFactor = 1.0;
+	double osc2bMix = 0.0;
 };
 
