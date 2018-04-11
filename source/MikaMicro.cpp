@@ -54,6 +54,9 @@ void MikaMicro::InitParameters()
 	GetParam(kVoiceMode)->InitEnum("Voice mode", kLegato, kNumVoiceModes);
 	GetParam(kGlideSpeed)->InitDouble("Glide speed", 1.0, 1.0, 1000.0, .01, "", "", .1);
 	GetParam(kMasterVolume)->InitDouble("Master volume", 0.25, 0.0, 0.5, .01);
+
+	// initialize smoothed parameters
+	parameters[kOscMix] = GetParam(kOscMix)->GetMin() + GetParam(kOscMix)->GetMax() - GetParam(kOscMix)->Value();
 }
 
 void MikaMicro::InitGraphics()
@@ -250,11 +253,17 @@ double MikaMicro::GetDriftValue()
 	return .001 * sin(driftPhase);
 }
 
+void MikaMicro::SmoothParameters()
+{
+	parameters[kOscMix] += (oscMix - parameters[kOscMix]) * 100.0 * dt;
+}
+
 void MikaMicro::ProcessDoubleReplacing(double** inputs, double** outputs, int nFrames)
 {
 	for (int s = 0; s < nFrames; s++)
 	{
 		FlushMidi(s);
+		SmoothParameters();
 		auto lfoValue = lfo.Next(dt, parameters[kLfoFrequency], kSine);
 		auto driftValue = GetDriftValue();
 		auto out = 0.0;
@@ -317,7 +326,6 @@ void MikaMicro::OnParamChange(int paramIdx)
 	switch (paramIdx)
 	{
 	// reversed parameters
-	case kOscMix:
 	case kVolEnvA:
 	case kVolEnvD:
 	case kVolEnvR:
@@ -335,6 +343,10 @@ void MikaMicro::OnParamChange(int paramIdx)
 		parameters[paramIdx] = copysign((v * .000125) * (v * .000125) * 8000.0, v);
 		break;
 	}
+	// smoothed parameters
+	case kOscMix:
+		oscMix = GetParam(paramIdx)->GetMin() + GetParam(paramIdx)->GetMax() - GetParam(paramIdx)->Value();
+		break;
 	// normal parameters
 	default:
 		parameters[paramIdx] = GetParam(paramIdx)->Value();

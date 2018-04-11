@@ -78,12 +78,9 @@ double Voice::Next(double dt, double lfoValue, double driftValue)
 	}
 	}
 
-	// osc mix smoothing
-	oscMix += (p[kOscMix] - oscMix) * 1.0 * dt;
-
 	// oscillator 1
 	auto osc1Out = 0.0;
-	if (oscMix < 1.0)
+	if (p[kOscMix] < .99)
 	{
 		osc1Out += osc1a.Next(dt, osc1Frequency * (1.0 + p[kOsc1Split]), (EWaveforms)(int)p[kOsc1Wave]);
 		if (p[kOsc1Split] != 0.0)
@@ -92,7 +89,7 @@ double Voice::Next(double dt, double lfoValue, double driftValue)
 
 	// oscillator 2
 	auto osc2Out = 0.0;
-	if (oscMix > 0.0)
+	if (p[kOscMix] > .01)
 	{
 		osc2Out += osc2a.Next(dt, osc2Frequency * (1.0 + p[kOsc2Split]), (EWaveforms)(int)p[kOsc2Wave]);
 		if (p[kOsc2Split] != 0.0)
@@ -100,8 +97,8 @@ double Voice::Next(double dt, double lfoValue, double driftValue)
 	}
 
 	// oscillator mix
-	auto out = osc1Out * (1.0 - oscMix) + osc2Out * oscMix;
-	out /= (1.0 + abs(.5 - oscMix)) * 1.5;
+	auto out = osc1Out * (1.0 - p[kOscMix]) + osc2Out * p[kOscMix];
+	out /= (1.0 + abs(.5 - p[kOscMix])) * 1.5;
 
 	out *= GetVolume();
 

@@ -37,6 +37,7 @@ private:
 	void InitGraphics();
 	void FlushMidi(int sample);
 	double GetDriftValue();
+	void SmoothParameters();
 	void GrayOutControls();
 
 	std::array<double, kNumParameters> parameters;
@@ -60,6 +61,7 @@ private:
 		Voice(parameters),
 		Voice(parameters)
 	};
+	double oscMix = 0.0;
 };
 
 #endif
