@@ -4,7 +4,6 @@ enum EEnvelopeStage
 {
 	kAttack,
 	kDecay,
-	kSustain,
 	kRelease,
 	kIdle
 };

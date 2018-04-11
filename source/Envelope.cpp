@@ -13,14 +13,7 @@ void Envelope::Update(double dt, double a, double d, double s, double r)
 		}
 		break;
 	case kDecay:
-		value += (s - .1 - value) * d * dt;
-		if (value <= s)
-		{
-			value = s;
-			stage = kSustain;
-		}
-		break;
-	case kSustain:
+		value += (s - value) * d * dt;
 		break;
 	case kRelease:
 		value += (-.1 - value) * r * dt;
