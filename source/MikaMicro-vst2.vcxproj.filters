@@ -23,6 +23,7 @@
     <ClInclude Include="Parameters.h" />
     <ClInclude Include="Util.h" />
     <ClInclude Include="Voice.h" />
+    <ClInclude Include="PresetMenu.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="MikaMicro.rc" />
