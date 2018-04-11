@@ -84,6 +84,8 @@ double Voice::Next(double dt, double lfoValue, double driftValue)
 	}
 	}
 
+	auto out = 0.0;
+
 	// oscillator 1
 	auto osc1Out = 0.0;
 	if (p[kOscMix] < .99)
@@ -91,6 +93,7 @@ double Voice::Next(double dt, double lfoValue, double driftValue)
 		osc1Out += osc1a.Next(dt, osc1Frequency * osc1SplitFactorA);
 		if (osc1bMix > .01)
 			osc1Out += osc1bMix * osc1b.Next(dt, osc1Frequency * osc1SplitFactorB);
+		out += osc1Out * sqrt(1.0 - p[kOscMix]);
 	}
 
 	// oscillator 2
@@ -100,11 +103,8 @@ double Voice::Next(double dt, double lfoValue, double driftValue)
 		osc2Out += osc2a.Next(dt, osc2Frequency * osc2SplitFactorA);
 		if (osc2bMix > .01)
 			osc2Out += osc2bMix * osc2b.Next(dt, osc2Frequency * osc2SplitFactorB);
+		out += osc2Out * sqrt(p[kOscMix]);
 	}
-
-	// oscillator mix
-	auto out = osc1Out * (1.0 - p[kOscMix]) + osc2Out * p[kOscMix];
-	out /= (1.0 + abs(.5 - p[kOscMix])) * 1.5;
 
 	out *= GetVolume();
 
