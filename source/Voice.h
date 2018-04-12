@@ -47,6 +47,8 @@ public:
 	double Next(double dt, double lfoValue, double driftValue);
 
 private:
+	void Reset();
+
 	std::array<double, kNumParameters> &p;
 	Oscillator oscFm;
 	Oscillator osc1a;

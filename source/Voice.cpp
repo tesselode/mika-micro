@@ -6,23 +6,27 @@ void Voice::SetNote(int n)
 	targetFrequency = pitchToFrequency(note);
 }
 
+void Voice::Reset()
+{
+	oscFm.Reset();
+	osc1a.Reset();
+	osc1b.Reset(p[kOsc1Split] < 0.0 ? .33 : 0.0);
+	osc2a.Reset();
+	osc2b.Reset(p[kOsc2Split] < 0.0 ? .33 : 0.0);
+	volEnv.Reset();
+	modEnv.Reset();
+	lfoEnv.Reset();
+	filter.Reset();
+
+	// set smoothed variables directly to their target values
+	osc1bMix = p[kOsc1Split] != 0.0 ? 1.0 : 0.0;
+	osc2bMix = p[kOsc2Split] != 0.0 ? 1.0 : 0.0;
+	filterMix = p[kFilterEnabled] ? 1.0 : 0.0;
+}
+
 void Voice::Start()
 {
-	if (GetVolume() == 0.0)
-	{
-		oscFm.Reset();
-		osc1a.Reset();
-		osc1b.Reset(p[kOsc1Split] < 0.0 ? .33 : 0.0);
-		osc1bMix = p[kOsc1Split] != 0.0 ? 1.0 : 0.0;
-		osc2a.Reset();
-		osc2b.Reset(p[kOsc2Split] < 0.0 ? .33 : 0.0);
-		osc2bMix = p[kOsc2Split] != 0.0 ? 1.0 : 0.0;
-		volEnv.Reset();
-		modEnv.Reset();
-		lfoEnv.Reset();
-		filter.Reset();
-		filterMix = p[kFilterEnabled] ? 1.0 : 0.0;
-	}
+	if (GetVolume() == 0.0) Reset();
 	volEnv.Start();
 	modEnv.Start();
 	lfoEnv.Start();
