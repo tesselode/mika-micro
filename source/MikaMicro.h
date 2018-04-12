@@ -7,6 +7,7 @@
 #include "IMidiQueue.h"
 #include "Oscillator.h"
 #include "Parameters.h"
+#include "PresetMenu.h"
 #include <random>
 #include <vector>
 #include "Voice.h"
