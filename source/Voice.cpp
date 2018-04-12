@@ -21,6 +21,7 @@ void Voice::Start()
 		modEnv.Reset();
 		lfoEnv.Reset();
 		filter.Reset();
+		filterMix = p[kFilterEnabled] ? 1.0 : 0.0;
 	}
 	volEnv.Start();
 	modEnv.Start();
