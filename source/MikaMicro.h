@@ -12,14 +12,6 @@
 #include <vector>
 #include "Voice.h"
 
-enum EVoiceModes
-{
-	kPoly,
-	kMono,
-	kLegato,
-	kNumVoiceModes
-};
-
 class MikaMicro : public IPlug
 {
 public:
