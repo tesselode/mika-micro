@@ -140,9 +140,7 @@ void MikaMicro::InitGraphics()
 }
 
 MikaMicro::MikaMicro(IPlugInstanceInfo instanceInfo)
-  :	IPLUG_CTOR(kNumParameters, 128, instanceInfo),
-	gen(rd()),
-	dist(-1.0, 1.0)
+  :	IPLUG_CTOR(kNumParameters, 128, instanceInfo)
 {
 	TRACE;
 
@@ -249,8 +247,8 @@ void MikaMicro::FlushMidi(int sample)
 
 double MikaMicro::GetDriftValue()
 {
-	driftVelocity += dist(gen) * 10000 * dt;
-	driftVelocity -= driftVelocity * 2 * dt;
+	driftVelocity += random() * 10000.0 * dt;
+	driftVelocity -= driftVelocity * 2.0 * dt;
 	driftPhase += driftVelocity * dt;
 	return .001 * sin(driftPhase);
 }
