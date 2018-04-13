@@ -51,12 +51,16 @@ double Oscillator::Get(EWaveforms waveform)
 	}
 }
 
-double Oscillator::Next(double dt, double frequency)
+void Oscillator::UpdatePhase(double dt, double frequency)
 {
 	phaseIncrement = frequency * dt;
 	phase += phaseIncrement;
 	while (phase > 1.0) phase -= 1.0;
+}
 
+double Oscillator::Next(double dt, double frequency)
+{
+	UpdatePhase(dt, frequency);
 	auto out = 0.0;
 	previousWaveformMix -= previousWaveformMix * 100.0 * dt;
 	if (previousWaveformMix > .01) out += previousWaveformMix * Get(previousWaveform);

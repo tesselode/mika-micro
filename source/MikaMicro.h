@@ -33,14 +33,26 @@ private:
 	void SmoothParameters();
 	void GrayOutControls();
 
+	// parameters
 	std::array<double, kNumParameters> parameters;
+	double oscMix = 0.0;
+
+	// graphics
+	IGraphics* pGraphics;
+
+	// midi
 	IMidiQueue midiQueue;
 	std::vector<int> heldNotes;
+
+	// sample rate
 	double dt = 0.0;
-	IGraphics* pGraphics;
+
+	// modulation
 	Oscillator lfo;
 	double driftVelocity = 0.0;
 	double driftPhase = 0.0;
+	
+	// voices
 	std::array<Voice, 8> voices = {
 		Voice(parameters),
 		Voice(parameters),
@@ -51,7 +63,6 @@ private:
 		Voice(parameters),
 		Voice(parameters)
 	};
-	double oscMix = 0.0;
 };
 
 #endif

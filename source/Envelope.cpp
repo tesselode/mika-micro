@@ -23,7 +23,5 @@ void Envelope::Update(double dt, double a, double d, double s, double r)
 			stage = kIdle;
 		}
 		break;
-	case kIdle:
-		break;
 	}
 }

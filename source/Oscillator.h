@@ -37,6 +37,7 @@ private:
 	double Blep(double phase);
 	double GeneratePulse(double width);
 	double Get(EWaveforms waveform);
+	void UpdatePhase(double dt, double frequency);
 
 	EWaveforms previousWaveform = kNoWaveform;
 	double previousWaveformMix = 0.0;
