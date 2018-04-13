@@ -61,10 +61,18 @@ void Oscillator::UpdatePhase(double dt, double frequency)
 double Oscillator::Next(double dt, double frequency)
 {
 	UpdatePhase(dt, frequency);
-	auto out = 0.0;
-	previousWaveformMix -= previousWaveformMix * 100.0 * dt;
-	if (previousWaveformMix > .01) out += previousWaveformMix * Get(previousWaveform);
-	currentWaveformMix += (1.0 - currentWaveformMix) * 100.0 * dt;
-	out += currentWaveformMix * Get(currentWaveform);
-	return out;
+
+	switch (crossfading)
+	{
+	case true:
+		currentWaveformMix += 100.0 * dt;
+		if (currentWaveformMix >= 1.0)
+		{
+			currentWaveformMix = 1.0;
+			crossfading = false;
+		}
+		return Get(previousWaveform) * (1.0 - currentWaveformMix) + Get(currentWaveform) * currentWaveformMix;
+	case false:
+		return Get(currentWaveform);
+	}
 }

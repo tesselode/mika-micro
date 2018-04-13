@@ -21,14 +21,14 @@ public:
 	void SetWaveform(EWaveforms waveform)
 	{
 		previousWaveform = currentWaveform;
-		previousWaveformMix = currentWaveformMix;
 		currentWaveform = waveform;
+		crossfading = true;
 		currentWaveformMix = 0.0;
 	}
 	void Reset(double p = 0.0) 
 	{
 		phase = p;
-		previousWaveformMix = 0.0;
+		crossfading = false;
 		currentWaveformMix = 1.0;
 	}
 	double Next(double dt, double frequency);
@@ -40,8 +40,8 @@ private:
 	void UpdatePhase(double dt, double frequency);
 
 	EWaveforms previousWaveform = kNoWaveform;
-	double previousWaveformMix = 0.0;
 	EWaveforms currentWaveform = kSine;
+	bool crossfading = false;
 	double currentWaveformMix = 1.0;
 
 	double phase = 0.0;
