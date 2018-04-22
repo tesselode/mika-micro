@@ -7,14 +7,6 @@
 #include "Parameters.h"
 #include "Util.h"
 
-enum EVoiceModes
-{
-	kPoly,
-	kMono,
-	kLegato,
-	kNumVoiceModes
-};
-
 class Voice
 {
 public:

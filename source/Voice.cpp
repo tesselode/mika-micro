@@ -53,13 +53,7 @@ double Voice::Next(double dt, double lfoValue, double driftValue)
 	lfoValue *= lfoEnv.Get(0.0, velocity);
 
 	// mono glide
-	switch ((EVoiceModes)(int)p[kVoiceMode])
-	{
-	case kMono:
-	case kLegato:
-		baseFrequency += (targetFrequency - baseFrequency) * p[kGlideSpeed] * dt;
-		break;
-	}
+	baseFrequency += (targetFrequency - baseFrequency) * p[kGlideSpeed] * dt;
 
 	// oscillator base frequencies
 	auto osc1Frequency = baseFrequency * osc1PitchFactor * pitchBendFactor * (1.0 + driftValue);
