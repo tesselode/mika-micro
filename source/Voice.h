@@ -47,6 +47,8 @@ public:
 	double Next(double dt, double lfoValue, double driftValue);
 
 private:
+	double GetFilterCutoff(double volEnvValue, double modEnvValue, double lfoValue, double driftValue);
+	void UpdateEnvelopes(double dt);
 	void Reset();
 
 	std::array<double, kNumParameters> &p;

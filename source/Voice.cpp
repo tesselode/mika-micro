@@ -39,31 +39,49 @@ void Voice::Release()
 	lfoEnv.Release();
 }
 
+void Voice::UpdateEnvelopes(double dt)
+{
+	volEnv.Update(dt, p[kVolEnvA], p[kVolEnvD], p[kVolEnvS], p[kVolEnvR]);
+	modEnv.Update(dt, p[kModEnvA], p[kModEnvD], p[kModEnvS], p[kModEnvR]);
+	lfoEnv.Update(dt, p[kLfoDelay], 0.5, 1.0, 0.5);
+}
+
+double Voice::GetFilterCutoff(double volEnvValue, double modEnvValue, double lfoValue, double driftValue)
+{
+	auto cutoff = p[kFilterCutoff];
+	cutoff *= 1.0 + driftValue;
+	cutoff += p[kVolEnvCutoff] * volEnvValue;
+	cutoff += p[kModEnvCutoff] * modEnvValue;
+	cutoff += lfoValue * p[kLfoCutoff];
+	cutoff += p[kFilterKeyTrack] * baseFrequency * pitchBendFactor;
+	return cutoff;
+}
+
 double Voice::Next(double dt, double lfoValue, double driftValue)
 {
-	// skip processing if voice is silent
-	volEnv.Update(dt, p[kVolEnvA], p[kVolEnvD], p[kVolEnvS], p[kVolEnvR]);
+	// update envelopes
+	UpdateEnvelopes(dt);
 	auto volEnvValue = volEnv.Get(p[kVolEnvV], velocity);
+	auto modEnvValue = modEnv.Get(p[kModEnvV], velocity);
+
+	// skip processing if voice is silent
 	if (volEnvValue == 0.0 && filter.IsSilent()) return 0.0;
 
-	// update envelopes
-	modEnv.Update(dt, p[kModEnvA], p[kModEnvD], p[kModEnvS], p[kModEnvR]);
-	auto modEnvValue = modEnv.Get(p[kModEnvV], velocity);
-	lfoEnv.Update(dt, p[kLfoDelay], 0.5, 1.0, 0.5);
+	// apply lfo delay
 	lfoValue *= lfoEnv.Get(0.0, velocity);
 
-	// mono glide
+	// glide to target frequency (for mono and legato modes)
 	baseFrequency += (targetFrequency - baseFrequency) * p[kGlideSpeed] * dt;
 
-	// oscillator base frequencies
+	// smooth oscillator split
+	osc1bMix += ((p[kOsc1Split] != 0.0 ? 1.0 : 0.0) - osc1bMix) * 100.0 * dt;
+	osc2bMix += ((p[kOsc2Split] != 0.0 ? 1.0 : 0.0) - osc2bMix) * 100.0 * dt;
+
+	// calculate oscillator base frequencies
 	auto osc1Frequency = baseFrequency * osc1PitchFactor * pitchBendFactor * (1.0 + driftValue);
 	if (p[kLfoAmount] < 0.0) osc1Frequency *= 1.0 + abs(p[kLfoAmount]) * lfoValue;
 	auto osc2Frequency = baseFrequency * osc2PitchFactor * pitchBendFactor * (1.0 + driftValue);
 	osc2Frequency *= 1.0 + abs(p[kLfoAmount]) * lfoValue;
-
-	// oscillator split smoothing
-	osc1bMix += ((p[kOsc1Split] != 0.0 ? 1.0 : 0.0) - osc1bMix) * 100.0 * dt;
-	osc2bMix += ((p[kOsc2Split] != 0.0 ? 1.0 : 0.0) - osc2bMix) * 100.0 * dt;
 
 	// fm
 	switch ((int)p[kFmMode])
@@ -111,18 +129,14 @@ double Voice::Next(double dt, double lfoValue, double driftValue)
 		out += osc2Out * sqrt(p[kOscMix]);
 	}
 
+	// apply volume envelope
 	out *= GetVolume();
 
 	// filter
 	filterMix += ((p[kFilterEnabled] ? 1.0 : 0.0) - filterMix) * 100.0 * dt;
 	if (filterMix > .01)
 	{
-		auto cutoff = p[kFilterCutoff];
-		cutoff *= 1.0 + driftValue;
-		cutoff += p[kVolEnvCutoff] * volEnvValue;
-		cutoff += p[kModEnvCutoff] * modEnvValue;
-		cutoff += lfoValue * p[kLfoCutoff];
-		cutoff += p[kFilterKeyTrack] * baseFrequency * pitchBendFactor;
+		auto cutoff = GetFilterCutoff(volEnvValue, modEnvValue, lfoValue, driftValue);
 		auto filterOut = filter.Process(dt, out, cutoff, p[kFilterResonance]);
 		out = out * (1.0 - filterMix) + filterOut * filterMix;
 	}
