@@ -7,7 +7,7 @@ Mika Micro is a subtractive synthesizer plugin that aims to be fun and expressiv
 Features:
 - 2 oscillators with 5 waveforms and split knobs
 - Simple FM functionality
-- Resonant low pass filter
+- 12dB resonant low pass filter
 - 8 voice polyphony and legato mode
 
 ## Contributing
