@@ -131,7 +131,7 @@ public:
 				mPlug->LoadBankFromFXB(&fileName);
 				break;
 			case 9:
-				fileName.Set(mPlug->GetPresetName(mPlug->GetCurrentPresetIdx()));
+				fileName.Set("preset");
 				GetGUI()->PromptForFile(&fileName, kFileSave, &mPreviousPath, "txt");
 				mPlug->DumpPresetSrcCode(fileName.Get(), paramEnumNames);
 				break;
