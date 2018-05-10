@@ -16,7 +16,6 @@ void Voice::Reset()
 	volEnv.Reset();
 	modEnv.Reset();
 	lfoEnv.Reset();
-	filter.Reset();
 
 	// set smoothed variables directly to their target values
 	osc1bMix = p[kOsc1Split] != 0.0 ? 1.0 : 0.0;

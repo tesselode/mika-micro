@@ -256,6 +256,7 @@ double MikaMicro::GetDriftValue()
 void MikaMicro::SmoothParameters()
 {
 	parameters[kOscMix] += (oscMix - parameters[kOscMix]) * 100.0 * dt;
+	parameters[kFilterCutoff] += (GetParam(kFilterCutoff)->Value() - parameters[kFilterCutoff]) * 100.0 * dt;
 }
 
 void MikaMicro::ProcessDoubleReplacing(double** inputs, double** outputs, int nFrames)
@@ -346,6 +347,8 @@ void MikaMicro::OnParamChange(int paramIdx)
 	// smoothed parameters
 	case kOscMix:
 		oscMix = GetParam(paramIdx)->GetMin() + GetParam(paramIdx)->GetMax() - GetParam(paramIdx)->Value();
+		break;
+	case kFilterCutoff:
 		break;
 	// normal parameters
 	default:

@@ -1,11 +1,7 @@
 #include "Filter.h"
 
-double Filter::Process(double dt, double input, double targetCutoff, double resonance)
+double Filter::Process(double dt, double input, double cutoff, double resonance)
 {
-	// cutoff smoothing
-	cutoff = reset ? targetCutoff : cutoff + (targetCutoff - cutoff) * 100.0 * dt;
-	reset = false;
-
 	// f calculation
 	auto f = 2 * sin(pi * cutoff * dt);
 	f = f > 1.0 ? 1.0 : f < .01 ? .01 : f;
