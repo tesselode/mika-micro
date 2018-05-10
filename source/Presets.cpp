@@ -376,7 +376,7 @@ void MikaMicro::InitPresets()
 		kVolEnvS, 1.000000,
 		kVolEnvR, 986.028261,
 		kVolEnvV, 0.000000,
-		kModEnvA, 0.500000,
+		kModEnvA, 935.000000,
 		kModEnvD, 986.028261,
 		kModEnvS, 0.000000,
 		kModEnvR, 998.000000,
@@ -432,7 +432,7 @@ void MikaMicro::InitPresets()
 		kVoiceMode, 0,
 		kGlideSpeed, 1.000000,
 		kMasterVolume, 0.123047);
-	MakePresetFromNamedParams("Tesselode | 4th Grade Keys", 38,
+	MakePresetFromNamedParams("Tesselode | It Gets Cuter", 38,
 		kOsc1Wave, 2,
 		kOsc1Coarse, 0,
 		kOsc1Fine, 0.000000,
