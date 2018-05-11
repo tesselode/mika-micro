@@ -25,6 +25,7 @@ public:
 		crossfading = true;
 		currentWaveformMix = 0.0;
 	}
+	EWaveforms GetWaveform() { return currentWaveform; }
 	void Reset(double p = 0.0) 
 	{
 		phase = p;
