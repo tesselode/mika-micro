@@ -1,10 +1,10 @@
-#define PLUG_MFR "AndrewMinnich"
-#define PLUG_NAME "MikaMicro"
+#define PLUG_MFR "Andrew Minnich"
+#define PLUG_NAME "Mika Micro"
 
 #define PLUG_CLASS_NAME MikaMicro
 
-#define BUNDLE_MFR "AndrewMinnich"
-#define BUNDLE_NAME "MikaMicro"
+#define BUNDLE_MFR "Andrew Minnich"
+#define BUNDLE_NAME "Mika Micro"
 
 #define PLUG_ENTRY MikaMicro_Entry
 #define PLUG_FACTORY MikaMicro_Factory
@@ -18,9 +18,9 @@
 
 // Format        0xMAJR.MN.BG - in HEX! so version 10.1.5 would be 0x000A0105
 #define PLUG_VER 0x00010000
-#define VST3_VER_STR "1.0.0"
+#define VST3_VER_STR "2.0.1"
 
-#define PLUG_COPYRIGHT  "Copyright 2017 Acme Inc"
+#define PLUG_COPYRIGHT  "Copyright 2018 Andrew Minnich"
 
 // http://service.steinberg.de/databases/plugin.nsf/plugIn?openForm
 // 4 chars, single quotes. At least one capital letter
