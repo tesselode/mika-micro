@@ -13,6 +13,9 @@ inline double pitchToFrequency(double p) { return 440.0 * pitchFactor(p - 69); }
 // fast trig //
 inline double fastAtan(double x) { return x / (1.0 + .28 * (x * x)); }
 
+// other math //
+inline double cosCurve(double x) { return .5 - .5 * cos(x * pi); }
+
 // random numbers //
 
 // https://stackoverflow.com/questions/1640258/need-a-fast-random-generator-for-c

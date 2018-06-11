@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Util.h"
+
 enum EEnvelopeStage
 {
 	kAttack,

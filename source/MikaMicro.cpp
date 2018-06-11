@@ -28,15 +28,15 @@ void MikaMicro::InitParameters()
 	GetParam(kFilterKeyTrack)->InitDouble("Filter key tracking", 0.0, -1.0, 1.0, .01);
 
 	// modulation sources
-	GetParam(kVolEnvA)->InitDouble("Volume envelope attack", 0.5, 0.5, 1000.0, .01, "", "", .025);
-	GetParam(kVolEnvD)->InitDouble("Volume envelope decay", 998.0, 0.5, 1000.0, .01, "", "", .025);
+	GetParam(kVolEnvA)->InitDouble("Volume envelope attack", 0.0, 0.0, 1.0, .01, "", "", 0.1);
+	GetParam(kVolEnvD)->InitDouble("Volume envelope decay", 1.0, 0.0, 1.0, .01, "", "", 0.1);
 	GetParam(kVolEnvS)->InitDouble("Volume envelope sustain", 1.0, 0.0, 1.0, .01);
-	GetParam(kVolEnvR)->InitDouble("Volume envelope release", 925.0, 0.5, 1000.0, .01, "", "", .025);
+	GetParam(kVolEnvR)->InitDouble("Volume envelope release", 0.85, 0.0, 1.0, .01, "", "", 0.1);
 	GetParam(kVolEnvV)->InitDouble("Volume envelope velocity sensitivity", 0.0, 0.0, 1.0, .01);
-	GetParam(kModEnvA)->InitDouble("Modulation envelope attack", 998.0, 0.5, 1000.0, .01, "", "", .025);
-	GetParam(kModEnvD)->InitDouble("Modulation envelope decay", 998.0, 0.5, 1000.0, .01, "", "", .025);
+	GetParam(kModEnvA)->InitDouble("Modulation envelope attack", 0.933, 0.0, 1.0, .01, "", "", 0.1);
+	GetParam(kModEnvD)->InitDouble("Modulation envelope decay", 0.933, 0.0, 1.0, .01, "", "", 0.1);
 	GetParam(kModEnvS)->InitDouble("Modulation envelope sustain", 0.5, 0.0, 1.0, .01);
-	GetParam(kModEnvR)->InitDouble("Modulation envelope release", 998.0, 0.5, 1000.0, .01, "", "", .025);
+	GetParam(kModEnvR)->InitDouble("Modulation envelope release", 0.933, 0.0, 1.0, .01, "", "", 0.1);
 	GetParam(kModEnvV)->InitDouble("Modulation envelope velocity sensitivity", 0.0, 0.0, 1.0, .01);
 	GetParam(kLfoAmount)->InitDouble("Vibrato amount", 0.0, -0.1, 0.1, .01);
 	GetParam(kLfoFrequency)->InitDouble("Vibrato frequency", 4.0, 0.1, 10.0, .01, "", "", 2.0);
@@ -326,13 +326,16 @@ void MikaMicro::OnParamChange(int paramIdx)
 
 	switch (paramIdx)
 	{
-	// reversed parameters
+	// custom curves
 	case kVolEnvA:
 	case kVolEnvD:
 	case kVolEnvR:
 	case kModEnvA:
 	case kModEnvD:
 	case kModEnvR:
+		parameters[paramIdx] = 1000 - 999.9 * cosCurve(GetParam(paramIdx)->Value());
+		break;
+	// reversed parameters
 	case kLfoDelay:
 	case kGlideSpeed:
 		parameters[paramIdx] = GetParam(paramIdx)->GetMin() + GetParam(paramIdx)->GetMax() - GetParam(paramIdx)->Value();
