@@ -1,6 +1,25 @@
 #include "Filter.h"
 
-double Filter::Process(double dt, double input, double cutoff, double resonance)
+double TwoPoleFilter::Process(double dt, double input, double cutoff, double resonance)
+{
+	// f calculation
+	auto f = 2 * sin(pi * cutoff * dt);
+	f = f > .99 ? .99 : f < .01 ? .01 : f;
+
+	// feedback calculation
+	auto feedback = resonance + resonance / (1.0 - f);
+	feedback = fastAtan(feedback * .1) * 10.0;
+
+	// main processing
+	a += f * (input - a + feedback * (a - b));
+	a = fastAtan(a * .1) * 10.0;
+	b += f * (a - b);
+	b = fastAtan(b * .1) * 10.0;
+
+	return b;
+}
+
+double StateVariableFilter::Process(double dt, double input, double cutoff, double resonance)
 {
 	// f calculation
 	auto f = 2 * sin(pi * cutoff * dt);
@@ -17,4 +36,41 @@ double Filter::Process(double dt, double input, double cutoff, double resonance)
 	low = fastAtan(low * .1) * 10.0;
 
 	return low;
+}
+
+void MultiFilter::SetMode(FilterModes m)
+{
+	if (currentMode != m)
+	{
+		previousMode = currentMode;
+		currentMode = m;
+		crossfading = true;
+		currentModeMix = 0.0;
+	}
+}
+
+double MultiFilter::Process(double dt, double input, double cutoff, double resonance)
+{
+	switch (crossfading)
+	{
+	case true:
+	{
+		currentModeMix += 100.0 * dt;
+		if (currentModeMix >= 1.0)
+		{
+			auto current = currentMode;
+			currentModeMix = 1.0;
+			crossfading = false;
+		}
+
+		value = filters[(int)previousMode]->Process(dt, input, cutoff, resonance) * (1.0 - currentModeMix);
+		value += filters[(int)currentMode]->Process(dt, input, cutoff, resonance) * currentModeMix;
+		break;
+	}
+	case false:
+		value = filters[(int)currentMode]->Process(dt, input, cutoff, resonance) * currentModeMix;
+		break;
+	}
+
+	return value;
 }

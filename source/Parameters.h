@@ -14,7 +14,7 @@ enum EParameters
 	kFmMode,
 	kFmCoarse,
 	kFmFine,
-	kFilterEnabled,
+	kFilterMode,
 	kFilterCutoff,
 	kFilterResonance,
 	kFilterKeyTrack,

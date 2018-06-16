@@ -34,6 +34,7 @@ public:
 		osc2SplitFactorA = 1.0 + s;
 		osc2SplitFactorB = 1.0 / osc2SplitFactorA;
 	}
+	void SetFilterMode(FilterModes mode) { filter.SetMode(mode); }
 
 	void SetNote(int note);
 	int GetNote() { return note; }
@@ -60,7 +61,7 @@ private:
 	Envelope volEnv;
 	Envelope modEnv;
 	Envelope lfoEnv;
-	Filter filter;
+	MultiFilter filter;
 	int note = 69;
 	double targetFrequency = 440.0;
 	double baseFrequency = 440.0;

@@ -22,7 +22,7 @@ void MikaMicro::InitParameters()
 	GetParam(kFmFine)->InitDouble("FM fine", 0.0, -1.0, 1.0, .01);
 
 	// filter
-	GetParam(kFilterEnabled)->InitBool("Filter enabled", false);
+	GetParam(kFilterMode)->InitEnum("Filter mode", (int)FilterStates::off, (int)FilterStates::numFilterStates);
 	GetParam(kFilterCutoff)->InitDouble("Filter cutoff", 8000.0, 20.0, 8000.0, .01, "hz");
 	GetParam(kFilterResonance)->InitDouble("Filter resonance", 0.0, 0.0, 1.0, .01);
 	GetParam(kFilterKeyTrack)->InitDouble("Filter key tracking", 0.0, -1.0, 1.0, .01);
@@ -91,7 +91,7 @@ void MikaMicro::InitGraphics()
 	pGraphics->AttachControl(new IKnobMultiControl(this, 54 * 4, 42 * 4, kFmFine, &knobMiddle));
 
 	// filter
-	pGraphics->AttachControl(new ISwitchControl(this, 22 * 4, 62 * 4, kFilterEnabled, &toggleSwitch));
+	pGraphics->AttachControl(new ISwitchControl(this, 22 * 4, 62 * 4, kFilterMode, &fmModeSwitch));
 	pGraphics->AttachControl(new IKnobMultiControl(this, 38 * 4, 62 * 4, kFilterCutoff, &knobRight));
 	pGraphics->AttachControl(new IKnobMultiControl(this, 54 * 4, 62 * 4, kFilterResonance, &knobLeft));
 	pGraphics->AttachControl(new IKnobMultiControl(this, 70 * 4, 62 * 4, kFilterKeyTrack, &knobMiddle));
@@ -289,7 +289,7 @@ void MikaMicro::GrayOutControls()
 	auto osc2Noise = (EWaveforms)(int)GetParam(kOsc2Wave)->Value() == kNoise;
 	auto fmEnabled = (GetParam(kFmMode)->Value() == 1 && osc1Enabled && !osc1Noise) ||
 		(GetParam(kFmMode)->Value() == 2 && osc2Enabled && !osc2Noise);
-	auto filterEnabled = GetParam(kFilterEnabled)->Value();
+	auto filterEnabled = GetParam(kFilterMode)->Value();
 	auto modEnvEnabled = GetParam(kModEnvFm)->Value() != 0.0 || GetParam(kModEnvCutoff)->Value() != 0.0;
 	auto vibratoEnabled = GetParam(kLfoFm)->Value() != 0.0 || GetParam(kLfoCutoff)->Value() != 0.0 ||
 		GetParam(kLfoAmount)->Value() < 0.0 || (GetParam(kLfoAmount)->Value() > 0.0 && osc2Enabled);
@@ -387,6 +387,9 @@ void MikaMicro::OnParamChange(int paramIdx)
 	case kOsc2Split:
 		for (auto &voice : voices) voice.SetOsc2Split(parameters[kOsc2Split]);
 		break;
+	case kFilterMode:
+		if (parameters[kFilterMode] != 0)
+			for (auto &voice : voices) voice.SetFilterMode((FilterModes)((int)parameters[kFilterMode] - 1));
 	case kVoiceMode:
 		for (int i = 1; i < std::size(voices); i++) voices[i].Release();
 		break;
