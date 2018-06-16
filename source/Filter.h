@@ -4,27 +4,27 @@
 #include <cmath>
 #include "Util.h"
 
-enum class FilterStates
+enum class FilterModes
 {
 	off,
 	twoPole,
 	stateVariable,
-	numFilterStates
+	numFilterModes
 };
 
-enum class FilterModes
-{
-	twoPole,
-	stateVariable,
-	numFilterModes,
-	noFilter
-};
-
+// passthrough filter
 class Filter
 {
 public:
-	virtual bool IsSilent() { return true; }
-	virtual double Process(double dt, double input, double cutoff, double resonance) { return 0.0; }
+	virtual bool IsSilent() { return value == 0.0; }
+	virtual double Process(double dt, double input, double cutoff, double resonance)
+	{
+		value = input;
+		return value;
+	}
+
+private:
+	double value = 0.0;
 };
 
 class TwoPoleFilter : public Filter
@@ -58,12 +58,13 @@ public:
 
 private:
 	std::array<std::shared_ptr<Filter>, (int)FilterModes::numFilterModes> filters = {
+		std::shared_ptr<Filter>(new Filter()),
 		std::shared_ptr<Filter>(new TwoPoleFilter()),
 		std::shared_ptr<Filter>(new StateVariableFilter())
 	};
 
 	FilterModes currentMode = FilterModes::twoPole;
-	FilterModes previousMode = FilterModes::noFilter;
+	FilterModes previousMode = FilterModes::off;
 	bool crossfading = false;
 	double currentModeMix = 1.0;
 

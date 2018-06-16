@@ -20,7 +20,6 @@ void Voice::Reset()
 	// set smoothed variables directly to their target values
 	osc1bMix = p[kOsc1Split] != 0.0 ? 1.0 : 0.0;
 	osc2bMix = p[kOsc2Split] != 0.0 ? 1.0 : 0.0;
-	filterMix = p[kFilterMode] ? 1.0 : 0.0;
 }
 
 void Voice::Start()
@@ -134,13 +133,8 @@ double Voice::Next(double dt, double lfoValue, double driftValue)
 	out *= GetVolume();
 
 	// filter
-	filterMix += ((p[kFilterMode] != (int)FilterStates::off ? 1.0 : 0.0) - filterMix) * 100.0 * dt;
-	if (filterMix > .01)
-	{
-		auto cutoff = GetFilterCutoff(volEnvValue, modEnvValue, lfoValue, driftValue);
-		auto filterOut = filter.Process(dt, out, cutoff, p[kFilterResonance]);
-		out = out * (1.0 - filterMix) + filterOut * filterMix;
-	}
+	auto cutoff = GetFilterCutoff(volEnvValue, modEnvValue, lfoValue, driftValue);
+	out = filter.Process(dt, out, cutoff, p[kFilterResonance]);
 
 	return out;
 }

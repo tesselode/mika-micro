@@ -22,7 +22,7 @@ void MikaMicro::InitParameters()
 	GetParam(kFmFine)->InitDouble("FM fine", 0.0, -1.0, 1.0, .01);
 
 	// filter
-	GetParam(kFilterMode)->InitEnum("Filter mode", (int)FilterStates::off, (int)FilterStates::numFilterStates);
+	GetParam(kFilterMode)->InitEnum("Filter mode", (int)FilterModes::off, (int)FilterModes::numFilterModes);
 	GetParam(kFilterCutoff)->InitDouble("Filter cutoff", 8000.0, 20.0, 8000.0, .01, "hz");
 	GetParam(kFilterResonance)->InitDouble("Filter resonance", 0.0, 0.0, 1.0, .01);
 	GetParam(kFilterKeyTrack)->InitDouble("Filter key tracking", 0.0, -1.0, 1.0, .01);
@@ -388,8 +388,8 @@ void MikaMicro::OnParamChange(int paramIdx)
 		for (auto &voice : voices) voice.SetOsc2Split(parameters[kOsc2Split]);
 		break;
 	case kFilterMode:
-		if (parameters[kFilterMode] != 0)
-			for (auto &voice : voices) voice.SetFilterMode((FilterModes)((int)parameters[kFilterMode] - 1));
+		for (auto &voice : voices) voice.SetFilterMode((FilterModes)(int)parameters[kFilterMode]);
+		break;
 	case kVoiceMode:
 		for (int i = 1; i < std::size(voices); i++) voices[i].Release();
 		break;
