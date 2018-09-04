@@ -56,7 +56,7 @@ void MikaMicro::InitParameters()
 
 	// master
 	GetParam((int)Parameters::VoiceMode)->InitEnum("Voice mode", (int)(VoiceModes::Legato), (int)(VoiceModes::NumVoiceModes));
-	GetParam((int)Parameters::GlideSpeed)->InitDouble("Glide speed", 1.0, 1.0, 1000.0, .01, "", "", .1);
+	GetParam((int)Parameters::GlideLength)->InitDouble("Glide length", 1.0, 1.0, 1000.0, .01, "", "", .1);
 	GetParam((int)Parameters::MasterVolume)->InitDouble("Master volume", 0.25, 0.0, 0.5, .01);
 
 	// initialize smoothed parameters
@@ -135,7 +135,7 @@ void MikaMicro::InitGraphics()
 
 	// master
 	pGraphics->AttachControl(new ISwitchControl(this, 6 * 4, 90 * 4, (int)Parameters::VoiceMode, &fmModeSwitch));
-	pGraphics->AttachControl(new IKnobMultiControl(this, 22 * 4, 90 * 4, (int)Parameters::GlideSpeed, &knobLeft));
+	pGraphics->AttachControl(new IKnobMultiControl(this, 22 * 4, 90 * 4, (int)Parameters::GlideLength, &knobLeft));
 	pGraphics->AttachControl(new IKnobMultiControl(this, 38 * 4, 90 * 4, (int)Parameters::MasterVolume, &knobLeft));
 
 	//pGraphics->AttachControl(new PresetMenu(this, IRECT(0, 0, 100, 25)));
@@ -347,7 +347,7 @@ void MikaMicro::OnParamChange(int paramIdx)
 	}
 	// reversed parameters
 	case Parameters::LfoDelay:
-	case Parameters::GlideSpeed:
+	case Parameters::GlideLength:
 		parameters[paramIdx] = GetParam(paramIdx)->GetMin() + GetParam(paramIdx)->GetMax() - GetParam(paramIdx)->Value();
 		break;
 	// smoothed parameters

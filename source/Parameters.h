@@ -38,7 +38,7 @@ enum class Parameters
 	LfoFm,
 	LfoCutoff,
 	VoiceMode,
-	GlideSpeed,
+	GlideLength,
 	MasterVolume,
 	NumParameters
 };

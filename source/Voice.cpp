@@ -69,7 +69,7 @@ double Voice::Next(double dt, double lfoValue, double driftValue)
 	lfoValue *= lfoEnv.Get(0.0, velocity);
 
 	// glide to target frequency (for mono and legato modes)
-	baseFrequency += (targetFrequency - baseFrequency) * p[(int)Parameters::GlideSpeed] * dt;
+	baseFrequency += (targetFrequency - baseFrequency) * p[(int)Parameters::GlideLength] * dt;
 
 	// smooth oscillator split
 	auto osc1bEnabled = p[(int)Parameters::Osc1Split] != 0.0 && osc1b.GetWaveform() != Waveforms::Noise;

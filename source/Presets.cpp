@@ -40,7 +40,7 @@ void MikaMicro::InitPresets()
 		(int)Parameters::LfoFm, 0.000000,
 		(int)Parameters::LfoCutoff, 0.000000,
 		(int)Parameters::VoiceMode, 2,
-		(int)Parameters::GlideSpeed, 842.428610,
+		(int)Parameters::GlideLength, 842.428610,
 		(int)Parameters::MasterVolume, 0.250000);
 	MakePresetFromNamedParams("Tesselode | FACE EATER 8092", 38,
 		(int)Parameters::Osc1Wave, 2,
@@ -79,7 +79,7 @@ void MikaMicro::InitPresets()
 		(int)Parameters::LfoFm, 2.062500,
 		(int)Parameters::LfoCutoff, 0.000000,
 		(int)Parameters::VoiceMode, 1,
-		(int)Parameters::GlideSpeed, 1.000000,
+		(int)Parameters::GlideLength, 1.000000,
 		(int)Parameters::MasterVolume, 0.250000);
 	MakePresetFromNamedParams("Tesselode | Apex Twin", 38,
 		(int)Parameters::Osc1Wave, 1,
@@ -118,7 +118,7 @@ void MikaMicro::InitPresets()
 		(int)Parameters::LfoFm, 0.000000,
 		(int)Parameters::LfoCutoff, 0.000000,
 		(int)Parameters::VoiceMode, 2,
-		(int)Parameters::GlideSpeed, 917.397440,
+		(int)Parameters::GlideLength, 917.397440,
 		(int)Parameters::MasterVolume, 0.250000);
 	MakePresetFromNamedParams("Tesselode | Rubber Bass", 38,
 		(int)Parameters::Osc1Wave, 2,
@@ -157,7 +157,7 @@ void MikaMicro::InitPresets()
 		(int)Parameters::LfoFm, 0.000000,
 		(int)Parameters::LfoCutoff, 0.000000,
 		(int)Parameters::VoiceMode, 2,
-		(int)Parameters::GlideSpeed, 1.000000,
+		(int)Parameters::GlideLength, 1.000000,
 		(int)Parameters::MasterVolume, 0.250000);
 	MakePresetFromNamedParams("Tesselode | Purple is a Color", 38,
 		(int)Parameters::Osc1Wave, 0,
@@ -196,7 +196,7 @@ void MikaMicro::InitPresets()
 		(int)Parameters::LfoFm, 0.000000,
 		(int)Parameters::LfoCutoff, 0.000000,
 		(int)Parameters::VoiceMode, 2,
-		(int)Parameters::GlideSpeed, 903.796333,
+		(int)Parameters::GlideLength, 903.796333,
 		(int)Parameters::MasterVolume, 0.250000);
 	MakePresetFromNamedParams("Tesselode | Super Strings", 38,
 		(int)Parameters::Osc1Wave, 2,
@@ -235,7 +235,7 @@ void MikaMicro::InitPresets()
 		(int)Parameters::LfoFm, 0.000000,
 		(int)Parameters::LfoCutoff, 0.000000,
 		(int)Parameters::VoiceMode, 0,
-		(int)Parameters::GlideSpeed, 1.000000,
+		(int)Parameters::GlideLength, 1.000000,
 		(int)Parameters::MasterVolume, 0.250000);
 	MakePresetFromNamedParams("Tesselode | Coming Into View", 38,
 		(int)Parameters::Osc1Wave, 2,
@@ -274,7 +274,7 @@ void MikaMicro::InitPresets()
 		(int)Parameters::LfoFm, 0.000000,
 		(int)Parameters::LfoCutoff, 0.000000,
 		(int)Parameters::VoiceMode, 0,
-		(int)Parameters::GlideSpeed, 1.000000,
+		(int)Parameters::GlideLength, 1.000000,
 		(int)Parameters::MasterVolume, 0.162109);
 	MakePresetFromNamedParams("Tesselode | Echo Chrome", 38,
 		(int)Parameters::Osc1Wave, 1,
@@ -313,7 +313,7 @@ void MikaMicro::InitPresets()
 		(int)Parameters::LfoFm, 2.062500,
 		(int)Parameters::LfoCutoff, 0.000000,
 		(int)Parameters::VoiceMode, 0,
-		(int)Parameters::GlideSpeed, 1.000000,
+		(int)Parameters::GlideLength, 1.000000,
 		(int)Parameters::MasterVolume, 0.289063);
 	MakePresetFromNamedParams("Tesselode | Off-Brand PWM", 38,
 		(int)Parameters::Osc1Wave, 4,
@@ -352,7 +352,7 @@ void MikaMicro::InitPresets()
 		(int)Parameters::LfoFm, 0.000000,
 		(int)Parameters::LfoCutoff, 0.000000,
 		(int)Parameters::VoiceMode, 2,
-		(int)Parameters::GlideSpeed, 867.923270,
+		(int)Parameters::GlideLength, 867.923270,
 		(int)Parameters::MasterVolume, 0.250000);
 	MakePresetFromNamedParams("Tesselode | Dusty Case", 38,
 		(int)Parameters::Osc1Wave, 1,
@@ -391,7 +391,7 @@ void MikaMicro::InitPresets()
 		(int)Parameters::LfoFm, 0.000000,
 		(int)Parameters::LfoCutoff, 0.000000,
 		(int)Parameters::VoiceMode, 2,
-		(int)Parameters::GlideSpeed, 945.445229,
+		(int)Parameters::GlideLength, 945.445229,
 		(int)Parameters::MasterVolume, 0.250000);
 	MakePresetFromNamedParams("Tesselode | Omnichord Dreams", 38,
 		(int)Parameters::Osc1Wave, 2,
@@ -430,7 +430,7 @@ void MikaMicro::InitPresets()
 		(int)Parameters::LfoFm, 0.000000,
 		(int)Parameters::LfoCutoff, 0.000000,
 		(int)Parameters::VoiceMode, 0,
-		(int)Parameters::GlideSpeed, 1.000000,
+		(int)Parameters::GlideLength, 1.000000,
 		(int)Parameters::MasterVolume, 0.123047);
 	MakePresetFromNamedParams("Tesselode | It Gets Cuter", 38,
 		(int)Parameters::Osc1Wave, 2,
@@ -469,7 +469,7 @@ void MikaMicro::InitPresets()
 		(int)Parameters::LfoFm, 0.000000,
 		(int)Parameters::LfoCutoff, 0.000000,
 		(int)Parameters::VoiceMode, 0,
-		(int)Parameters::GlideSpeed, 1.000000,
+		(int)Parameters::GlideLength, 1.000000,
 		(int)Parameters::MasterVolume, 0.250000);
 	MakePresetFromNamedParams("Tesselode | Watchers", 38,
 		(int)Parameters::Osc1Wave, 0,
@@ -508,7 +508,7 @@ void MikaMicro::InitPresets()
 		(int)Parameters::LfoFm, 0.000000,
 		(int)Parameters::LfoCutoff, 0.000000,
 		(int)Parameters::VoiceMode, 0,
-		(int)Parameters::GlideSpeed, 1.000000,
+		(int)Parameters::GlideLength, 1.000000,
 		(int)Parameters::MasterVolume, 0.250000);
 	MakePresetFromNamedParams("Alphagem-O | Prez", 38,
 		(int)Parameters::Osc1Wave, 1,
@@ -547,7 +547,7 @@ void MikaMicro::InitPresets()
 		(int)Parameters::LfoFm, 0.000000,
 		(int)Parameters::LfoCutoff, 0.000000,
 		(int)Parameters::VoiceMode, 1,
-		(int)Parameters::GlideSpeed, 883.398302,
+		(int)Parameters::GlideLength, 883.398302,
 		(int)Parameters::MasterVolume, 0.347656);
 	MakePresetFromNamedParams("Alphagem-O | Ogre", 38,
 		(int)Parameters::Osc1Wave, 2,
@@ -586,7 +586,7 @@ void MikaMicro::InitPresets()
 		(int)Parameters::LfoFm, 0.000000,
 		(int)Parameters::LfoCutoff, 1625.000000,
 		(int)Parameters::VoiceMode, 1,
-		(int)Parameters::GlideSpeed, 832.801841,
+		(int)Parameters::GlideLength, 832.801841,
 		(int)Parameters::MasterVolume, 0.386719);
 	MakePresetFromNamedParams("Alphagem-O | Ploy", 38,
 		(int)Parameters::Osc1Wave, 3,
@@ -625,7 +625,7 @@ void MikaMicro::InitPresets()
 		(int)Parameters::LfoFm, 0.000000,
 		(int)Parameters::LfoCutoff, 0.000000,
 		(int)Parameters::VoiceMode, 1,
-		(int)Parameters::GlideSpeed, 1.000000,
+		(int)Parameters::GlideLength, 1.000000,
 		(int)Parameters::MasterVolume, 0.419922);
 	MakePresetFromNamedParams("Alphagem-O | Horn", 38,
 		(int)Parameters::Osc1Wave, 2,
@@ -664,7 +664,7 @@ void MikaMicro::InitPresets()
 		(int)Parameters::LfoFm, 0.000000,
 		(int)Parameters::LfoCutoff, 2000.000000,
 		(int)Parameters::VoiceMode, 0,
-		(int)Parameters::GlideSpeed, 1.000000,
+		(int)Parameters::GlideLength, 1.000000,
 		(int)Parameters::MasterVolume, 0.228516);
 	MakePresetFromNamedParams("Alphagem-O | Hrsh", 38,
 		(int)Parameters::Osc1Wave, 2,
@@ -703,7 +703,7 @@ void MikaMicro::InitPresets()
 		(int)Parameters::LfoFm, 0.000000,
 		(int)Parameters::LfoCutoff, 0.000000,
 		(int)Parameters::VoiceMode, 0,
-		(int)Parameters::GlideSpeed, 1.000000,
+		(int)Parameters::GlideLength, 1.000000,
 		(int)Parameters::MasterVolume, 0.189453);
 	MakePresetFromNamedParams("Alphagem-O | Diet", 38,
 		(int)Parameters::Osc1Wave, 1,
@@ -742,7 +742,7 @@ void MikaMicro::InitPresets()
 		(int)Parameters::LfoFm, 0.000000,
 		(int)Parameters::LfoCutoff, 3687.500000,
 		(int)Parameters::VoiceMode, 0,
-		(int)Parameters::GlideSpeed, 942.159874,
+		(int)Parameters::GlideLength, 942.159874,
 		(int)Parameters::MasterVolume, 0.197266);
 	MakePresetFromNamedParams("Alphagem-O | Dint", 38,
 		(int)Parameters::Osc1Wave, 1,
@@ -781,7 +781,7 @@ void MikaMicro::InitPresets()
 		(int)Parameters::LfoFm, 0.000000,
 		(int)Parameters::LfoCutoff, 0.000000,
 		(int)Parameters::VoiceMode, 0,
-		(int)Parameters::GlideSpeed, 1.000000,
+		(int)Parameters::GlideLength, 1.000000,
 		(int)Parameters::MasterVolume, 0.500000);
 	MakePresetFromNamedParams("Alphagem-O | Furl", 38,
 		(int)Parameters::Osc1Wave, 2,
@@ -820,7 +820,7 @@ void MikaMicro::InitPresets()
 		(int)Parameters::LfoFm, 0.000000,
 		(int)Parameters::LfoCutoff, 2000.000000,
 		(int)Parameters::VoiceMode, 0,
-		(int)Parameters::GlideSpeed, 1.000000,
+		(int)Parameters::GlideLength, 1.000000,
 		(int)Parameters::MasterVolume, 0.210938);
 	MakePresetFromNamedParams("Alphagem-O | Alph", 38,
 		(int)Parameters::Osc1Wave, 2,
@@ -859,7 +859,7 @@ void MikaMicro::InitPresets()
 		(int)Parameters::LfoFm, 0.000000,
 		(int)Parameters::LfoCutoff, 2000.000000,
 		(int)Parameters::VoiceMode, 0,
-		(int)Parameters::GlideSpeed, 1.000000,
+		(int)Parameters::GlideLength, 1.000000,
 		(int)Parameters::MasterVolume, 0.255859);
 	MakePresetFromNamedParams("Alphagem-O | Plng", 38,
 		(int)Parameters::Osc1Wave, 1,
@@ -898,6 +898,6 @@ void MikaMicro::InitPresets()
 		(int)Parameters::LfoFm, 0.000000,
 		(int)Parameters::LfoCutoff, -2125.000000,
 		(int)Parameters::VoiceMode, 0,
-		(int)Parameters::GlideSpeed, 1.000000,
+		(int)Parameters::GlideLength, 1.000000,
 		(int)Parameters::MasterVolume, 0.183594);
 }
