@@ -1,6 +1,6 @@
 #pragma once
 
-enum Parameters
+enum class Parameters
 {
 	Osc1Wave,
 	Osc1Coarse,
