@@ -24,24 +24,24 @@ double Oscillator::GeneratePulse(double width)
 	return v;
 }
 
-double Oscillator::Get(EWaveforms waveform)
+double Oscillator::Get(Waveforms waveform)
 {
 	switch (waveform)
 	{
-	case kSine:
+	case Waveforms::Sine:
 		return sin(phase * twoPi);
-	case kTriangle:
+	case Waveforms::Triangle:
 		triLast = triCurrent;
 		triCurrent = phaseIncrement * GeneratePulse(.5) + (1.0 - phaseIncrement) * triLast;
 		return triCurrent * 5.0;
-	case kSaw:
+	case Waveforms::Saw:
 		return 1.0 - 2.0 * phase + Blep(phase);
 		break;
-	case kSquare:
+	case Waveforms::Square:
 		return GeneratePulse(.5);
-	case kPulse:
+	case Waveforms::Pulse:
 		return GeneratePulse(.75);
-	case kNoise:
+	case Waveforms::Noise:
 		noiseValue += 19.0;
 		noiseValue *= noiseValue;
 		noiseValue -= (int)noiseValue;

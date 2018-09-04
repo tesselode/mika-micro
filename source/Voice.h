@@ -12,7 +12,7 @@ class Voice
 public:
 	Voice(std::array<double, kNumParameters> &parameters) : p(parameters) {}
 
-	void SetOsc1Wave(EWaveforms waveform)
+	void SetOsc1Wave(Waveforms waveform)
 	{
 		osc1a.SetWaveform(waveform);
 		osc1b.SetWaveform(waveform);
@@ -23,7 +23,7 @@ public:
 		osc1SplitFactorA = 1.0 + s;
 		osc1SplitFactorB = 1.0 / osc1SplitFactorA;
 	}
-	void SetOsc2Wave(EWaveforms waveform)
+	void SetOsc2Wave(Waveforms waveform)
 	{
 		osc2a.SetWaveform(waveform);
 		osc2b.SetWaveform(waveform);

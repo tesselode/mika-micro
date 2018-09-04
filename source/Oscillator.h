@@ -3,29 +3,29 @@
 #include <cmath>
 #include "Util.h"
 
-enum EWaveforms
+enum class Waveforms
 {
-	kSine,
-	kTriangle,
-	kSaw,
-	kSquare,
-	kPulse,
-	kNoise,
-	kNumWaveforms,
-	kNoWaveform
+	Sine,
+	Triangle,
+	Saw,
+	Square,
+	Pulse,
+	Noise,
+	NumWaveforms,
+	NoWaveform
 };
 
 class Oscillator
 {
 public:
-	void SetWaveform(EWaveforms waveform)
+	void SetWaveform(Waveforms waveform)
 	{
 		previousWaveform = currentWaveform;
 		currentWaveform = waveform;
 		crossfading = true;
 		currentWaveformMix = 0.0;
 	}
-	EWaveforms GetWaveform() { return currentWaveform; }
+	Waveforms GetWaveform() { return currentWaveform; }
 	void Reset(double p = 0.0) 
 	{
 		phase = p;
@@ -37,11 +37,11 @@ public:
 private:
 	double Blep(double phase);
 	double GeneratePulse(double width);
-	double Get(EWaveforms waveform);
+	double Get(Waveforms waveform);
 	void UpdatePhase(double dt, double frequency);
 
-	EWaveforms previousWaveform = kNoWaveform;
-	EWaveforms currentWaveform = kSine;
+	Waveforms previousWaveform = Waveforms::NoWaveform;
+	Waveforms currentWaveform = Waveforms::Sine;
 	bool crossfading = false;
 	double currentWaveformMix = 1.0;
 

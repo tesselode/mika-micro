@@ -4,23 +4,23 @@ void Envelope::Update(double dt, double a, double d, double s, double r)
 {
 	switch (stage)
 	{
-	case kAttack:
+	case EnvelopeStages::Attack:
 		value += (1.1 - value) * a * dt;
 		if (value >= 1.0)
 		{
 			value = 1.0;
-			stage = kDecay;
+			stage = EnvelopeStages::Decay;
 		}
 		break;
-	case kDecay:
+	case EnvelopeStages::Decay:
 		value += (s - value) * d * dt;
 		break;
-	case kRelease:
+	case EnvelopeStages::Release:
 		value += (-.1 - value) * r * dt;
 		if (value <= 0.0)
 		{
 			value = 0.0;
-			stage = kIdle;
+			stage = EnvelopeStages::Idle;
 		}
 		break;
 	}

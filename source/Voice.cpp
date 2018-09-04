@@ -72,8 +72,8 @@ double Voice::Next(double dt, double lfoValue, double driftValue)
 	baseFrequency += (targetFrequency - baseFrequency) * p[kGlideSpeed] * dt;
 
 	// smooth oscillator split
-	auto osc1bEnabled = p[kOsc1Split] != 0.0 && osc1b.GetWaveform() != kNoise;
-	auto osc2bEnabled = p[kOsc2Split] != 0.0 && osc2b.GetWaveform() != kNoise;
+	auto osc1bEnabled = p[kOsc1Split] != 0.0 && osc1b.GetWaveform() != Waveforms::Noise;
+	auto osc2bEnabled = p[kOsc2Split] != 0.0 && osc2b.GetWaveform() != Waveforms::Noise;
 	osc1bMix += ((osc1bEnabled ? 1.0 : 0.0) - osc1bMix) * 100.0 * dt;
 	osc2bMix += ((osc2bEnabled ? 1.0 : 0.0) - osc2bMix) * 100.0 * dt;
 

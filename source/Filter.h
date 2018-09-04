@@ -6,11 +6,11 @@
 
 enum class FilterModes
 {
-	off,
-	twoPole,
-	stateVariable,
-	fourPole,
-	numFilterModes
+	Off,
+	TwoPole,
+	StateVariable,
+	FourPole,
+	NumFilterModes
 };
 
 // passthrough filter
@@ -71,15 +71,15 @@ public:
 	double Process(double dt, double input, double cutoff, double resonance);
 
 private:
-	std::array<std::shared_ptr<Filter>, (int)FilterModes::numFilterModes> filters = {
+	std::array<std::shared_ptr<Filter>, (int)FilterModes::NumFilterModes> filters = {
 		std::shared_ptr<Filter>(new Filter()),
 		std::shared_ptr<Filter>(new TwoPoleFilter()),
 		std::shared_ptr<Filter>(new StateVariableFilter()),
 		std::shared_ptr<Filter>(new FourPoleFilter())
 	};
 
-	FilterModes currentMode = FilterModes::off;
-	FilterModes previousMode = FilterModes::off;
+	FilterModes currentMode = FilterModes::Off;
+	FilterModes previousMode = FilterModes::Off;
 	bool crossfading = false;
 	double currentModeMix = 1.0;
 

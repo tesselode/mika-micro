@@ -6,11 +6,11 @@
 void MikaMicro::InitParameters()
 {
 	// oscillators
-	GetParam(kOsc1Wave)->InitEnum("Oscillator 1 waveform", kSaw, kNumWaveforms);
+	GetParam(kOsc1Wave)->InitEnum("Oscillator 1 waveform", (int)Waveforms::Saw, (int)Waveforms::NumWaveforms);
 	GetParam(kOsc1Coarse)->InitInt("Oscillator 1 coarse", 0, -24, 24, "semitones");
 	GetParam(kOsc1Fine)->InitDouble("Oscillator 1 fine", 0.0, -1.0, 1.0, .01, "semitones");
 	GetParam(kOsc1Split)->InitDouble("Oscillator 1 split", 0.0, -.025, .025, .01);
-	GetParam(kOsc2Wave)->InitEnum("Oscillator 2 waveform", kSaw, kNumWaveforms);
+	GetParam(kOsc2Wave)->InitEnum("Oscillator 2 waveform", (int)Waveforms::Saw, (int)Waveforms::NumWaveforms);
 	GetParam(kOsc2Coarse)->InitInt("Oscillator 2 coarse", 0, -24, 24, "semitones");
 	GetParam(kOsc2Fine)->InitDouble("Oscillator 2 fine", 0.0, -1.0, 1.0, .01, "semitones");
 	GetParam(kOsc2Split)->InitDouble("Oscillator 2 split", 0.0, -.025, .025, .01);
@@ -22,11 +22,11 @@ void MikaMicro::InitParameters()
 	GetParam(kFmFine)->InitDouble("FM fine", 0.0, -1.0, 1.0, .01);
 
 	// filter
-	GetParam(kFilterMode)->InitEnum("Filter mode", (int)FilterModes::off, (int)FilterModes::numFilterModes);
-	GetParam(kFilterMode)->SetDisplayText((int)FilterModes::off, "Off");
-	GetParam(kFilterMode)->SetDisplayText((int)FilterModes::twoPole, "Two pole");
-	GetParam(kFilterMode)->SetDisplayText((int)FilterModes::stateVariable, "State variable");
-	GetParam(kFilterMode)->SetDisplayText((int)FilterModes::fourPole, "Four pole");
+	GetParam(kFilterMode)->InitEnum("Filter mode", (int)FilterModes::Off, (int)FilterModes::NumFilterModes);
+	GetParam(kFilterMode)->SetDisplayText((int)FilterModes::Off, "Off");
+	GetParam(kFilterMode)->SetDisplayText((int)FilterModes::TwoPole, "Two pole");
+	GetParam(kFilterMode)->SetDisplayText((int)FilterModes::StateVariable, "State variable");
+	GetParam(kFilterMode)->SetDisplayText((int)FilterModes::FourPole, "Four pole");
 	GetParam(kFilterCutoff)->InitDouble("Filter cutoff", 8000.0, 20.0, 8000.0, .01, "hz");
 	GetParam(kFilterResonance)->InitDouble("Filter resonance", 0.0, 0.0, 1.0, .01);
 	GetParam(kFilterKeyTrack)->InitDouble("Filter key tracking", 0.0, -1.0, 1.0, .01);
@@ -55,7 +55,7 @@ void MikaMicro::InitParameters()
 	GetParam(kLfoCutoff)->InitDouble("Vibrato to filter cutoff", 0.0, -8000.0, 8000.0, .01);
 
 	// master
-	GetParam(kVoiceMode)->InitEnum("Voice mode", kLegato, kNumVoiceModes);
+	GetParam(kVoiceMode)->InitEnum("Voice mode", (int)(VoiceModes::Legato), (int)(VoiceModes::NumVoiceModes));
 	GetParam(kGlideSpeed)->InitDouble("Glide speed", 1.0, 1.0, 1000.0, .01, "", "", .1);
 	GetParam(kMasterVolume)->InitDouble("Master volume", 0.25, 0.0, 0.5, .01);
 
@@ -73,7 +73,7 @@ void MikaMicro::InitGraphics()
 	auto knobRight = pGraphics->LoadIBitmap(KNOBRIGHT_ID, KNOBRIGHT_FN, 100);
 	auto slider = pGraphics->LoadIBitmap(SLIDER_ID, SLIDER_FN, 1);
 	auto sliderBg = pGraphics->LoadIBitmap(SLIDERBG_ID, SLIDERBG_FN, 1);
-	auto waveformSwitch = pGraphics->LoadIBitmap(WAVEFORMSWITCH_ID, WAVEFORMSWITCH_FN, kNumWaveforms);
+	auto waveformSwitch = pGraphics->LoadIBitmap(WAVEFORMSWITCH_ID, WAVEFORMSWITCH_FN, (int)Waveforms::NumWaveforms);
 	auto toggleSwitch = pGraphics->LoadIBitmap(TOGGLESWITCH_ID, TOGGLESWITCH_FN, 2);
 	auto fmModeSwitch = pGraphics->LoadIBitmap(FMMODESWITCH_ID, FMMODESWITCH_FN, 3);
 
@@ -162,7 +162,7 @@ void MikaMicro::FlushMidi(int sample)
 		auto message = midiQueue.Peek();
 		if (message->mOffset > sample) break;
 
-		auto voiceMode = (EVoiceModes)(int)parameters[kVoiceMode];
+		auto voiceMode = (VoiceModes)(int)parameters[kVoiceMode];
 		auto status = message->StatusMsg();
 		auto note = message->NoteNumber();
 		auto velocity = pow(message->Velocity() * .0078125, 1.25);
@@ -183,12 +183,12 @@ void MikaMicro::FlushMidi(int sample)
 
 			switch (voiceMode)
 			{
-			case kPoly:
+			case VoiceModes::Poly:
 				for (auto &voice : voices)
 					if (voice.GetNote() == note) voice.Release();
 				break;
-			case kMono:
-			case kLegato:
+			case VoiceModes::Mono:
+			case VoiceModes::Legato:
 				if (heldNotes.empty())
 					voices[0].Release();
 				else
@@ -199,7 +199,7 @@ void MikaMicro::FlushMidi(int sample)
 		case IMidiMsg::kNoteOn:
 			switch (voiceMode)
 			{
-			case kPoly:
+			case VoiceModes::Poly:
 			{
 				// get the quietest voice, prioritizing voices that are released
 				auto voice = std::min_element(
@@ -216,12 +216,12 @@ void MikaMicro::FlushMidi(int sample)
 				voice->Start();
 				break;
 			}
-			case kMono:
+			case VoiceModes::Mono:
 				voices[0].SetNote(note);
 				voices[0].SetVelocity(velocity);
 				voices[0].Start();
 				break;
-			case kLegato:
+			case VoiceModes::Legato:
 				voices[0].SetNote(note);
 				if (heldNotes.empty())
 				{
@@ -289,8 +289,8 @@ void MikaMicro::GrayOutControls()
 {
 	auto osc1Enabled = GetParam(kOscMix)->Value() > 0.0;
 	auto osc2Enabled = GetParam(kOscMix)->Value() < 1.0;
-	auto osc1Noise = (EWaveforms)(int)GetParam(kOsc1Wave)->Value() == kNoise;
-	auto osc2Noise = (EWaveforms)(int)GetParam(kOsc2Wave)->Value() == kNoise;
+	auto osc1Noise = (Waveforms)(int)GetParam(kOsc1Wave)->Value() == Waveforms::Noise;
+	auto osc2Noise = (Waveforms)(int)GetParam(kOsc2Wave)->Value() == Waveforms::Noise;
 	auto fmEnabled = (GetParam(kFmMode)->Value() == 1 && osc1Enabled && !osc1Noise) ||
 		(GetParam(kFmMode)->Value() == 2 && osc2Enabled && !osc2Noise);
 	auto filterEnabled = GetParam(kFilterMode)->Value();
@@ -366,7 +366,7 @@ void MikaMicro::OnParamChange(int paramIdx)
 	switch (paramIdx)
 	{
 	case kOsc1Wave:
-		for (auto &voice : voices) voice.SetOsc1Wave((EWaveforms)(int)parameters[kOsc1Wave]);
+		for (auto &voice : voices) voice.SetOsc1Wave((Waveforms)(int)parameters[kOsc1Wave]);
 		break;
 	case kOsc1Coarse:
 	case kOsc1Fine:
@@ -379,7 +379,7 @@ void MikaMicro::OnParamChange(int paramIdx)
 		for (auto &voice : voices) voice.SetOsc1Split(parameters[kOsc1Split]);
 		break;
 	case kOsc2Wave:
-		for (auto &voice : voices) voice.SetOsc2Wave((EWaveforms)(int)parameters[kOsc2Wave]);
+		for (auto &voice : voices) voice.SetOsc2Wave((Waveforms)(int)parameters[kOsc2Wave]);
 		break;
 	case kOsc2Coarse:
 	case kOsc2Fine:
