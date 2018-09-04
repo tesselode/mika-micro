@@ -23,6 +23,10 @@ void MikaMicro::InitParameters()
 
 	// filter
 	GetParam(kFilterMode)->InitEnum("Filter mode", (int)FilterModes::off, (int)FilterModes::numFilterModes);
+	GetParam(kFilterMode)->SetDisplayText((int)FilterModes::off, "Off");
+	GetParam(kFilterMode)->SetDisplayText((int)FilterModes::twoPole, "Two pole");
+	GetParam(kFilterMode)->SetDisplayText((int)FilterModes::stateVariable, "State variable");
+	GetParam(kFilterMode)->SetDisplayText((int)FilterModes::fourPole, "Four pole");
 	GetParam(kFilterCutoff)->InitDouble("Filter cutoff", 8000.0, 20.0, 8000.0, .01, "hz");
 	GetParam(kFilterResonance)->InitDouble("Filter resonance", 0.0, 0.0, 1.0, .01);
 	GetParam(kFilterKeyTrack)->InitDouble("Filter key tracking", 0.0, -1.0, 1.0, .01);
@@ -91,7 +95,7 @@ void MikaMicro::InitGraphics()
 	pGraphics->AttachControl(new IKnobMultiControl(this, 54 * 4, 42 * 4, kFmFine, &knobMiddle));
 
 	// filter
-	pGraphics->AttachControl(new ISwitchControl(this, 22 * 4, 62 * 4, kFilterMode, &fmModeSwitch));
+	pGraphics->AttachControl(new ISwitchPopUpControl(this, 22 * 4, 62 * 4, kFilterMode, &fmModeSwitch));
 	pGraphics->AttachControl(new IKnobMultiControl(this, 38 * 4, 62 * 4, kFilterCutoff, &knobRight));
 	pGraphics->AttachControl(new IKnobMultiControl(this, 54 * 4, 62 * 4, kFilterResonance, &knobLeft));
 	pGraphics->AttachControl(new IKnobMultiControl(this, 70 * 4, 62 * 4, kFilterKeyTrack, &knobMiddle));

@@ -9,6 +9,7 @@ enum class FilterModes
 	off,
 	twoPole,
 	stateVariable,
+	fourPole,
 	numFilterModes
 };
 
@@ -49,6 +50,19 @@ private:
 	double low = 0.0;
 };
 
+class FourPoleFilter : public Filter
+{
+public:
+	bool IsSilent() { return d == 0.0; }
+	double Process(double dt, double input, double cutoff, double resonance);
+
+private:
+	double a = 0.0;
+	double b = 0.0;
+	double c = 0.0;
+	double d = 0.0;
+};
+
 class MultiFilter : Filter
 {
 public:
@@ -60,10 +74,11 @@ private:
 	std::array<std::shared_ptr<Filter>, (int)FilterModes::numFilterModes> filters = {
 		std::shared_ptr<Filter>(new Filter()),
 		std::shared_ptr<Filter>(new TwoPoleFilter()),
-		std::shared_ptr<Filter>(new StateVariableFilter())
+		std::shared_ptr<Filter>(new StateVariableFilter()),
+		std::shared_ptr<Filter>(new FourPoleFilter())
 	};
 
-	FilterModes currentMode = FilterModes::twoPole;
+	FilterModes currentMode = FilterModes::off;
 	FilterModes previousMode = FilterModes::off;
 	bool crossfading = false;
 	double currentModeMix = 1.0;
