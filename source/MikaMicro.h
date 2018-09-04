@@ -42,7 +42,7 @@ private:
 	void GrayOutControls();
 
 	// parameters
-	std::array<double, kNumParameters> parameters;
+	std::array<double, NumParameters> parameters;
 	double oscMix = 0.0;
 
 	// graphics

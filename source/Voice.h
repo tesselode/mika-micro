@@ -10,7 +10,7 @@
 class Voice
 {
 public:
-	Voice(std::array<double, kNumParameters> &parameters) : p(parameters) {}
+	Voice(std::array<double, NumParameters> &parameters) : p(parameters) {}
 
 	void SetOsc1Wave(Waveforms waveform)
 	{
@@ -41,7 +41,7 @@ public:
 	void SetVelocity(double v) { velocity = v; }
 	void SetPitchBendFactor(double f) { pitchBendFactor = f; }
 	void ResetPitch() { baseFrequency = targetFrequency; }
-	double GetVolume() { return volEnv.Get(p[kVolEnvV], velocity); }
+	double GetVolume() { return volEnv.Get(p[VolEnvV], velocity); }
 	bool IsReleased() { return volEnv.IsReleased(); }
 	void Start();
 	void Release();
@@ -52,7 +52,7 @@ private:
 	void UpdateEnvelopes(double dt);
 	void Reset();
 
-	std::array<double, kNumParameters> &p;
+	std::array<double, NumParameters> &p;
 	Oscillator oscFm;
 	Oscillator osc1a;
 	Oscillator osc1b;

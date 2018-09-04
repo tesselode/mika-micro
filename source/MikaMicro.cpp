@@ -6,61 +6,61 @@
 void MikaMicro::InitParameters()
 {
 	// oscillators
-	GetParam(kOsc1Wave)->InitEnum("Oscillator 1 waveform", (int)Waveforms::Saw, (int)Waveforms::NumWaveforms);
-	GetParam(kOsc1Coarse)->InitInt("Oscillator 1 coarse", 0, -24, 24, "semitones");
-	GetParam(kOsc1Fine)->InitDouble("Oscillator 1 fine", 0.0, -1.0, 1.0, .01, "semitones");
-	GetParam(kOsc1Split)->InitDouble("Oscillator 1 split", 0.0, -.025, .025, .01);
-	GetParam(kOsc2Wave)->InitEnum("Oscillator 2 waveform", (int)Waveforms::Saw, (int)Waveforms::NumWaveforms);
-	GetParam(kOsc2Coarse)->InitInt("Oscillator 2 coarse", 0, -24, 24, "semitones");
-	GetParam(kOsc2Fine)->InitDouble("Oscillator 2 fine", 0.0, -1.0, 1.0, .01, "semitones");
-	GetParam(kOsc2Split)->InitDouble("Oscillator 2 split", 0.0, -.025, .025, .01);
-	GetParam(kOscMix)->InitDouble("Oscillator mix", 1.0, 0.0, 1.0, .01);
+	GetParam(Osc1Wave)->InitEnum("Oscillator 1 waveform", (int)Waveforms::Saw, (int)Waveforms::NumWaveforms);
+	GetParam(Osc1Coarse)->InitInt("Oscillator 1 coarse", 0, -24, 24, "semitones");
+	GetParam(Osc1Fine)->InitDouble("Oscillator 1 fine", 0.0, -1.0, 1.0, .01, "semitones");
+	GetParam(Osc1Split)->InitDouble("Oscillator 1 split", 0.0, -.025, .025, .01);
+	GetParam(Osc2Wave)->InitEnum("Oscillator 2 waveform", (int)Waveforms::Saw, (int)Waveforms::NumWaveforms);
+	GetParam(Osc2Coarse)->InitInt("Oscillator 2 coarse", 0, -24, 24, "semitones");
+	GetParam(Osc2Fine)->InitDouble("Oscillator 2 fine", 0.0, -1.0, 1.0, .01, "semitones");
+	GetParam(Osc2Split)->InitDouble("Oscillator 2 split", 0.0, -.025, .025, .01);
+	GetParam(OscMix)->InitDouble("Oscillator mix", 1.0, 0.0, 1.0, .01);
 
 	// fm
-	GetParam(kFmMode)->InitEnum("FM mode", 0, 3);
-	GetParam(kFmCoarse)->InitInt("FM coarse", 0, 0, 48);
-	GetParam(kFmFine)->InitDouble("FM fine", 0.0, -1.0, 1.0, .01);
+	GetParam(FmMode)->InitEnum("FM mode", 0, 3);
+	GetParam(FmCoarse)->InitInt("FM coarse", 0, 0, 48);
+	GetParam(FmFine)->InitDouble("FM fine", 0.0, -1.0, 1.0, .01);
 
 	// filter
-	GetParam(kFilterMode)->InitEnum("Filter mode", (int)FilterModes::Off, (int)FilterModes::NumFilterModes);
-	GetParam(kFilterMode)->SetDisplayText((int)FilterModes::Off, "Off");
-	GetParam(kFilterMode)->SetDisplayText((int)FilterModes::TwoPole, "Two pole");
-	GetParam(kFilterMode)->SetDisplayText((int)FilterModes::StateVariable, "State variable");
-	GetParam(kFilterMode)->SetDisplayText((int)FilterModes::FourPole, "Four pole");
-	GetParam(kFilterCutoff)->InitDouble("Filter cutoff", 8000.0, 20.0, 8000.0, .01, "hz");
-	GetParam(kFilterResonance)->InitDouble("Filter resonance", 0.0, 0.0, 1.0, .01);
-	GetParam(kFilterKeyTrack)->InitDouble("Filter key tracking", 0.0, -1.0, 1.0, .01);
+	GetParam(FilterMode)->InitEnum("Filter mode", (int)FilterModes::Off, (int)FilterModes::NumFilterModes);
+	GetParam(FilterMode)->SetDisplayText((int)FilterModes::Off, "Off");
+	GetParam(FilterMode)->SetDisplayText((int)FilterModes::TwoPole, "Two pole");
+	GetParam(FilterMode)->SetDisplayText((int)FilterModes::StateVariable, "State variable");
+	GetParam(FilterMode)->SetDisplayText((int)FilterModes::FourPole, "Four pole");
+	GetParam(FilterCutoff)->InitDouble("Filter cutoff", 8000.0, 20.0, 8000.0, .01, "hz");
+	GetParam(FilterResonance)->InitDouble("Filter resonance", 0.0, 0.0, 1.0, .01);
+	GetParam(FilterKeyTrack)->InitDouble("Filter key tracking", 0.0, -1.0, 1.0, .01);
 
 	// modulation sources
-	GetParam(kVolEnvA)->InitDouble("Volume envelope attack", 0.0, 0.0, 1.0, .01, "", "", 0.1);
-	GetParam(kVolEnvD)->InitDouble("Volume envelope decay", 1.0, 0.0, 1.0, .01, "", "", 0.1);
-	GetParam(kVolEnvS)->InitDouble("Volume envelope sustain", 1.0, 0.0, 1.0, .01);
-	GetParam(kVolEnvR)->InitDouble("Volume envelope release", 0.85, 0.0, 1.0, .01, "", "", 0.1);
-	GetParam(kVolEnvV)->InitDouble("Volume envelope velocity sensitivity", 0.0, 0.0, 1.0, .01);
-	GetParam(kModEnvA)->InitDouble("Modulation envelope attack", 0.933, 0.0, 1.0, .01, "", "", 0.1);
-	GetParam(kModEnvD)->InitDouble("Modulation envelope decay", 0.933, 0.0, 1.0, .01, "", "", 0.1);
-	GetParam(kModEnvS)->InitDouble("Modulation envelope sustain", 0.5, 0.0, 1.0, .01);
-	GetParam(kModEnvR)->InitDouble("Modulation envelope release", 0.933, 0.0, 1.0, .01, "", "", 0.1);
-	GetParam(kModEnvV)->InitDouble("Modulation envelope velocity sensitivity", 0.0, 0.0, 1.0, .01);
-	GetParam(kLfoAmount)->InitDouble("Vibrato amount", 0.0, -0.1, 0.1, .01);
-	GetParam(kLfoFrequency)->InitDouble("Vibrato frequency", 4.0, 0.1, 10.0, .01, "", "", 2.0);
-	GetParam(kLfoDelay)->InitDouble("Vibrato delay", 0.1, 0.1, 1000.0, .01, "", "", .001);
+	GetParam(VolEnvA)->InitDouble("Volume envelope attack", 0.0, 0.0, 1.0, .01, "", "", 0.1);
+	GetParam(VolEnvD)->InitDouble("Volume envelope decay", 1.0, 0.0, 1.0, .01, "", "", 0.1);
+	GetParam(VolEnvS)->InitDouble("Volume envelope sustain", 1.0, 0.0, 1.0, .01);
+	GetParam(VolEnvR)->InitDouble("Volume envelope release", 0.85, 0.0, 1.0, .01, "", "", 0.1);
+	GetParam(VolEnvV)->InitDouble("Volume envelope velocity sensitivity", 0.0, 0.0, 1.0, .01);
+	GetParam(ModEnvA)->InitDouble("Modulation envelope attack", 0.933, 0.0, 1.0, .01, "", "", 0.1);
+	GetParam(ModEnvD)->InitDouble("Modulation envelope decay", 0.933, 0.0, 1.0, .01, "", "", 0.1);
+	GetParam(ModEnvS)->InitDouble("Modulation envelope sustain", 0.5, 0.0, 1.0, .01);
+	GetParam(ModEnvR)->InitDouble("Modulation envelope release", 0.933, 0.0, 1.0, .01, "", "", 0.1);
+	GetParam(ModEnvV)->InitDouble("Modulation envelope velocity sensitivity", 0.0, 0.0, 1.0, .01);
+	GetParam(LfoAmount)->InitDouble("Vibrato amount", 0.0, -0.1, 0.1, .01);
+	GetParam(LfoFrequency)->InitDouble("Vibrato frequency", 4.0, 0.1, 10.0, .01, "", "", 2.0);
+	GetParam(LfoDelay)->InitDouble("Vibrato delay", 0.1, 0.1, 1000.0, .01, "", "", .001);
 
 	// modulation targets
-	GetParam(kVolEnvFm)->InitDouble("Volume envelope to FM amount", 0.0, -24.0, 24.0, .01, "semitones");
-	GetParam(kModEnvFm)->InitDouble("Modulation envelope to FM amount", 0.0, -24.0, 24.0, .01, "semitones");
-	GetParam(kLfoFm)->InitDouble("Vibrato to FM amount", 0.0, -24.0, 24.0, .01, "semitones");
-	GetParam(kVolEnvCutoff)->InitDouble("Volume envelope to filter cutoff", 0.0, -8000.0, 8000.0, .01, "hz");
-	GetParam(kModEnvCutoff)->InitDouble("Modulation envelope to filter cutoff", 0.0, -8000.0, 8000.0, .01, "hz");
-	GetParam(kLfoCutoff)->InitDouble("Vibrato to filter cutoff", 0.0, -8000.0, 8000.0, .01);
+	GetParam(VolEnvFm)->InitDouble("Volume envelope to FM amount", 0.0, -24.0, 24.0, .01, "semitones");
+	GetParam(ModEnvFm)->InitDouble("Modulation envelope to FM amount", 0.0, -24.0, 24.0, .01, "semitones");
+	GetParam(LfoFm)->InitDouble("Vibrato to FM amount", 0.0, -24.0, 24.0, .01, "semitones");
+	GetParam(VolEnvCutoff)->InitDouble("Volume envelope to filter cutoff", 0.0, -8000.0, 8000.0, .01, "hz");
+	GetParam(ModEnvCutoff)->InitDouble("Modulation envelope to filter cutoff", 0.0, -8000.0, 8000.0, .01, "hz");
+	GetParam(LfoCutoff)->InitDouble("Vibrato to filter cutoff", 0.0, -8000.0, 8000.0, .01);
 
 	// master
-	GetParam(kVoiceMode)->InitEnum("Voice mode", (int)(VoiceModes::Legato), (int)(VoiceModes::NumVoiceModes));
-	GetParam(kGlideSpeed)->InitDouble("Glide speed", 1.0, 1.0, 1000.0, .01, "", "", .1);
-	GetParam(kMasterVolume)->InitDouble("Master volume", 0.25, 0.0, 0.5, .01);
+	GetParam(VoiceMode)->InitEnum("Voice mode", (int)(VoiceModes::Legato), (int)(VoiceModes::NumVoiceModes));
+	GetParam(GlideSpeed)->InitDouble("Glide speed", 1.0, 1.0, 1000.0, .01, "", "", .1);
+	GetParam(MasterVolume)->InitDouble("Master volume", 0.25, 0.0, 0.5, .01);
 
 	// initialize smoothed parameters
-	parameters[kOscMix] = GetParam(kOscMix)->GetMin() + GetParam(kOscMix)->GetMax() - GetParam(kOscMix)->Value();
+	parameters[OscMix] = GetParam(OscMix)->GetMin() + GetParam(OscMix)->GetMax() - GetParam(OscMix)->Value();
 }
 
 void MikaMicro::InitGraphics()
@@ -78,65 +78,65 @@ void MikaMicro::InitGraphics()
 	auto fmModeSwitch = pGraphics->LoadIBitmap(FMMODESWITCH_ID, FMMODESWITCH_FN, 3);
 
 	// oscillators
-	pGraphics->AttachControl(new ISwitchControl(this, 22 * 4, 10 * 4, kOsc1Wave, &waveformSwitch));
-	pGraphics->AttachControl(new IKnobMultiControl(this, 38 * 4, 10 * 4, kOsc1Coarse, &knobMiddle));
-	pGraphics->AttachControl(new IKnobMultiControl(this, 54 * 4, 10 * 4, kOsc1Fine, &knobMiddle));
-	pGraphics->AttachControl(new IKnobMultiControl(this, 70 * 4, 10 * 4, kOsc1Split, &knobMiddle));
-	pGraphics->AttachControl(new ISwitchControl(this, 22 * 4, 26 * 4, kOsc2Wave, &waveformSwitch));
-	pGraphics->AttachControl(new IKnobMultiControl(this, 38 * 4, 26 * 4, kOsc2Coarse, &knobMiddle));
-	pGraphics->AttachControl(new IKnobMultiControl(this, 54 * 4, 26 * 4, kOsc2Fine, &knobMiddle));
-	pGraphics->AttachControl(new IKnobMultiControl(this, 70 * 4, 26 * 4, kOsc2Split, &knobMiddle));
+	pGraphics->AttachControl(new ISwitchControl(this, 22 * 4, 10 * 4, Osc1Wave, &waveformSwitch));
+	pGraphics->AttachControl(new IKnobMultiControl(this, 38 * 4, 10 * 4, Osc1Coarse, &knobMiddle));
+	pGraphics->AttachControl(new IKnobMultiControl(this, 54 * 4, 10 * 4, Osc1Fine, &knobMiddle));
+	pGraphics->AttachControl(new IKnobMultiControl(this, 70 * 4, 10 * 4, Osc1Split, &knobMiddle));
+	pGraphics->AttachControl(new ISwitchControl(this, 22 * 4, 26 * 4, Osc2Wave, &waveformSwitch));
+	pGraphics->AttachControl(new IKnobMultiControl(this, 38 * 4, 26 * 4, Osc2Coarse, &knobMiddle));
+	pGraphics->AttachControl(new IKnobMultiControl(this, 54 * 4, 26 * 4, Osc2Fine, &knobMiddle));
+	pGraphics->AttachControl(new IKnobMultiControl(this, 70 * 4, 26 * 4, Osc2Split, &knobMiddle));
 	pGraphics->AttachControl(new IBitmapControl(this, 91.5 * 4, 15 * 4, &sliderBg));
-	pGraphics->AttachControl(new IFaderControl(this, 90.5 * 4, 16 * 4, 20 * 4, kOscMix, &slider));
+	pGraphics->AttachControl(new IFaderControl(this, 90.5 * 4, 16 * 4, 20 * 4, OscMix, &slider));
 
 	// fm
-	pGraphics->AttachControl(new ISwitchControl(this, 22 * 4, 42 * 4, kFmMode, &fmModeSwitch));
-	pGraphics->AttachControl(new IKnobMultiControl(this, 38 * 4, 42 * 4, kFmCoarse, &knobLeft));
-	pGraphics->AttachControl(new IKnobMultiControl(this, 54 * 4, 42 * 4, kFmFine, &knobMiddle));
+	pGraphics->AttachControl(new ISwitchControl(this, 22 * 4, 42 * 4, FmMode, &fmModeSwitch));
+	pGraphics->AttachControl(new IKnobMultiControl(this, 38 * 4, 42 * 4, FmCoarse, &knobLeft));
+	pGraphics->AttachControl(new IKnobMultiControl(this, 54 * 4, 42 * 4, FmFine, &knobMiddle));
 
 	// filter
-	pGraphics->AttachControl(new ISwitchPopUpControl(this, 22 * 4, 62 * 4, kFilterMode, &fmModeSwitch));
-	pGraphics->AttachControl(new IKnobMultiControl(this, 38 * 4, 62 * 4, kFilterCutoff, &knobRight));
-	pGraphics->AttachControl(new IKnobMultiControl(this, 54 * 4, 62 * 4, kFilterResonance, &knobLeft));
-	pGraphics->AttachControl(new IKnobMultiControl(this, 70 * 4, 62 * 4, kFilterKeyTrack, &knobMiddle));
+	pGraphics->AttachControl(new ISwitchPopUpControl(this, 22 * 4, 62 * 4, FilterMode, &fmModeSwitch));
+	pGraphics->AttachControl(new IKnobMultiControl(this, 38 * 4, 62 * 4, FilterCutoff, &knobRight));
+	pGraphics->AttachControl(new IKnobMultiControl(this, 54 * 4, 62 * 4, FilterResonance, &knobLeft));
+	pGraphics->AttachControl(new IKnobMultiControl(this, 70 * 4, 62 * 4, FilterKeyTrack, &knobMiddle));
 
 	// modulation sources
 	pGraphics->AttachControl(new IBitmapControl(this, 121.5 * 4, 22 * 4, &sliderBg));
-	pGraphics->AttachControl(new IFaderControl(this, 120.5 * 4, 23 * 4, 20 * 4, kVolEnvA, &slider));
+	pGraphics->AttachControl(new IFaderControl(this, 120.5 * 4, 23 * 4, 20 * 4, VolEnvA, &slider));
 	pGraphics->AttachControl(new IBitmapControl(this, 129.5 * 4, 22 * 4, &sliderBg));
-	pGraphics->AttachControl(new IFaderControl(this, 128.5 * 4, 23 * 4, 20 * 4, kVolEnvD, &slider));
+	pGraphics->AttachControl(new IFaderControl(this, 128.5 * 4, 23 * 4, 20 * 4, VolEnvD, &slider));
 	pGraphics->AttachControl(new IBitmapControl(this, 137.5 * 4, 22 * 4, &sliderBg));
-	pGraphics->AttachControl(new IFaderControl(this, 136.5 * 4, 23 * 4, 20 * 4, kVolEnvS, &slider));
+	pGraphics->AttachControl(new IFaderControl(this, 136.5 * 4, 23 * 4, 20 * 4, VolEnvS, &slider));
 	pGraphics->AttachControl(new IBitmapControl(this, 145.5 * 4, 22 * 4, &sliderBg));
-	pGraphics->AttachControl(new IFaderControl(this, 144.5 * 4, 23 * 4, 20 * 4, kVolEnvR, &slider));
+	pGraphics->AttachControl(new IFaderControl(this, 144.5 * 4, 23 * 4, 20 * 4, VolEnvR, &slider));
 	pGraphics->AttachControl(new IBitmapControl(this, 153.5 * 4, 22 * 4, &sliderBg));
-	pGraphics->AttachControl(new IFaderControl(this, 152.5 * 4, 23 * 4, 20 * 4, kVolEnvV, &slider));
+	pGraphics->AttachControl(new IFaderControl(this, 152.5 * 4, 23 * 4, 20 * 4, VolEnvV, &slider));
 	pGraphics->AttachControl(new IBitmapControl(this, 121.5 * 4, 56.5 * 4, &sliderBg));
-	pGraphics->AttachControl(new IFaderControl(this, 120.5 * 4, 57.5 * 4, 20 * 4, kModEnvA, &slider));
+	pGraphics->AttachControl(new IFaderControl(this, 120.5 * 4, 57.5 * 4, 20 * 4, ModEnvA, &slider));
 	pGraphics->AttachControl(new IBitmapControl(this, 129.5 * 4, 56.5 * 4, &sliderBg));
-	pGraphics->AttachControl(new IFaderControl(this, 128.5 * 4, 57.5 * 4, 20 * 4, kModEnvD, &slider));
+	pGraphics->AttachControl(new IFaderControl(this, 128.5 * 4, 57.5 * 4, 20 * 4, ModEnvD, &slider));
 	pGraphics->AttachControl(new IBitmapControl(this, 137.5 * 4, 56.5 * 4, &sliderBg));
-	pGraphics->AttachControl(new IFaderControl(this, 136.5 * 4, 57.5 * 4, 20 * 4, kModEnvS, &slider));
+	pGraphics->AttachControl(new IFaderControl(this, 136.5 * 4, 57.5 * 4, 20 * 4, ModEnvS, &slider));
 	pGraphics->AttachControl(new IBitmapControl(this, 145.5 * 4, 56.5 * 4, &sliderBg));
-	pGraphics->AttachControl(new IFaderControl(this, 144.5 * 4, 57.5 * 4, 20 * 4, kModEnvR, &slider));
+	pGraphics->AttachControl(new IFaderControl(this, 144.5 * 4, 57.5 * 4, 20 * 4, ModEnvR, &slider));
 	pGraphics->AttachControl(new IBitmapControl(this, 153.5 * 4, 56.5 * 4, &sliderBg));
-	pGraphics->AttachControl(new IFaderControl(this, 152.5 * 4, 57.5 * 4, 20 * 4, kModEnvV, &slider));
-	pGraphics->AttachControl(new IKnobMultiControl(this, 171 * 4, 13.5 * 4, kLfoAmount, &knobMiddle));
-	pGraphics->AttachControl(new IKnobMultiControl(this, 187 * 4, 13.5 * 4, kLfoFrequency, &knobLeft));
-	pGraphics->AttachControl(new IKnobMultiControl(this, 203 * 4, 13.5 * 4, kLfoDelay, &knobLeft));
+	pGraphics->AttachControl(new IFaderControl(this, 152.5 * 4, 57.5 * 4, 20 * 4, ModEnvV, &slider));
+	pGraphics->AttachControl(new IKnobMultiControl(this, 171 * 4, 13.5 * 4, LfoAmount, &knobMiddle));
+	pGraphics->AttachControl(new IKnobMultiControl(this, 187 * 4, 13.5 * 4, LfoFrequency, &knobLeft));
+	pGraphics->AttachControl(new IKnobMultiControl(this, 203 * 4, 13.5 * 4, LfoDelay, &knobLeft));
 
 	// targets
-	pGraphics->AttachControl(new IKnobMultiControl(this, 171 * 4, 50.5 * 4, kVolEnvFm, &knobMiddle));
-	pGraphics->AttachControl(new IKnobMultiControl(this, 187 * 4, 50.5 * 4, kModEnvFm, &knobMiddle));
-	pGraphics->AttachControl(new IKnobMultiControl(this, 203 * 4, 50.5 * 4, kLfoFm, &knobMiddle));
-	pGraphics->AttachControl(new IKnobMultiControl(this, 171 * 4, 66.5 * 4, kVolEnvCutoff, &knobMiddle));
-	pGraphics->AttachControl(new IKnobMultiControl(this, 187 * 4, 66.5 * 4, kModEnvCutoff, &knobMiddle));
-	pGraphics->AttachControl(new IKnobMultiControl(this, 203 * 4, 66.5 * 4, kLfoCutoff, &knobMiddle));
+	pGraphics->AttachControl(new IKnobMultiControl(this, 171 * 4, 50.5 * 4, VolEnvFm, &knobMiddle));
+	pGraphics->AttachControl(new IKnobMultiControl(this, 187 * 4, 50.5 * 4, ModEnvFm, &knobMiddle));
+	pGraphics->AttachControl(new IKnobMultiControl(this, 203 * 4, 50.5 * 4, LfoFm, &knobMiddle));
+	pGraphics->AttachControl(new IKnobMultiControl(this, 171 * 4, 66.5 * 4, VolEnvCutoff, &knobMiddle));
+	pGraphics->AttachControl(new IKnobMultiControl(this, 187 * 4, 66.5 * 4, ModEnvCutoff, &knobMiddle));
+	pGraphics->AttachControl(new IKnobMultiControl(this, 203 * 4, 66.5 * 4, LfoCutoff, &knobMiddle));
 
 	// master
-	pGraphics->AttachControl(new ISwitchControl(this, 6 * 4, 90 * 4, kVoiceMode, &fmModeSwitch));
-	pGraphics->AttachControl(new IKnobMultiControl(this, 22 * 4, 90 * 4, kGlideSpeed, &knobLeft));
-	pGraphics->AttachControl(new IKnobMultiControl(this, 38 * 4, 90 * 4, kMasterVolume, &knobLeft));
+	pGraphics->AttachControl(new ISwitchControl(this, 6 * 4, 90 * 4, VoiceMode, &fmModeSwitch));
+	pGraphics->AttachControl(new IKnobMultiControl(this, 22 * 4, 90 * 4, GlideSpeed, &knobLeft));
+	pGraphics->AttachControl(new IKnobMultiControl(this, 38 * 4, 90 * 4, MasterVolume, &knobLeft));
 
 	//pGraphics->AttachControl(new PresetMenu(this, IRECT(0, 0, 100, 25)));
 
@@ -144,7 +144,7 @@ void MikaMicro::InitGraphics()
 }
 
 MikaMicro::MikaMicro(IPlugInstanceInfo instanceInfo)
-  :	IPLUG_CTOR(kNumParameters, 128, instanceInfo)
+  :	IPLUG_CTOR(NumParameters, 128, instanceInfo)
 {
 	TRACE;
 
@@ -162,7 +162,7 @@ void MikaMicro::FlushMidi(int sample)
 		auto message = midiQueue.Peek();
 		if (message->mOffset > sample) break;
 
-		auto voiceMode = (VoiceModes)(int)parameters[kVoiceMode];
+		auto voiceMode = (VoiceModes)(int)parameters[VoiceMode];
 		auto status = message->StatusMsg();
 		auto note = message->NoteNumber();
 		auto velocity = pow(message->Velocity() * .0078125, 1.25);
@@ -259,8 +259,8 @@ double MikaMicro::GetDriftValue()
 
 void MikaMicro::SmoothParameters()
 {
-	parameters[kOscMix] += (oscMix - parameters[kOscMix]) * 100.0 * dt;
-	parameters[kFilterCutoff] += (GetParam(kFilterCutoff)->Value() - parameters[kFilterCutoff]) * 100.0 * dt;
+	parameters[OscMix] += (oscMix - parameters[OscMix]) * 100.0 * dt;
+	parameters[FilterCutoff] += (GetParam(FilterCutoff)->Value() - parameters[FilterCutoff]) * 100.0 * dt;
 }
 
 void MikaMicro::ProcessDoubleReplacing(double** inputs, double** outputs, int nFrames)
@@ -269,11 +269,11 @@ void MikaMicro::ProcessDoubleReplacing(double** inputs, double** outputs, int nF
 	{
 		FlushMidi(s);
 		SmoothParameters();
-		auto lfoValue = lfo.Next(dt, parameters[kLfoFrequency]);
+		auto lfoValue = lfo.Next(dt, parameters[LfoFrequency]);
 		auto driftValue = GetDriftValue();
 		auto out = 0.0;
 		for (auto &voice : voices) out += voice.Next(dt, lfoValue, driftValue);
-		out *= parameters[kMasterVolume];
+		out *= parameters[MasterVolume];
 		outputs[0][s] = outputs[1][s] = out;
 	}
 }
@@ -287,16 +287,16 @@ void MikaMicro::Reset()
 
 void MikaMicro::GrayOutControls()
 {
-	auto osc1Enabled = GetParam(kOscMix)->Value() > 0.0;
-	auto osc2Enabled = GetParam(kOscMix)->Value() < 1.0;
-	auto osc1Noise = (Waveforms)(int)GetParam(kOsc1Wave)->Value() == Waveforms::Noise;
-	auto osc2Noise = (Waveforms)(int)GetParam(kOsc2Wave)->Value() == Waveforms::Noise;
-	auto fmEnabled = (GetParam(kFmMode)->Value() == 1 && osc1Enabled && !osc1Noise) ||
-		(GetParam(kFmMode)->Value() == 2 && osc2Enabled && !osc2Noise);
-	auto filterEnabled = GetParam(kFilterMode)->Value();
-	auto modEnvEnabled = GetParam(kModEnvFm)->Value() != 0.0 || GetParam(kModEnvCutoff)->Value() != 0.0;
-	auto vibratoEnabled = GetParam(kLfoFm)->Value() != 0.0 || GetParam(kLfoCutoff)->Value() != 0.0 ||
-		GetParam(kLfoAmount)->Value() < 0.0 || (GetParam(kLfoAmount)->Value() > 0.0 && osc2Enabled);
+	auto osc1Enabled = GetParam(OscMix)->Value() > 0.0;
+	auto osc2Enabled = GetParam(OscMix)->Value() < 1.0;
+	auto osc1Noise = (Waveforms)(int)GetParam(Osc1Wave)->Value() == Waveforms::Noise;
+	auto osc2Noise = (Waveforms)(int)GetParam(Osc2Wave)->Value() == Waveforms::Noise;
+	auto fmEnabled = (GetParam(FmMode)->Value() == 1 && osc1Enabled && !osc1Noise) ||
+		(GetParam(FmMode)->Value() == 2 && osc2Enabled && !osc2Noise);
+	auto filterEnabled = GetParam(FilterMode)->Value();
+	auto modEnvEnabled = GetParam(ModEnvFm)->Value() != 0.0 || GetParam(ModEnvCutoff)->Value() != 0.0;
+	auto vibratoEnabled = GetParam(LfoFm)->Value() != 0.0 || GetParam(LfoCutoff)->Value() != 0.0 ||
+		GetParam(LfoAmount)->Value() < 0.0 || (GetParam(LfoAmount)->Value() > 0.0 && osc2Enabled);
 
 	// oscillator 1
 	pGraphics->GetControl(1)->GrayOut(!osc1Enabled);
@@ -321,7 +321,7 @@ void MikaMicro::GrayOutControls()
 	for (int i = 39; i < 41; i++) pGraphics->GetControl(i)->GrayOut(!vibratoEnabled);
 
 	// glide
-	pGraphics->GetControl(48)->GrayOut(!GetParam(kVoiceMode)->Value());
+	pGraphics->GetControl(48)->GrayOut(!GetParam(VoiceMode)->Value());
 }
 
 void MikaMicro::OnParamChange(int paramIdx)
@@ -331,31 +331,31 @@ void MikaMicro::OnParamChange(int paramIdx)
 	switch (paramIdx)
 	{
 	// custom curves
-	case kVolEnvA:
-	case kVolEnvD:
-	case kVolEnvR:
-	case kModEnvA:
-	case kModEnvD:
-	case kModEnvR:
+	case VolEnvA:
+	case VolEnvD:
+	case VolEnvR:
+	case ModEnvA:
+	case ModEnvD:
+	case ModEnvR:
 		parameters[paramIdx] = 1000 - 999.9 * cosCurve(GetParam(paramIdx)->Value());
 		break;
 	// reversed parameters
-	case kLfoDelay:
-	case kGlideSpeed:
+	case LfoDelay:
+	case GlideSpeed:
 		parameters[paramIdx] = GetParam(paramIdx)->GetMin() + GetParam(paramIdx)->GetMax() - GetParam(paramIdx)->Value();
 		break;
 	// curved parameters
-	case kLfoCutoff:
+	case LfoCutoff:
 	{
 		auto v = GetParam(paramIdx)->Value();
 		parameters[paramIdx] = copysign((v * .000125) * (v * .000125) * 8000.0, v);
 		break;
 	}
 	// smoothed parameters
-	case kOscMix:
+	case OscMix:
 		oscMix = GetParam(paramIdx)->GetMin() + GetParam(paramIdx)->GetMax() - GetParam(paramIdx)->Value();
 		break;
-	case kFilterCutoff:
+	case FilterCutoff:
 		break;
 	// normal parameters
 	default:
@@ -365,36 +365,36 @@ void MikaMicro::OnParamChange(int paramIdx)
 
 	switch (paramIdx)
 	{
-	case kOsc1Wave:
-		for (auto &voice : voices) voice.SetOsc1Wave((Waveforms)(int)parameters[kOsc1Wave]);
+	case Osc1Wave:
+		for (auto &voice : voices) voice.SetOsc1Wave((Waveforms)(int)parameters[Osc1Wave]);
 		break;
-	case kOsc1Coarse:
-	case kOsc1Fine:
+	case Osc1Coarse:
+	case Osc1Fine:
 	{
-		auto osc1PitchFactor = pitchFactor(parameters[kOsc1Coarse] + parameters[kOsc1Fine]);
+		auto osc1PitchFactor = pitchFactor(parameters[Osc1Coarse] + parameters[Osc1Fine]);
 		for (auto &voice : voices) voice.SetOsc1PitchFactor(osc1PitchFactor);
 		break;
 	}
-	case kOsc1Split:
-		for (auto &voice : voices) voice.SetOsc1Split(parameters[kOsc1Split]);
+	case Osc1Split:
+		for (auto &voice : voices) voice.SetOsc1Split(parameters[Osc1Split]);
 		break;
-	case kOsc2Wave:
-		for (auto &voice : voices) voice.SetOsc2Wave((Waveforms)(int)parameters[kOsc2Wave]);
+	case Osc2Wave:
+		for (auto &voice : voices) voice.SetOsc2Wave((Waveforms)(int)parameters[Osc2Wave]);
 		break;
-	case kOsc2Coarse:
-	case kOsc2Fine:
+	case Osc2Coarse:
+	case Osc2Fine:
 	{
-		auto osc2PitchFactor = pitchFactor(parameters[kOsc2Coarse] + parameters[kOsc2Fine]);
+		auto osc2PitchFactor = pitchFactor(parameters[Osc2Coarse] + parameters[Osc2Fine]);
 		for (auto &voice : voices) voice.SetOsc2PitchFactor(osc2PitchFactor);
 		break;
 	}
-	case kOsc2Split:
-		for (auto &voice : voices) voice.SetOsc2Split(parameters[kOsc2Split]);
+	case Osc2Split:
+		for (auto &voice : voices) voice.SetOsc2Split(parameters[Osc2Split]);
 		break;
-	case kFilterMode:
-		for (auto &voice : voices) voice.SetFilterMode((FilterModes)(int)parameters[kFilterMode]);
+	case FilterMode:
+		for (auto &voice : voices) voice.SetFilterMode((FilterModes)(int)parameters[FilterMode]);
 		break;
-	case kVoiceMode:
+	case VoiceMode:
 		for (int i = 1; i < std::size(voices); i++) voices[i].Release();
 		break;
 	}
