@@ -15,6 +15,14 @@ enum class Waveforms
 	NoWaveform
 };
 
+enum class FmModes
+{
+	Off,
+	Osc1,
+	Osc2,
+	NumFmModes
+};
+
 class Oscillator
 {
 public:

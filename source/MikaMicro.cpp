@@ -17,7 +17,7 @@ void MikaMicro::InitParameters()
 	GetParam((int)Parameters::OscMix)->InitDouble("Oscillator mix", 1.0, 0.0, 1.0, .01);
 
 	// fm
-	GetParam((int)Parameters::FmMode)->InitEnum("FM mode", 0, 3);
+	GetParam((int)Parameters::FmMode)->InitEnum("FM mode", (int)FmModes::Off, (int)FmModes::NumFmModes);
 	GetParam((int)Parameters::FmCoarse)->InitInt("FM coarse", 0, 0, 48);
 	GetParam((int)Parameters::FmFine)->InitDouble("FM fine", 0.0, -1.0, 1.0, .01);
 
@@ -339,18 +339,17 @@ void MikaMicro::OnParamChange(int paramIdx)
 	case Parameters::ModEnvR:
 		parameters[paramIdx] = 1000 - 999.9 * cosCurve(GetParam(paramIdx)->Value());
 		break;
-	// reversed parameters
-	case Parameters::LfoDelay:
-	case Parameters::GlideSpeed:
-		parameters[paramIdx] = GetParam(paramIdx)->GetMin() + GetParam(paramIdx)->GetMax() - GetParam(paramIdx)->Value();
-		break;
-	// curved parameters
 	case Parameters::LfoCutoff:
 	{
 		auto v = GetParam(paramIdx)->Value();
 		parameters[paramIdx] = copysign((v * .000125) * (v * .000125) * 8000.0, v);
 		break;
 	}
+	// reversed parameters
+	case Parameters::LfoDelay:
+	case Parameters::GlideSpeed:
+		parameters[paramIdx] = GetParam(paramIdx)->GetMin() + GetParam(paramIdx)->GetMax() - GetParam(paramIdx)->Value();
+		break;
 	// smoothed parameters
 	case Parameters::OscMix:
 		oscMix = GetParam(paramIdx)->GetMin() + GetParam(paramIdx)->GetMax() - GetParam(paramIdx)->Value();

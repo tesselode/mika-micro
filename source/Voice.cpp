@@ -84,22 +84,23 @@ double Voice::Next(double dt, double lfoValue, double driftValue)
 	osc2Frequency *= 1.0 + abs(p[(int)Parameters::LfoAmount]) * lfoValue;
 
 	// fm
-	switch ((int)p[(int)Parameters::FmMode])
+	auto fmMode = (FmModes)(int)p[(int)Parameters::FmMode];
+	switch (fmMode)
 	{
-	case 1:
-	case 2:
+	case FmModes::Osc1:
+	case FmModes::Osc2:
 	{
 		auto fmAmount = p[(int)Parameters::FmCoarse] + p[(int)Parameters::FmFine];
 		fmAmount += p[(int)Parameters::VolEnvFm] * volEnvValue;
 		fmAmount += p[(int)Parameters::ModEnvFm] * modEnvValue;
 		fmAmount += p[(int)Parameters::LfoFm] * lfoValue;
 		auto fmValue = pitchFactor(oscFm.Next(dt, osc1Frequency) * fmAmount);
-		switch ((int)p[(int)Parameters::FmMode])
+		switch (fmMode)
 		{
-		case 1:
+		case FmModes::Osc1:
 			osc1Frequency *= fmValue;
 			break;
-		case 2:
+		case FmModes::Osc2:
 			osc2Frequency *= fmValue;
 			break;
 		}
