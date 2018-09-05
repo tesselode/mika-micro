@@ -40,8 +40,7 @@ void MikaMicro::ProcessDoubleReplacing(double** inputs, double** outputs, int nF
 	for (int s = 0; s < nFrames; s++)
 	{
 		for (auto &p : parameters) p->Update(dt);
-		phase += 440.0 * dt;
-		auto out = sin(phase * 4.0 * acos(0.0)) * parameters[(int)Parameters::Volume]->Get();
+		auto out = osc.Next(dt, 440.0, Waveforms::Sine) * parameters[(int)Parameters::Volume]->Get();
 		outputs[0][s] = out;
 		outputs[1][s] = out;
 	}

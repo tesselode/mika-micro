@@ -3,6 +3,7 @@
 
 #include <array>
 #include "IPlug_include_in_plug_hdr.h"
+#include "Oscillator.h"
 #include "Parameter.h"
 
 enum class Parameters
@@ -27,7 +28,7 @@ private:
 
 	std::array<std::unique_ptr<Parameter>, (int)Parameters::NumParameters> parameters;
 	double dt = 0.0;
-	double phase = 0.0;
+	Oscillator osc;
 };
 
 #endif
