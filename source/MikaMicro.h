@@ -2,6 +2,7 @@
 #define __MIKAMICRO__
 
 #include <array>
+#include "Envelope.h"
 #include "IPlug_include_in_plug_hdr.h"
 #include "Oscillator.h"
 #include "Parameter.h"
@@ -29,6 +30,7 @@ private:
 	std::array<std::unique_ptr<Parameter>, (int)Parameters::NumParameters> parameters;
 	double dt = 0.0;
 	Oscillator osc;
+	Envelope env;
 };
 
 #endif

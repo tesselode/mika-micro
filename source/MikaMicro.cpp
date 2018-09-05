@@ -29,8 +29,9 @@ MikaMicro::MikaMicro(IPlugInstanceInfo instanceInfo)
 
 	InitParameters();
 	InitGraphics();
-
 	MakeDefaultPreset((char *) "-", 1);
+
+	env.Start();
 }
 
 MikaMicro::~MikaMicro() {}
@@ -40,7 +41,8 @@ void MikaMicro::ProcessDoubleReplacing(double** inputs, double** outputs, int nF
 	for (int s = 0; s < nFrames; s++)
 	{
 		for (auto &p : parameters) p->Update(dt);
-		auto out = osc.Next(dt, 440.0, Waveforms::Sine) * parameters[(int)Parameters::Volume]->Get();
+		env.Update(dt, 10.0, 10.0, .5, 10.0);
+		auto out = osc.Next(dt, 440.0, Waveforms::Sine) * env.Get() * parameters[(int)Parameters::Volume]->Get();
 		outputs[0][s] = out;
 		outputs[1][s] = out;
 	}
