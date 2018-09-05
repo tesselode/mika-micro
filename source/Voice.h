@@ -7,6 +7,7 @@
 class Voice
 {
 public:
+	int GetNote() { return note; }
 	void SetNote(int n) {
 		note = n;
 		baseFrequency = pitchToFrequency(note);
@@ -14,6 +15,8 @@ public:
 	void Start() { volEnv.Start(); }
 	void Release() { volEnv.Release(); }
 	double Next(double dt);
+	bool IsReleased() { return volEnv.IsReleased(); }
+	double GetVolume() { return volEnv.Get(); }
 
 private:
 	int note = 0;

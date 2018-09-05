@@ -22,6 +22,16 @@ void MikaMicro::InitGraphics()
 	AttachGraphics(pGraphics);
 }
 
+void MikaMicro::InitPresets()
+{
+	MakeDefaultPreset((char *) "-", 1);
+}
+
+void MikaMicro::InitVoices()
+{
+	for (int i = 0; i < numVoices; i++) voices.push_back(Voice());
+}
+
 MikaMicro::MikaMicro(IPlugInstanceInfo instanceInfo)
   :	IPLUG_CTOR((int)Parameters::NumParameters, 1, instanceInfo)
 {
@@ -29,41 +39,54 @@ MikaMicro::MikaMicro(IPlugInstanceInfo instanceInfo)
 
 	InitParameters();
 	InitGraphics();
-	MakeDefaultPreset((char *) "-", 1);
+	InitPresets();
+	InitVoices();
 }
 
 MikaMicro::~MikaMicro() {}
+
+void MikaMicro::FlushMidi(int s)
+{
+	while (!midiQueue.Empty())
+	{
+		auto message = midiQueue.Peek();
+		if (message->mOffset > s) break;
+
+		auto status = message->StatusMsg();
+		auto note = message->NoteNumber();
+		auto velocity = message->Velocity();
+
+		if (status == IMidiMsg::kNoteOn && velocity == 0) status = IMidiMsg::kNoteOff;
+
+		switch (status)
+		{
+		case IMidiMsg::kNoteOff:
+			for (auto &v : voices)
+				if (v.GetNote() == note) v.Release();
+			break;
+		case IMidiMsg::kNoteOn:
+			// get the quietest voice, prioritizing voices that are released
+			auto voice = std::min_element(std::begin(voices), std::end(voices), [](Voice a, Voice b) {
+				return a.IsReleased() == b.IsReleased() ? a.GetVolume() < b.GetVolume() : a.IsReleased();
+			});
+			voice->SetNote(note);
+			voice->Start();
+			break;
+		}
+
+		midiQueue.Remove();
+	}
+}
 
 void MikaMicro::ProcessDoubleReplacing(double** inputs, double** outputs, int nFrames)
 {
 	for (int s = 0; s < nFrames; s++)
 	{
-		while (!midiQueue.Empty())
-		{
-			auto message = midiQueue.Peek();
-			if (message->mOffset > s) break;
-
-			auto status = message->StatusMsg();
-			auto note = message->NoteNumber();
-			auto velocity = message->Velocity();
-
-			if (status == IMidiMsg::kNoteOn && velocity == 0) status = IMidiMsg::kNoteOff;
-
-			switch (status)
-			{
-			case IMidiMsg::kNoteOff:
-				voice.Release();
-				break;
-			case IMidiMsg::kNoteOn:
-				voice.SetNote(note);
-				voice.Start();
-				break;
-			}
-
-			midiQueue.Remove();
-		}
-
-		auto out = voice.Next(dt);
+		FlushMidi(s);
+		for (auto &p : parameters) p->Update(dt);
+		auto out = 0.0;
+		for (auto &v : voices) out += v.Next(dt);
+		out *= parameters[(int)Parameters::Volume]->Get();
 		outputs[0][s] = out;
 		outputs[1][s] = out;
 	}
