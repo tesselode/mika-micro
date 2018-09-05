@@ -2,6 +2,7 @@
 #define __MIKAMICRO__
 
 #include <array>
+#include <cmath>
 #include "IPlug_include_in_plug_hdr.h"
 #include "IMidiQueue.h"
 #include "Parameter.h"
@@ -9,12 +10,6 @@
 #include "Voice.h"
 
 const int numVoices = 8;
-
-enum class Parameters
-{
-	Volume,
-	NumParameters
-};
 
 class MikaMicro : public IPlug
 {
