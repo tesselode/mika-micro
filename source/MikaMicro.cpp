@@ -261,6 +261,7 @@ void MikaMicro::SmoothParameters()
 {
 	parameters[(int)Parameters::OscMix] += (oscMix - parameters[(int)Parameters::OscMix]) * 100.0 * dt;
 	parameters[(int)Parameters::FilterCutoff] += (GetParam((int)Parameters::FilterCutoff)->Value() - parameters[(int)Parameters::FilterCutoff]) * 100.0 * dt;
+	parameters[(int)Parameters::MasterVolume] += (GetParam((int)Parameters::MasterVolume)->Value() - parameters[(int)Parameters::MasterVolume]) * 100.0 * dt;
 }
 
 void MikaMicro::ProcessDoubleReplacing(double** inputs, double** outputs, int nFrames)
@@ -355,6 +356,7 @@ void MikaMicro::OnParamChange(int paramIdx)
 		oscMix = GetParam(paramIdx)->GetMin() + GetParam(paramIdx)->GetMax() - GetParam(paramIdx)->Value();
 		break;
 	case Parameters::FilterCutoff:
+	case Parameters::MasterVolume:
 		break;
 	// normal parameters
 	default:
