@@ -11,6 +11,7 @@ enum class EnvelopeStages
 class Envelope
 {
 public:
+	void Reset() { value = 0.0; }
 	void Start() { stage = EnvelopeStages::Attack; }
 	void Release() { stage = EnvelopeStages::Release; }
 	void Update(double dt, double a, double d, double s, double r);

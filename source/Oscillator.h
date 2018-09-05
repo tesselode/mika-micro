@@ -17,6 +17,7 @@ enum class Waveforms
 class Oscillator
 {
 public:
+	void ResetPhase(double p = 0.0) { phase = p; }
 	double Next(double dt, double frequency, double sineMix, double triangleMix,
 		double sawMix, double squareMix, double pulseMix, double noiseMix);
 

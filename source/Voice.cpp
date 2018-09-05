@@ -1,5 +1,20 @@
 #include "Voice.h"
 
+void Voice::Reset()
+{
+	osc1a.ResetPhase();
+	osc1b.ResetPhase(parameters[(int)InternalParameters::Osc1SplitFactorA]->Get() < 1.0 ? .33 : 0.0);
+	osc2a.ResetPhase();
+	osc2b.ResetPhase(parameters[(int)InternalParameters::Osc1SplitFactorA]->Get() < 1.0 ? .33 : 0.0);
+	volEnv.Reset();
+}
+
+void Voice::Start()
+{
+	if (GetVolume() == 0.0) Reset();
+	volEnv.Start();
+}
+
 void Voice::UpdateEnvelopes(double dt)
 {
 	volEnv.Update(

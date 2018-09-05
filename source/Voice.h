@@ -16,7 +16,8 @@ public:
 		note = n;
 		baseFrequency = pitchToFrequency(note);
 	}
-	void Start() { volEnv.Start(); }
+	void Reset();
+	void Start();
 	void Release() { volEnv.Release(); }
 	double Next(double dt);
 	bool IsReleased() { return volEnv.IsReleased(); }
