@@ -30,9 +30,6 @@ MikaMicro::MikaMicro(IPlugInstanceInfo instanceInfo)
 	InitParameters();
 	InitGraphics();
 	MakeDefaultPreset((char *) "-", 1);
-
-	voice.SetNote(79);
-	voice.Start();
 }
 
 MikaMicro::~MikaMicro() {}
@@ -41,6 +38,31 @@ void MikaMicro::ProcessDoubleReplacing(double** inputs, double** outputs, int nF
 {
 	for (int s = 0; s < nFrames; s++)
 	{
+		while (!midiQueue.Empty())
+		{
+			auto message = midiQueue.Peek();
+			if (message->mOffset > s) break;
+
+			auto status = message->StatusMsg();
+			auto note = message->NoteNumber();
+			auto velocity = message->Velocity();
+
+			if (status == IMidiMsg::kNoteOn && velocity == 0) status = IMidiMsg::kNoteOff;
+
+			switch (status)
+			{
+			case IMidiMsg::kNoteOff:
+				voice.Release();
+				break;
+			case IMidiMsg::kNoteOn:
+				voice.SetNote(note);
+				voice.Start();
+				break;
+			}
+
+			midiQueue.Remove();
+		}
+
 		auto out = voice.Next(dt);
 		outputs[0][s] = out;
 		outputs[1][s] = out;
