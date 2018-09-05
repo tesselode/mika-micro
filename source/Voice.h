@@ -1,6 +1,7 @@
 #pragma once
 
 #include <array>
+#include <cmath>
 #include "Envelope.h"
 #include "Oscillator.h"
 #include "Parameter.h"
@@ -23,6 +24,8 @@ public:
 
 private:
 	void UpdateEnvelopes(double dt);
+	double GetOscillator1(double dt);
+	double GetOscillator2(double dt);
 	double GetOscillators(double dt);
 
 	std::array<std::unique_ptr<Parameter>, (int)InternalParameters::NumParameters> &parameters;
@@ -30,6 +33,8 @@ private:
 	double baseFrequency = 440.0;
 	Oscillator osc1a;
 	Oscillator osc1b;
+	Oscillator osc2a;
+	Oscillator osc2b;
 	Envelope volEnv;
 };
 

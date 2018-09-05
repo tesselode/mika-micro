@@ -9,6 +9,11 @@ void MikaMicro::InitParameters()
 	GetParam((int)PublicParameters::Osc1Coarse)->InitInt("Oscillator 1 coarse", 0, -24, 24, "semitones");
 	GetParam((int)PublicParameters::Osc1Fine)->InitDouble("Oscillator 1 fine", 0.0, -1.0, 1.0, .01, "semitones");
 	GetParam((int)PublicParameters::Osc1Split)->InitDouble("Oscillator 1 split", 0.0, -1.0, 1.0, .01);
+	GetParam((int)PublicParameters::Osc2Wave)->InitEnum("Oscillator 2 waveform", (int)Waveforms::Saw, (int)Waveforms::NumWaveforms);
+	GetParam((int)PublicParameters::Osc2Coarse)->InitInt("Oscillator 2 coarse", 0, -24, 24, "semitones");
+	GetParam((int)PublicParameters::Osc2Fine)->InitDouble("Oscillator 2 fine", 0.0, -1.0, 1.0, .01, "semitones");
+	GetParam((int)PublicParameters::Osc2Split)->InitDouble("Oscillator 2 split", 0.0, -1.0, 1.0, .01);
+	GetParam((int)PublicParameters::OscMix)->InitDouble("Oscillator mix", 1.0, 0.0, 1.0, .01);
 	GetParam((int)PublicParameters::VolEnvA)->InitDouble("Volume envelope attack time", 0.0, 0.0, 1.0, .01);
 	GetParam((int)PublicParameters::VolEnvD)->InitDouble("Volume envelope decay time", 0.5, 0.0, 1.0, .01);
 	GetParam((int)PublicParameters::VolEnvS)->InitDouble("Volume envelope sustain", 1.0, 0.0, 1.0, .01);
@@ -64,6 +69,57 @@ void MikaMicro::InitParameters()
 	parameters[(int)InternalParameters::Osc1SplitFactorB]->SetTransformation([](double v) {
 		return pitchFactor(-v);
 	});
+	
+	parameters[(int)InternalParameters::Osc2SineMix] = std::make_unique<Parameter>(GetParam((int)PublicParameters::Osc2Wave));
+	parameters[(int)InternalParameters::Osc2SineMix]->SetTransformation([](double v) {
+		return v == (int)Waveforms::Sine ? 1.0 : 0.0;
+	});
+	parameters[(int)InternalParameters::Osc2TriangleMix] = std::make_unique<Parameter>(GetParam((int)PublicParameters::Osc2Wave));
+	parameters[(int)InternalParameters::Osc2TriangleMix]->SetTransformation([](double v) {
+		return v == (int)Waveforms::Triangle ? 1.0 : 0.0;
+	});
+	parameters[(int)InternalParameters::Osc2SawMix] = std::make_unique<Parameter>(GetParam((int)PublicParameters::Osc2Wave));
+	parameters[(int)InternalParameters::Osc2SawMix]->SetTransformation([](double v) {
+		return v == (int)Waveforms::Saw ? 1.0 : 0.0;
+	});
+	parameters[(int)InternalParameters::Osc2SquareMix] = std::make_unique<Parameter>(GetParam((int)PublicParameters::Osc2Wave));
+	parameters[(int)InternalParameters::Osc2SquareMix]->SetTransformation([](double v) {
+		return v == (int)Waveforms::Square ? 1.0 : 0.0;
+	});
+	parameters[(int)InternalParameters::Osc2PulseMix] = std::make_unique<Parameter>(GetParam((int)PublicParameters::Osc2Wave));
+	parameters[(int)InternalParameters::Osc2PulseMix]->SetTransformation([](double v) {
+		return v == (int)Waveforms::Pulse ? 1.0 : 0.0;
+	});
+	parameters[(int)InternalParameters::Osc2NoiseMix] = std::make_unique<Parameter>(GetParam((int)PublicParameters::Osc2Wave));
+	parameters[(int)InternalParameters::Osc2NoiseMix]->SetTransformation([](double v) {
+		return v == (int)Waveforms::Noise ? 1.0 : 0.0;
+	});
+	parameters[(int)InternalParameters::Osc2Coarse] = std::make_unique<Parameter>(GetParam((int)PublicParameters::Osc2Coarse));
+	parameters[(int)InternalParameters::Osc2Coarse]->SetTransformation([](double v) {
+		return pitchFactor(v);
+	});
+	parameters[(int)InternalParameters::Osc2Fine] = std::make_unique<Parameter>(GetParam((int)PublicParameters::Osc2Fine));
+	parameters[(int)InternalParameters::Osc2Fine]->SetTransformation([](double v) {
+		return pitchFactor(v);
+	});
+	parameters[(int)InternalParameters::Osc2SplitMix] = std::make_unique<Parameter>(GetParam((int)PublicParameters::Osc2Split));
+	parameters[(int)InternalParameters::Osc2SplitMix]->SetTransformation([](double v) {
+		return v != 0.0 ? 1.0 : 0.0;
+	});
+	parameters[(int)InternalParameters::Osc2SplitFactorA] = std::make_unique<Parameter>(GetParam((int)PublicParameters::Osc2Split));
+	parameters[(int)InternalParameters::Osc2SplitFactorA]->SetTransformation([](double v) {
+		return pitchFactor(v);
+	});
+	parameters[(int)InternalParameters::Osc2SplitFactorB] = std::make_unique<Parameter>(GetParam((int)PublicParameters::Osc2Split));
+	parameters[(int)InternalParameters::Osc2SplitFactorB]->SetTransformation([](double v) {
+		return pitchFactor(-v);
+	});
+
+	parameters[(int)InternalParameters::OscMix] = std::make_unique<Parameter>(GetParam((int)PublicParameters::OscMix));
+	parameters[(int)InternalParameters::OscMix]->SetTransformation([](double v) {
+		return 1.0 - v;
+	});
+
 	parameters[(int)InternalParameters::VolEnvA] = std::make_unique<Parameter>(GetParam((int)PublicParameters::VolEnvA));
 	parameters[(int)InternalParameters::VolEnvA]->SetTransformation(envelopeCurve);
 	parameters[(int)InternalParameters::VolEnvD] = std::make_unique<Parameter>(GetParam((int)PublicParameters::VolEnvD));
@@ -94,12 +150,12 @@ void MikaMicro::InitGraphics()
 	pGraphics->AttachControl(new IKnobMultiControl(this, 38 * 4, 10 * 4, (int)PublicParameters::Osc1Coarse, &knobMiddle));
 	pGraphics->AttachControl(new IKnobMultiControl(this, 54 * 4, 10 * 4, (int)PublicParameters::Osc1Fine, &knobMiddle));
 	pGraphics->AttachControl(new IKnobMultiControl(this, 70 * 4, 10 * 4, (int)PublicParameters::Osc1Split, &knobMiddle));
-	//pGraphics->AttachControl(new ISwitchControl(this, 22 * 4, 26 * 4, (int)Parameters::Osc2Wave, &waveformSwitch));
-	//pGraphics->AttachControl(new IKnobMultiControl(this, 38 * 4, 26 * 4, (int)Parameters::Osc2Coarse, &knobMiddle));
-	//pGraphics->AttachControl(new IKnobMultiControl(this, 54 * 4, 26 * 4, (int)Parameters::Osc2Fine, &knobMiddle));
-	//pGraphics->AttachControl(new IKnobMultiControl(this, 70 * 4, 26 * 4, (int)Parameters::Osc2Split, &knobMiddle));
-	//pGraphics->AttachControl(new IBitmapControl(this, 91.5 * 4, 15 * 4, &sliderBg));
-	//pGraphics->AttachControl(new IFaderControl(this, 90.5 * 4, 16 * 4, 20 * 4, (int)Parameters::OscMix, &slider));
+	pGraphics->AttachControl(new ISwitchControl(this, 22 * 4, 26 * 4, (int)PublicParameters::Osc2Wave, &waveformSwitch));
+	pGraphics->AttachControl(new IKnobMultiControl(this, 38 * 4, 26 * 4, (int)PublicParameters::Osc2Coarse, &knobMiddle));
+	pGraphics->AttachControl(new IKnobMultiControl(this, 54 * 4, 26 * 4, (int)PublicParameters::Osc2Fine, &knobMiddle));
+	pGraphics->AttachControl(new IKnobMultiControl(this, 70 * 4, 26 * 4, (int)PublicParameters::Osc2Split, &knobMiddle));
+	pGraphics->AttachControl(new IBitmapControl(this, 91.5 * 4, 15 * 4, &sliderBg));
+	pGraphics->AttachControl(new IFaderControl(this, 90.5 * 4, 16 * 4, 20 * 4, (int)PublicParameters::OscMix, &slider));
 
 	// fm
 	//pGraphics->AttachControl(new ISwitchControl(this, 22 * 4, 42 * 4, (int)Parameters::FmMode, &fmModeSwitch));
