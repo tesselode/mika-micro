@@ -23,6 +23,7 @@ public:
 
 private:
 	void UpdateEnvelopes(double dt);
+	double GetOscillators(double dt);
 
 	std::array<std::unique_ptr<Parameter>, (int)InternalParameters::NumParameters> &parameters;
 	int note = 0;

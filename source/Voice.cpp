@@ -11,13 +11,15 @@ void Voice::UpdateEnvelopes(double dt)
 	);
 }
 
-double Voice::Next(double dt)
+double Voice::GetOscillators(double dt)
 {
-	UpdateEnvelopes(dt);
+	auto osc1CoarseFactor = parameters[(int)InternalParameters::Osc1Coarse]->Get();
+	auto osc1FineFactor = parameters[(int)InternalParameters::Osc1Fine]->Get();
+	
 	auto out = 0.0;
-	out = osc1a.Next(
+	out += osc1a.Next(
 		dt,
-		baseFrequency,
+		baseFrequency * osc1CoarseFactor * osc1FineFactor,
 		parameters[(int)InternalParameters::Osc1SineMix]->Get(),
 		parameters[(int)InternalParameters::Osc1TriangleMix]->Get(),
 		parameters[(int)InternalParameters::Osc1SawMix]->Get(),
@@ -25,6 +27,13 @@ double Voice::Next(double dt)
 		parameters[(int)InternalParameters::Osc1PulseMix]->Get(),
 		parameters[(int)InternalParameters::Osc1NoiseMix]->Get()
 	);
+	return out;
+}
+
+double Voice::Next(double dt)
+{
+	UpdateEnvelopes(dt);
+	auto out = GetOscillators(dt);
 	out *= volEnv.Get();
 	return out;
 }

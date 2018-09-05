@@ -6,6 +6,8 @@
 void MikaMicro::InitParameters()
 {
 	GetParam((int)PublicParameters::Osc1Wave)->InitEnum("Oscillator 1 waveform", (int)Waveforms::Saw, (int)Waveforms::NumWaveforms);
+	GetParam((int)PublicParameters::Osc1Coarse)->InitInt("Oscillator 1 coarse", 0, -24, 24, "semitones");
+	GetParam((int)PublicParameters::Osc1Fine)->InitDouble("Oscillator 1 fine", 0.0, -1.0, 1.0, .01, "semitones");
 	GetParam((int)PublicParameters::VolEnvA)->InitDouble("Volume envelope attack time", 0.0, 0.0, 1.0, .01);
 	GetParam((int)PublicParameters::VolEnvD)->InitDouble("Volume envelope decay time", 0.5, 0.0, 1.0, .01);
 	GetParam((int)PublicParameters::VolEnvS)->InitDouble("Volume envelope sustain", 1.0, 0.0, 1.0, .01);
@@ -41,6 +43,14 @@ void MikaMicro::InitParameters()
 	parameters[(int)InternalParameters::Osc1NoiseMix]->SetTransformation([](double v) {
 		return v == (int)Waveforms::Noise ? 1.0 : 0.0;
 	});
+	parameters[(int)InternalParameters::Osc1Coarse] = std::make_unique<Parameter>(GetParam((int)PublicParameters::Osc1Coarse));
+	parameters[(int)InternalParameters::Osc1Coarse]->SetTransformation([](double v) {
+		return pitchFactor(v);
+	});
+	parameters[(int)InternalParameters::Osc1Fine] = std::make_unique<Parameter>(GetParam((int)PublicParameters::Osc1Fine));
+	parameters[(int)InternalParameters::Osc1Fine]->SetTransformation([](double v) {
+		return pitchFactor(v);
+	});
 	parameters[(int)InternalParameters::VolEnvA] = std::make_unique<Parameter>(GetParam((int)PublicParameters::VolEnvA));
 	parameters[(int)InternalParameters::VolEnvA]->SetTransformation(envelopeCurve);
 	parameters[(int)InternalParameters::VolEnvD] = std::make_unique<Parameter>(GetParam((int)PublicParameters::VolEnvD));
@@ -68,8 +78,8 @@ void MikaMicro::InitGraphics()
 
 	// oscillators
 	pGraphics->AttachControl(new ISwitchControl(this, 22 * 4, 10 * 4, (int)PublicParameters::Osc1Wave, &waveformSwitch));
-	//pGraphics->AttachControl(new IKnobMultiControl(this, 38 * 4, 10 * 4, (int)Parameters::Osc1Coarse, &knobMiddle));
-	//pGraphics->AttachControl(new IKnobMultiControl(this, 54 * 4, 10 * 4, (int)Parameters::Osc1Fine, &knobMiddle));
+	pGraphics->AttachControl(new IKnobMultiControl(this, 38 * 4, 10 * 4, (int)PublicParameters::Osc1Coarse, &knobMiddle));
+	pGraphics->AttachControl(new IKnobMultiControl(this, 54 * 4, 10 * 4, (int)PublicParameters::Osc1Fine, &knobMiddle));
 	//pGraphics->AttachControl(new IKnobMultiControl(this, 70 * 4, 10 * 4, (int)Parameters::Osc1Split, &knobMiddle));
 	//pGraphics->AttachControl(new ISwitchControl(this, 22 * 4, 26 * 4, (int)Parameters::Osc2Wave, &waveformSwitch));
 	//pGraphics->AttachControl(new IKnobMultiControl(this, 38 * 4, 26 * 4, (int)Parameters::Osc2Coarse, &knobMiddle));
