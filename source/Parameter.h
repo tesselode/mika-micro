@@ -5,9 +5,10 @@
 
 enum class PublicParameters
 {
+	Osc1Wave,
 	Osc1Coarse,
 	Osc1Fine,
-	Osc1Wave,
+	Osc1Split,
 	VolEnvA,
 	VolEnvD,
 	VolEnvS,
@@ -27,6 +28,9 @@ enum class InternalParameters
 	Osc1NoiseMix,
 	Osc1Coarse,
 	Osc1Fine,
+	Osc1SplitMix,
+	Osc1SplitFactorA,
+	Osc1SplitFactorB,
 	VolEnvA,
 	VolEnvD,
 	VolEnvS,

@@ -29,6 +29,7 @@ private:
 	int note = 0;
 	double baseFrequency = 440.0;
 	Oscillator osc1a;
+	Oscillator osc1b;
 	Envelope volEnv;
 };
 
