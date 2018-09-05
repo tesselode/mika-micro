@@ -4,7 +4,8 @@ enum class EnvelopeStages
 {
 	Attack,
 	Decay,
-	Release
+	Release,
+	Idle
 };
 
 class Envelope
@@ -16,7 +17,7 @@ public:
 	double Get() { return value; }
 
 private:
-	EnvelopeStages stage = EnvelopeStages::Release;
+	EnvelopeStages stage = EnvelopeStages::Idle;
 	double value = 0.0;
 };
 

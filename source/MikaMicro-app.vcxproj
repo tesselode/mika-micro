@@ -284,6 +284,7 @@
     <ClInclude Include="Parameter.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="Util.h" />
+    <ClInclude Include="Voice.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\ASIO_SDK\asio.cpp" />
@@ -298,6 +299,7 @@
     <ClCompile Include="MikaMicro.cpp" />
     <ClCompile Include="Oscillator.cpp" />
     <ClCompile Include="Parameter.cpp" />
+    <ClCompile Include="Voice.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="MikaMicro.rc" />
