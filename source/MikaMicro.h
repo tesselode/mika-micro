@@ -30,7 +30,7 @@ private:
 	void FlushMidi(int s);
 
 	IMidiQueue midiQueue;
-	std::array<std::unique_ptr<Parameter>, (int)Parameters::NumParameters> parameters;
+	std::array<std::unique_ptr<Parameter>, (int)InternalParameters::NumParameters> parameters;
 	double dt = 0.0;
 	std::vector<Voice> voices;
 };

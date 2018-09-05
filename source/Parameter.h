@@ -3,8 +3,26 @@
 #include "IParam.h"
 #include <functional>
 
-enum class Parameters
+enum class PublicParameters
 {
+	Osc1Wave,
+	VolEnvA,
+	VolEnvD,
+	VolEnvS,
+	VolEnvR,
+	VolEnvV,
+	Volume,
+	NumParameters
+};
+
+enum class InternalParameters
+{
+	Osc1SineMix,
+	Osc1TriangleMix,
+	Osc1SawMix,
+	Osc1SquareMix,
+	Osc1PulseMix,
+	Osc1NoiseMix,
 	VolEnvA,
 	VolEnvD,
 	VolEnvS,

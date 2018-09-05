@@ -5,22 +5,51 @@
 
 void MikaMicro::InitParameters()
 {
-	GetParam((int)Parameters::VolEnvA)->InitDouble("Volume envelope attack time", 0.0, 0.0, 1.0, .01);
-	GetParam((int)Parameters::VolEnvD)->InitDouble("Volume envelope decay time", 0.5, 0.0, 1.0, .01);
-	GetParam((int)Parameters::VolEnvS)->InitDouble("Volume envelope sustain", 1.0, 0.0, 1.0, .01);
-	GetParam((int)Parameters::VolEnvR)->InitDouble("Volume envelope release time", 0.25, 0.0, 1.0, .01);
-	GetParam((int)Parameters::VolEnvV)->InitDouble("Volume envelope velocity sensitivity", 0.0, 0.0, 1.0, .01);
-	GetParam((int)Parameters::Volume)->InitDouble("Master volume", 0.5, 0.0, 1.0, .01);
+	GetParam((int)PublicParameters::Osc1Wave)->InitEnum("Oscillator 1 waveform", (int)Waveforms::Saw, (int)Waveforms::NumWaveforms);
+	GetParam((int)PublicParameters::VolEnvA)->InitDouble("Volume envelope attack time", 0.0, 0.0, 1.0, .01);
+	GetParam((int)PublicParameters::VolEnvD)->InitDouble("Volume envelope decay time", 0.5, 0.0, 1.0, .01);
+	GetParam((int)PublicParameters::VolEnvS)->InitDouble("Volume envelope sustain", 1.0, 0.0, 1.0, .01);
+	GetParam((int)PublicParameters::VolEnvR)->InitDouble("Volume envelope release time", 0.25, 0.0, 1.0, .01);
+	GetParam((int)PublicParameters::VolEnvV)->InitDouble("Volume envelope velocity sensitivity", 0.0, 0.0, 1.0, .01);
+	GetParam((int)PublicParameters::Volume)->InitDouble("Master volume", 0.5, 0.0, 1.0, .01);
 
-	for (int i = 0; i < (int)Parameters::NumParameters; i++)
-		parameters[i] = std::make_unique<Parameter>(GetParam(i));
-
-	std::function<double(double)> envelopeCurve = [](double v) {
+	auto envelopeCurve = [](double v) {
 		return 1000.0 - 999.9 * pow(.5 - .5 * cos(v * pi), .01);
 	};
-	parameters[(int)Parameters::VolEnvA]->SetTransformation(envelopeCurve);
-	parameters[(int)Parameters::VolEnvD]->SetTransformation(envelopeCurve);
-	parameters[(int)Parameters::VolEnvR]->SetTransformation(envelopeCurve);
+
+	parameters[(int)InternalParameters::Osc1SineMix] = std::make_unique<Parameter>(GetParam((int)PublicParameters::Osc1Wave));
+	parameters[(int)InternalParameters::Osc1SineMix]->SetTransformation([](double v) {
+		return v == (int)Waveforms::Sine ? 1.0 : 0.0;
+	});
+	parameters[(int)InternalParameters::Osc1TriangleMix] = std::make_unique<Parameter>(GetParam((int)PublicParameters::Osc1Wave));
+	parameters[(int)InternalParameters::Osc1TriangleMix]->SetTransformation([](double v) {
+		return v == (int)Waveforms::Triangle ? 1.0 : 0.0;
+	});
+	parameters[(int)InternalParameters::Osc1SawMix] = std::make_unique<Parameter>(GetParam((int)PublicParameters::Osc1Wave));
+	parameters[(int)InternalParameters::Osc1SawMix]->SetTransformation([](double v) {
+		return v == (int)Waveforms::Saw ? 1.0 : 0.0;
+	});
+	parameters[(int)InternalParameters::Osc1SquareMix] = std::make_unique<Parameter>(GetParam((int)PublicParameters::Osc1Wave));
+	parameters[(int)InternalParameters::Osc1SquareMix]->SetTransformation([](double v) {
+		return v == (int)Waveforms::Square ? 1.0 : 0.0;
+	});
+	parameters[(int)InternalParameters::Osc1PulseMix] = std::make_unique<Parameter>(GetParam((int)PublicParameters::Osc1Wave));
+	parameters[(int)InternalParameters::Osc1PulseMix]->SetTransformation([](double v) {
+		return v == (int)Waveforms::Pulse ? 1.0 : 0.0;
+	});
+	parameters[(int)InternalParameters::Osc1NoiseMix] = std::make_unique<Parameter>(GetParam((int)PublicParameters::Osc1Wave));
+	parameters[(int)InternalParameters::Osc1NoiseMix]->SetTransformation([](double v) {
+		return v == (int)Waveforms::Noise ? 1.0 : 0.0;
+	});
+	parameters[(int)InternalParameters::VolEnvA] = std::make_unique<Parameter>(GetParam((int)PublicParameters::VolEnvA));
+	parameters[(int)InternalParameters::VolEnvA]->SetTransformation(envelopeCurve);
+	parameters[(int)InternalParameters::VolEnvD] = std::make_unique<Parameter>(GetParam((int)PublicParameters::VolEnvD));
+	parameters[(int)InternalParameters::VolEnvD]->SetTransformation(envelopeCurve);
+	parameters[(int)InternalParameters::VolEnvS] = std::make_unique<Parameter>(GetParam((int)PublicParameters::VolEnvS));
+	parameters[(int)InternalParameters::VolEnvR] = std::make_unique<Parameter>(GetParam((int)PublicParameters::VolEnvR));
+	parameters[(int)InternalParameters::VolEnvR]->SetTransformation(envelopeCurve);
+	parameters[(int)InternalParameters::VolEnvV] = std::make_unique<Parameter>(GetParam((int)PublicParameters::VolEnvV));
+	parameters[(int)InternalParameters::Volume] = std::make_unique<Parameter>(GetParam((int)PublicParameters::Volume));
 }
 
 void MikaMicro::InitGraphics()
@@ -38,7 +67,7 @@ void MikaMicro::InitGraphics()
 	auto fmModeSwitch = pGraphics->LoadIBitmap(FMMODESWITCH_ID, FMMODESWITCH_FN, 3);
 
 	// oscillators
-	//pGraphics->AttachControl(new ISwitchControl(this, 22 * 4, 10 * 4, (int)Parameters::Osc1Wave, &waveformSwitch));
+	pGraphics->AttachControl(new ISwitchControl(this, 22 * 4, 10 * 4, (int)PublicParameters::Osc1Wave, &waveformSwitch));
 	//pGraphics->AttachControl(new IKnobMultiControl(this, 38 * 4, 10 * 4, (int)Parameters::Osc1Coarse, &knobMiddle));
 	//pGraphics->AttachControl(new IKnobMultiControl(this, 54 * 4, 10 * 4, (int)Parameters::Osc1Fine, &knobMiddle));
 	//pGraphics->AttachControl(new IKnobMultiControl(this, 70 * 4, 10 * 4, (int)Parameters::Osc1Split, &knobMiddle));
@@ -62,15 +91,15 @@ void MikaMicro::InitGraphics()
 
 	// modulation sources
 	pGraphics->AttachControl(new IBitmapControl(this, 121.5 * 4, 22 * 4, &sliderBg));
-	pGraphics->AttachControl(new IFaderControl(this, 120.5 * 4, 23 * 4, 20 * 4, (int)Parameters::VolEnvA, &slider));
+	pGraphics->AttachControl(new IFaderControl(this, 120.5 * 4, 23 * 4, 20 * 4, (int)PublicParameters::VolEnvA, &slider));
 	pGraphics->AttachControl(new IBitmapControl(this, 129.5 * 4, 22 * 4, &sliderBg));
-	pGraphics->AttachControl(new IFaderControl(this, 128.5 * 4, 23 * 4, 20 * 4, (int)Parameters::VolEnvD, &slider));
+	pGraphics->AttachControl(new IFaderControl(this, 128.5 * 4, 23 * 4, 20 * 4, (int)PublicParameters::VolEnvD, &slider));
 	pGraphics->AttachControl(new IBitmapControl(this, 137.5 * 4, 22 * 4, &sliderBg));
-	pGraphics->AttachControl(new IFaderControl(this, 136.5 * 4, 23 * 4, 20 * 4, (int)Parameters::VolEnvS, &slider));
+	pGraphics->AttachControl(new IFaderControl(this, 136.5 * 4, 23 * 4, 20 * 4, (int)PublicParameters::VolEnvS, &slider));
 	pGraphics->AttachControl(new IBitmapControl(this, 145.5 * 4, 22 * 4, &sliderBg));
-	pGraphics->AttachControl(new IFaderControl(this, 144.5 * 4, 23 * 4, 20 * 4, (int)Parameters::VolEnvR, &slider));
+	pGraphics->AttachControl(new IFaderControl(this, 144.5 * 4, 23 * 4, 20 * 4, (int)PublicParameters::VolEnvR, &slider));
 	pGraphics->AttachControl(new IBitmapControl(this, 153.5 * 4, 22 * 4, &sliderBg));
-	pGraphics->AttachControl(new IFaderControl(this, 152.5 * 4, 23 * 4, 20 * 4, (int)Parameters::VolEnvV, &slider));
+	pGraphics->AttachControl(new IFaderControl(this, 152.5 * 4, 23 * 4, 20 * 4, (int)PublicParameters::VolEnvV, &slider));
 	//pGraphics->AttachControl(new IBitmapControl(this, 121.5 * 4, 56.5 * 4, &sliderBg));
 	//pGraphics->AttachControl(new IFaderControl(this, 120.5 * 4, 57.5 * 4, 20 * 4, (int)Parameters::ModEnvA, &slider));
 	//pGraphics->AttachControl(new IBitmapControl(this, 129.5 * 4, 56.5 * 4, &sliderBg));
@@ -96,7 +125,7 @@ void MikaMicro::InitGraphics()
 	// master
 	//pGraphics->AttachControl(new ISwitchControl(this, 6 * 4, 90 * 4, (int)Parameters::VoiceMode, &fmModeSwitch));
 	//pGraphics->AttachControl(new IKnobMultiControl(this, 22 * 4, 90 * 4, (int)Parameters::GlideLength, &knobLeft));
-	pGraphics->AttachControl(new IKnobMultiControl(this, 38 * 4, 90 * 4, (int)Parameters::Volume, &knobLeft));
+	pGraphics->AttachControl(new IKnobMultiControl(this, 38 * 4, 90 * 4, (int)PublicParameters::Volume, &knobLeft));
 
 	//pGraphics->AttachControl(new PresetMenu(this, IRECT(0, 0, 100, 25)));
 
@@ -114,7 +143,7 @@ void MikaMicro::InitVoices()
 }
 
 MikaMicro::MikaMicro(IPlugInstanceInfo instanceInfo)
-  :	IPLUG_CTOR((int)Parameters::NumParameters, 1, instanceInfo)
+  :	IPLUG_CTOR((int)PublicParameters::NumParameters, 1, instanceInfo)
 {
 	TRACE;
 
@@ -167,7 +196,7 @@ void MikaMicro::ProcessDoubleReplacing(double** inputs, double** outputs, int nF
 		for (auto &p : parameters) p->Update(dt);
 		auto out = 0.0;
 		for (auto &v : voices) out += v.Next(dt);
-		out *= parameters[(int)Parameters::Volume]->Get();
+		out *= parameters[(int)InternalParameters::Volume]->Get();
 		outputs[0][s] = out;
 		outputs[1][s] = out;
 	}
