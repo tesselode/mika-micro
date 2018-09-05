@@ -1,10 +1,10 @@
-#define PLUG_MFR "AndrewMinnich"
-#define PLUG_NAME "MikaMicro"
+#define PLUG_MFR "Andrew Minnich"
+#define PLUG_NAME "Mika Micro"
 
 #define PLUG_CLASS_NAME MikaMicro
 
-#define BUNDLE_MFR "AndrewMinnich"
-#define BUNDLE_NAME "MikaMicro"
+#define BUNDLE_MFR "Andrew Minnich"
+#define BUNDLE_NAME "Mika Micro"
 
 #define PLUG_ENTRY MikaMicro_Entry
 #define PLUG_FACTORY MikaMicro_Factory
@@ -18,15 +18,15 @@
 
 // Format        0xMAJR.MN.BG - in HEX! so version 10.1.5 would be 0x000A0105
 #define PLUG_VER 0x00010000
-#define VST3_VER_STR "1.0.0"
+#define VST3_VER_STR "2.0.1"
 
-#define PLUG_COPYRIGHT  "Copyright 2017 Acme Inc"
+#define PLUG_COPYRIGHT  "Copyright 2018 Andrew Minnich"
 
 // http://service.steinberg.de/databases/plugin.nsf/plugIn?openForm
 // 4 chars, single quotes. At least one capital letter
-#define PLUG_UNIQUE_ID 'Ipef'
+#define PLUG_UNIQUE_ID 'TesM'
 // make sure this is not the same as BUNDLE_MFR
-#define PLUG_MFR_ID 'Acme'
+#define PLUG_MFR_ID 'Tesa'
 
 // ProTools stuff
 
@@ -46,25 +46,41 @@
 instrument determined by PLUG _IS _INST
 */
 
-#define PLUG_CHANNEL_IO "1-1 2-2"
+#define PLUG_CHANNEL_IO "0-1 0-2"
 
 #define PLUG_LATENCY 0
-#define PLUG_IS_INST 0
+#define PLUG_IS_INST 1
 
 // if this is 0 RTAS can't get tempo info
-#define PLUG_DOES_MIDI 0
+#define PLUG_DOES_MIDI 1
 
 #define PLUG_DOES_STATE_CHUNKS 0
 
 // Unique IDs for each image resource.
-#define KNOB_ID 101
+#define BG_ID 100
+#define KNOBLEFT_ID 101
+#define KNOBMIDDLE_ID 102
+#define KNOBRIGHT_ID 103
+#define SLIDER_ID 104
+#define SLIDERBG_ID 105
+#define WAVEFORMSWITCH_ID 106
+#define TOGGLESWITCH_ID 107
+#define FMMODESWITCH_ID 108
 
 // Image resource locations for this plug.
-#define KNOB_FN "resources/img/knob.png"
+#define BG_FN "resources/img/bg.png"
+#define KNOBLEFT_FN "resources/img/knob left.png"
+#define KNOBMIDDLE_FN "resources/img/knob middle.png"
+#define KNOBRIGHT_FN "resources/img/knob right.png"
+#define SLIDER_FN "resources/img/slider.png"
+#define SLIDERBG_FN "resources/img/sliderbg.png"
+#define WAVEFORMSWITCH_FN "resources/img/waveforms.png"
+#define TOGGLESWITCH_FN "resources/img/switch.png"
+#define FMMODESWITCH_FN "resources/img/fm.png"
 
 // GUI default dimensions
-#define GUI_WIDTH 300
-#define GUI_HEIGHT 300
+#define GUI_WIDTH 224*4
+#define GUI_HEIGHT 112*4
 
 // on MSVC, you must define SA_API in the resource editor preprocessor macros as well as the c++ ones
 #if defined(SA_API)
@@ -72,9 +88,9 @@ instrument determined by PLUG _IS _INST
 #endif
 
 // vst3 stuff
-#define MFR_URL "www.olilarkin.co.uk"
-#define MFR_EMAIL "spam@me.com"
-#define EFFECT_TYPE_VST3 "Fx"
+#define MFR_URL "tesselode.github.io"
+#define MFR_EMAIL "aminnich3@gmail.com"
+#define EFFECT_TYPE_VST3 "Instrument|Synth"
 
 /* "Fx|Analyzer"", "Fx|Delay", "Fx|Distortion", "Fx|Dynamics", "Fx|EQ", "Fx|Filter",
 "Fx", "Fx|Instrument", "Fx|InstrumentExternal", "Fx|Spatial", "Fx|Generator",
