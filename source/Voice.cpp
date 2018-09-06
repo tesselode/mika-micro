@@ -2,6 +2,7 @@
 
 void Voice::Reset()
 {
+	oscFm.ResetPhase();
 	osc1a.ResetPhase();
 	osc1b.ResetPhase(parameters[(int)InternalParameters::Osc1SplitFactorA]->Get() < 1.0 ? .33 : 0.0);
 	osc2a.ResetPhase();
@@ -26,10 +27,54 @@ void Voice::UpdateEnvelopes(double dt)
 	);
 }
 
-double Voice::GetOscillator1(double dt)
+double Voice::GetFmMultiplier(double dt)
+{
+	auto fmCoarse = parameters[(int)InternalParameters::FmCoarse]->Get();
+	auto fmFine = parameters[(int)InternalParameters::FmFine]->Get();
+	auto fmAmount = fmCoarse + fmFine;
+	return pitchFactor(oscFm.Next(dt, GetOscillator1Frequency(dt, true), 1.0, 0.0, 0.0, 0.0, 0.0, 0.0) * fmAmount);
+}
+
+double Voice::GetOscillator1Frequency(double dt, bool skipFm)
 {
 	auto coarse = parameters[(int)InternalParameters::Osc1Coarse]->Get();
 	auto fine = parameters[(int)InternalParameters::Osc1Fine]->Get();
+	auto frequency = baseFrequency * coarse * fine;
+	switch (skipFm)
+	{
+	case false:
+	{
+		auto fmMode = (FmModes)(int)parameters[(int)InternalParameters::FmMode]->Get();
+		switch (fmMode)
+		{
+		case FmModes::Osc1:
+			frequency *= GetFmMultiplier(dt);
+			break;
+		}
+		break;
+	}
+	}
+	return frequency;
+}
+
+double Voice::GetOscillator2Frequency(double dt)
+{
+	auto coarse = parameters[(int)InternalParameters::Osc2Coarse]->Get();
+	auto fine = parameters[(int)InternalParameters::Osc2Fine]->Get();
+	auto frequency = baseFrequency * coarse * fine;
+	auto fmMode = (FmModes)(int)parameters[(int)InternalParameters::FmMode]->Get();
+	switch (fmMode)
+	{
+	case FmModes::Osc2:
+		frequency *= GetFmMultiplier(dt);
+		break;
+	}
+	return frequency;
+}
+
+double Voice::GetOscillator1(double dt)
+{
+	auto frequency = GetOscillator1Frequency(dt);
 	auto splitA = parameters[(int)InternalParameters::Osc1SplitFactorA]->Get();
 	auto splitB = parameters[(int)InternalParameters::Osc1SplitFactorB]->Get();
 
@@ -37,7 +82,7 @@ double Voice::GetOscillator1(double dt)
 
 	out += osc1a.Next(
 		dt,
-		baseFrequency * coarse * fine * splitA,
+		frequency * splitA,
 		parameters[(int)InternalParameters::Osc1SineMix]->Get(),
 		parameters[(int)InternalParameters::Osc1TriangleMix]->Get(),
 		parameters[(int)InternalParameters::Osc1SawMix]->Get(),
@@ -50,7 +95,7 @@ double Voice::GetOscillator1(double dt)
 	if (splitMix > 0.0)
 		out += splitMix * osc1b.Next(
 			dt,
-			baseFrequency * coarse * fine * splitB,
+			frequency * splitB,
 			parameters[(int)InternalParameters::Osc1SineMix]->Get(),
 			parameters[(int)InternalParameters::Osc1TriangleMix]->Get(),
 			parameters[(int)InternalParameters::Osc1SawMix]->Get(),
@@ -64,8 +109,7 @@ double Voice::GetOscillator1(double dt)
 
 double Voice::GetOscillator2(double dt)
 {
-	auto coarse = parameters[(int)InternalParameters::Osc2Coarse]->Get();
-	auto fine = parameters[(int)InternalParameters::Osc2Fine]->Get();
+	auto frequency = GetOscillator2Frequency(dt);
 	auto splitA = parameters[(int)InternalParameters::Osc2SplitFactorA]->Get();
 	auto splitB = parameters[(int)InternalParameters::Osc2SplitFactorB]->Get();
 
@@ -73,7 +117,7 @@ double Voice::GetOscillator2(double dt)
 
 	out += osc2a.Next(
 		dt,
-		baseFrequency * coarse * fine * splitA,
+		frequency * splitA,
 		parameters[(int)InternalParameters::Osc2SineMix]->Get(),
 		parameters[(int)InternalParameters::Osc2TriangleMix]->Get(),
 		parameters[(int)InternalParameters::Osc2SawMix]->Get(),
@@ -86,7 +130,7 @@ double Voice::GetOscillator2(double dt)
 	if (splitMix > 0.0)
 		out += splitMix * osc2b.Next(
 			dt,
-			baseFrequency * coarse * fine * splitB,
+			frequency * splitB,
 			parameters[(int)InternalParameters::Osc2SineMix]->Get(),
 			parameters[(int)InternalParameters::Osc2TriangleMix]->Get(),
 			parameters[(int)InternalParameters::Osc2SawMix]->Get(),

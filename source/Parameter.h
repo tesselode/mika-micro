@@ -14,6 +14,9 @@ enum class PublicParameters
 	Osc2Fine,
 	Osc2Split,
 	OscMix,
+	FmMode,
+	FmCoarse,
+	FmFine,
 	VolEnvA,
 	VolEnvD,
 	VolEnvS,
@@ -48,6 +51,9 @@ enum class InternalParameters
 	Osc2SplitFactorA,
 	Osc2SplitFactorB,
 	OscMix,
+	FmMode,
+	FmCoarse,
+	FmFine,
 	VolEnvA,
 	VolEnvD,
 	VolEnvS,
@@ -62,15 +68,25 @@ class Parameter
 public:
 	Parameter(IParam* p) : parameter(p) {}
 	void SetTransformation(std::function<double(double)> f) { transformation = f; }
+	void DisableSmoothing() { smooth = false; }
 	void Update(double dt)
 	{
 		auto target = transformation(parameter->Value());
-		value += (target - value) * 100.0 * dt;
+		switch (smooth)
+		{
+		case true:
+			value += (target - value) * 100.0 * dt;
+			break;
+		case false:
+			value = target;
+			break;
+		}
 	}
 	double Get() { return value; }
 
 private:
 	IParam* parameter;
 	double value = 0.0;
+	bool smooth = true;
 	std::function<double(double)> transformation = [](double v) { return v; };
 };
