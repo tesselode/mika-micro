@@ -17,6 +17,9 @@ enum class PublicParameters
 	FmMode,
 	FmCoarse,
 	FmFine,
+	FilterEnabled,
+	FilterCutoff,
+	FilterResonance,
 	VolEnvA,
 	VolEnvD,
 	VolEnvS,
@@ -54,6 +57,9 @@ enum class InternalParameters
 	FmMode,
 	FmCoarse,
 	FmFine,
+	FilterMix,
+	FilterCutoff,
+	FilterResonance,
 	VolEnvA,
 	VolEnvD,
 	VolEnvS,
@@ -69,19 +75,7 @@ public:
 	Parameter(IParam* p) : parameter(p) {}
 	void SetTransformation(std::function<double(double)> f) { transformation = f; }
 	void DisableSmoothing() { smooth = false; }
-	void Update(double dt)
-	{
-		auto target = transformation(parameter->Value());
-		switch (smooth)
-		{
-		case true:
-			value += (target - value) * 100.0 * dt;
-			break;
-		case false:
-			value = target;
-			break;
-		}
-	}
+	void Update(double dt);
 	double Get() { return value; }
 
 private:

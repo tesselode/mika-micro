@@ -3,6 +3,7 @@
 #include <array>
 #include <cmath>
 #include "Envelope.h"
+#include "Filter.h"
 #include "Oscillator.h"
 #include "Parameter.h"
 #include "Util.h"
@@ -40,6 +41,8 @@ private:
 	double GetOscillator2(double dt);
 	double GetOscillators(double dt);
 
+	double ApplyFilter(double dt, double input);
+
 	std::array<std::unique_ptr<Parameter>, (int)InternalParameters::NumParameters> &parameters;
 	int note = 0;
 	double baseFrequency = 440.0;
@@ -49,5 +52,6 @@ private:
 	Oscillator osc2a;
 	Oscillator osc2b;
 	Envelope volEnv;
+	Filter filter;
 };
 

@@ -14,9 +14,15 @@ void MikaMicro::InitParameters()
 	GetParam((int)PublicParameters::Osc2Fine)->InitDouble("Oscillator 2 fine", 0.0, -1.0, 1.0, .01, "semitones");
 	GetParam((int)PublicParameters::Osc2Split)->InitDouble("Oscillator 2 split", 0.0, -1.0, 1.0, .01);
 	GetParam((int)PublicParameters::OscMix)->InitDouble("Oscillator mix", 1.0, 0.0, 1.0, .01);
+
 	GetParam((int)PublicParameters::FmMode)->InitEnum("FM mode", (int)FmModes::Off, (int)FmModes::NumFmModes);
 	GetParam((int)PublicParameters::FmCoarse)->InitInt("FM coarse", 0, 0, 48, "semitones");
 	GetParam((int)PublicParameters::FmFine)->InitDouble("FM fine", 0.0, -1.0, 1.0, .01, "semitones");
+
+	GetParam((int)PublicParameters::FilterEnabled)->InitBool("Filter enabled", false);
+	GetParam((int)PublicParameters::FilterCutoff)->InitDouble("Filter cutoff", 8000.0, 20.0, 8000.0, .01, "hz");
+	GetParam((int)PublicParameters::FilterResonance)->InitDouble("Filter resonance", 0.0, 0.0, 1.0, .01);
+
 	GetParam((int)PublicParameters::VolEnvA)->InitDouble("Volume envelope attack time", 0.0, 0.0, 1.0, .01);
 	GetParam((int)PublicParameters::VolEnvD)->InitDouble("Volume envelope decay time", 0.5, 0.0, 1.0, .01);
 	GetParam((int)PublicParameters::VolEnvS)->InitDouble("Volume envelope sustain", 1.0, 0.0, 1.0, .01);
@@ -128,6 +134,10 @@ void MikaMicro::InitParameters()
 	parameters[(int)InternalParameters::FmCoarse] = std::make_unique<Parameter>(GetParam((int)PublicParameters::FmCoarse));
 	parameters[(int)InternalParameters::FmFine] = std::make_unique<Parameter>(GetParam((int)PublicParameters::FmFine));
 
+	parameters[(int)InternalParameters::FilterMix] = std::make_unique<Parameter>(GetParam((int)PublicParameters::FilterEnabled));
+	parameters[(int)InternalParameters::FilterCutoff] = std::make_unique<Parameter>(GetParam((int)PublicParameters::FilterCutoff));
+	parameters[(int)InternalParameters::FilterResonance] = std::make_unique<Parameter>(GetParam((int)PublicParameters::FilterResonance));
+
 	parameters[(int)InternalParameters::VolEnvA] = std::make_unique<Parameter>(GetParam((int)PublicParameters::VolEnvA));
 	parameters[(int)InternalParameters::VolEnvA]->SetTransformation(envelopeCurve);
 	parameters[(int)InternalParameters::VolEnvD] = std::make_unique<Parameter>(GetParam((int)PublicParameters::VolEnvD));
@@ -172,9 +182,9 @@ void MikaMicro::InitGraphics()
 	pGraphics->AttachControl(new IKnobMultiControl(this, 54 * 4, 42 * 4, (int)PublicParameters::FmFine, &knobMiddle));
 
 	// filter
-	//pGraphics->AttachControl(new ISwitchPopUpControl(this, 22 * 4, 62 * 4, (int)Parameters::FilterMode, &fmModeSwitch));
-	//pGraphics->AttachControl(new IKnobMultiControl(this, 38 * 4, 62 * 4, (int)Parameters::FilterCutoff, &knobRight));
-	//pGraphics->AttachControl(new IKnobMultiControl(this, 54 * 4, 62 * 4, (int)Parameters::FilterResonance, &knobLeft));
+	pGraphics->AttachControl(new ISwitchControl(this, 22 * 4, 62 * 4, (int)PublicParameters::FilterEnabled, &toggleSwitch));
+	pGraphics->AttachControl(new IKnobMultiControl(this, 38 * 4, 62 * 4, (int)PublicParameters::FilterCutoff, &knobRight));
+	pGraphics->AttachControl(new IKnobMultiControl(this, 54 * 4, 62 * 4, (int)PublicParameters::FilterResonance, &knobLeft));
 	//pGraphics->AttachControl(new IKnobMultiControl(this, 70 * 4, 62 * 4, (int)Parameters::FilterKeyTrack, &knobMiddle));
 
 	// modulation sources

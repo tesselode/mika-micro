@@ -153,10 +153,28 @@ double Voice::GetOscillators(double dt)
 	return out;
 }
 
+double Voice::ApplyFilter(double dt, double input)
+{
+	auto mix = parameters[(int)InternalParameters::FilterMix]->Get();
+	switch (mix > 0.0)
+	{
+	case true:
+	{
+		auto cutoff = parameters[(int)InternalParameters::FilterCutoff]->Get();
+		auto resonance = parameters[(int)InternalParameters::FilterResonance]->Get();
+		auto wet = filter.Process(dt, input, cutoff, resonance);
+		return input * (1.0 - mix) + wet * mix;
+	}
+	case false:
+		return input;
+	}
+}
+
 double Voice::Next(double dt)
 {
 	UpdateEnvelopes(dt);
 	auto out = GetOscillators(dt);
 	out *= volEnv.Get();
+	out = ApplyFilter(dt, out);
 	return out;
 }
