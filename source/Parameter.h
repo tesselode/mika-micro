@@ -3,6 +3,8 @@
 #include "IParam.h"
 #include <functional>
 
+const double parameterCloseEnoughThreshold = .001;
+
 enum class PublicParameters
 {
 	Osc1Wave,
@@ -83,6 +85,9 @@ public:
 
 private:
 	IParam* parameter;
+	bool upToDate = false;
+	double previousRawValue = 0.0;
+	double target = 0.0;
 	double value = 0.0;
 	bool smooth = true;
 	std::function<double(double)> transformation = [](double v) { return v; };

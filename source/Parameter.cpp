@@ -2,14 +2,24 @@
 
 void Parameter::Update(double dt)
 {
-	auto target = transformation(parameter->Value());
-	switch (smooth)
+	auto rawValue = parameter->Value();
+	if (rawValue != previousRawValue) upToDate = false;
+	if (!upToDate)
 	{
-	case true:
-		value += (target - value) * 100.0 * dt;
-		break;
-	case false:
-		value = target;
-		break;
+		target = transformation(parameter->Value());
+		upToDate = true;
+	}
+	previousRawValue = rawValue;
+
+	if (value != target)
+	{
+		if (smooth)
+		{
+			value += (target - value) * 100.0 * dt;
+			if (abs(target - value) < parameterCloseEnoughThreshold)
+				value = target;
+		}
+		else
+			value = target;
 	}
 }
