@@ -155,19 +155,21 @@ double Voice::GetOscillators(double dt)
 
 double Voice::ApplyFilter(double dt, double input)
 {
-	auto mix = parameters[(int)InternalParameters::FilterMix]->Get();
-	switch (mix > 0.0)
-	{
-	case true:
-	{
-		auto cutoff = parameters[(int)InternalParameters::FilterCutoff]->Get();
-		auto resonance = parameters[(int)InternalParameters::FilterResonance]->Get();
-		auto wet = filter.Process(dt, input, cutoff, resonance);
-		return input * (1.0 - mix) + wet * mix;
-	}
-	case false:
-		return input;
-	}
+	auto dryMix = parameters[(int)InternalParameters::FilterDryMix]->Get();
+	auto twoPoleMix = parameters[(int)InternalParameters::Filter2pMix]->Get();
+	auto svfMix = parameters[(int)InternalParameters::FilterSvfMix]->Get();
+	auto fourPoleMix = parameters[(int)InternalParameters::Filter4pMix]->Get();
+
+	if (dryMix == 1.0) return input;
+
+	auto cutoff = parameters[(int)InternalParameters::FilterCutoff]->Get();
+	auto resonance = parameters[(int)InternalParameters::FilterResonance]->Get();
+	auto out = 0.0;
+	out += input * dryMix;
+	if (twoPoleMix > 0.0) out += twoPoleMix * twoPole.Process(dt, input, cutoff, resonance);
+	if (svfMix > 0.0) out += svfMix * svf.Process(dt, input, cutoff, resonance);
+	if (fourPoleMix > 0.0) out += fourPoleMix * fourPole.Process(dt, input, cutoff, resonance);
+	return out;
 }
 
 double Voice::Next(double dt)

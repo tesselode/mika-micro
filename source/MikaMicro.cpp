@@ -19,7 +19,11 @@ void MikaMicro::InitParameters()
 	GetParam((int)PublicParameters::FmCoarse)->InitInt("FM coarse", 0, 0, 48, "semitones");
 	GetParam((int)PublicParameters::FmFine)->InitDouble("FM fine", 0.0, -1.0, 1.0, .01, "semitones");
 
-	GetParam((int)PublicParameters::FilterEnabled)->InitBool("Filter enabled", false);
+	GetParam((int)PublicParameters::FilterMode)->InitEnum("Filter mode", (int)FilterModes::Off, (int)FilterModes::NumFilterModes);
+	GetParam((int)PublicParameters::FilterMode)->SetDisplayText((int)FilterModes::Off, "Off");
+	GetParam((int)PublicParameters::FilterMode)->SetDisplayText((int)FilterModes::TwoPole, "Two pole");
+	GetParam((int)PublicParameters::FilterMode)->SetDisplayText((int)FilterModes::StateVariable, "State variable");
+	GetParam((int)PublicParameters::FilterMode)->SetDisplayText((int)FilterModes::FourPole, "Four pole");
 	GetParam((int)PublicParameters::FilterCutoff)->InitDouble("Filter cutoff", 8000.0, 20.0, 8000.0, .01, "hz");
 	GetParam((int)PublicParameters::FilterResonance)->InitDouble("Filter resonance", 0.0, 0.0, 1.0, .01);
 
@@ -134,7 +138,22 @@ void MikaMicro::InitParameters()
 	parameters[(int)InternalParameters::FmCoarse] = std::make_unique<Parameter>(GetParam((int)PublicParameters::FmCoarse));
 	parameters[(int)InternalParameters::FmFine] = std::make_unique<Parameter>(GetParam((int)PublicParameters::FmFine));
 
-	parameters[(int)InternalParameters::FilterMix] = std::make_unique<Parameter>(GetParam((int)PublicParameters::FilterEnabled));
+	parameters[(int)InternalParameters::FilterDryMix] = std::make_unique<Parameter>(GetParam((int)PublicParameters::FilterMode));
+	parameters[(int)InternalParameters::FilterDryMix]->SetTransformation([](double v) {
+		return (FilterModes)(int)v == FilterModes::Off ? 1.0 : 0.0;
+	});
+	parameters[(int)InternalParameters::Filter2pMix] = std::make_unique<Parameter>(GetParam((int)PublicParameters::FilterMode));
+	parameters[(int)InternalParameters::Filter2pMix]->SetTransformation([](double v) {
+		return (FilterModes)(int)v == FilterModes::TwoPole ? 1.0 : 0.0;
+	});
+	parameters[(int)InternalParameters::FilterSvfMix] = std::make_unique<Parameter>(GetParam((int)PublicParameters::FilterMode));
+	parameters[(int)InternalParameters::FilterSvfMix]->SetTransformation([](double v) {
+		return (FilterModes)(int)v == FilterModes::StateVariable ? 1.0 : 0.0;
+	});
+	parameters[(int)InternalParameters::Filter4pMix] = std::make_unique<Parameter>(GetParam((int)PublicParameters::FilterMode));
+	parameters[(int)InternalParameters::Filter4pMix]->SetTransformation([](double v) {
+		return (FilterModes)(int)v == FilterModes::FourPole ? 1.0 : 0.0;
+	});
 	parameters[(int)InternalParameters::FilterCutoff] = std::make_unique<Parameter>(GetParam((int)PublicParameters::FilterCutoff));
 	parameters[(int)InternalParameters::FilterResonance] = std::make_unique<Parameter>(GetParam((int)PublicParameters::FilterResonance));
 
@@ -182,7 +201,7 @@ void MikaMicro::InitGraphics()
 	pGraphics->AttachControl(new IKnobMultiControl(this, 54 * 4, 42 * 4, (int)PublicParameters::FmFine, &knobMiddle));
 
 	// filter
-	pGraphics->AttachControl(new ISwitchControl(this, 22 * 4, 62 * 4, (int)PublicParameters::FilterEnabled, &toggleSwitch));
+	pGraphics->AttachControl(new ISwitchPopUpControl(this, 22 * 4, 62 * 4, (int)PublicParameters::FilterMode, &toggleSwitch));
 	pGraphics->AttachControl(new IKnobMultiControl(this, 38 * 4, 62 * 4, (int)PublicParameters::FilterCutoff, &knobRight));
 	pGraphics->AttachControl(new IKnobMultiControl(this, 54 * 4, 62 * 4, (int)PublicParameters::FilterResonance, &knobLeft));
 	//pGraphics->AttachControl(new IKnobMultiControl(this, 70 * 4, 62 * 4, (int)Parameters::FilterKeyTrack, &knobMiddle));

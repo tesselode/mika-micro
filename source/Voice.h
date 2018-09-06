@@ -52,6 +52,8 @@ private:
 	Oscillator osc2a;
 	Oscillator osc2b;
 	Envelope volEnv;
-	Filter filter;
+	TwoPoleFilter twoPole;
+	StateVariableFilter svf;
+	FourPoleFilter fourPole;
 };
 
