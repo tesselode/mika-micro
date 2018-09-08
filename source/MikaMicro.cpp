@@ -26,6 +26,7 @@ void MikaMicro::InitPublicParameters()
 	GetParam((int)PublicParameters::FilterMode)->SetDisplayText((int)FilterModes::FourPole, "Four pole");
 	GetParam((int)PublicParameters::FilterCutoff)->InitDouble("Filter cutoff", 8000.0, 20.0, 8000.0, .01, "hz");
 	GetParam((int)PublicParameters::FilterResonance)->InitDouble("Filter resonance", 0.0, 0.0, 1.0, .01);
+	GetParam((int)PublicParameters::FilterKeyTracking)->InitDouble("Filter key tracking", 0.0, -1.0, 1.0, .01);
 
 	GetParam((int)PublicParameters::VolEnvA)->InitDouble("Volume envelope attack time", 0.0, 0.0, 1.0, .01);
 	GetParam((int)PublicParameters::VolEnvD)->InitDouble("Volume envelope decay time", 0.5, 0.0, 1.0, .01);
@@ -177,6 +178,7 @@ void MikaMicro::InitInternalParameters()
 	});
 	parameters[(int)InternalParameters::FilterCutoff] = std::make_unique<Parameter>(GetParam((int)PublicParameters::FilterCutoff));
 	parameters[(int)InternalParameters::FilterResonance] = std::make_unique<Parameter>(GetParam((int)PublicParameters::FilterResonance));
+	parameters[(int)InternalParameters::FilterKeyTracking] = std::make_unique<Parameter>(GetParam((int)PublicParameters::FilterKeyTracking));
 
 	parameters[(int)InternalParameters::VolEnvA] = std::make_unique<Parameter>(GetParam((int)PublicParameters::VolEnvA));
 	parameters[(int)InternalParameters::VolEnvA]->SetTransformation(envelopeCurve);
@@ -249,7 +251,7 @@ void MikaMicro::InitGraphics()
 	pGraphics->AttachControl(new ISwitchPopUpControl(this, 22 * 4, 62 * 4, (int)PublicParameters::FilterMode, &toggleSwitch));
 	pGraphics->AttachControl(new IKnobMultiControl(this, 38 * 4, 62 * 4, (int)PublicParameters::FilterCutoff, &knobRight));
 	pGraphics->AttachControl(new IKnobMultiControl(this, 54 * 4, 62 * 4, (int)PublicParameters::FilterResonance, &knobLeft));
-	//pGraphics->AttachControl(new IKnobMultiControl(this, 70 * 4, 62 * 4, (int)Parameters::FilterKeyTrack, &knobMiddle));
+	pGraphics->AttachControl(new IKnobMultiControl(this, 70 * 4, 62 * 4, (int)PublicParameters::FilterKeyTracking, &knobMiddle));
 
 	// modulation sources
 	pGraphics->AttachControl(new IBitmapControl(this, 121.5 * 4, 22 * 4, &sliderBg));

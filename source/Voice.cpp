@@ -62,7 +62,7 @@ double Voice::GetOscillator1Frequency(double dt, bool skipFm)
 {
 	auto coarse = parameters[(int)InternalParameters::Osc1Coarse]->Get();
 	auto fine = parameters[(int)InternalParameters::Osc1Fine]->Get();
-	auto frequency = baseFrequency * coarse * fine;
+	auto frequency = baseFrequency * pitchBendFactor * coarse * fine;
 	switch (skipFm)
 	{
 	case false:
@@ -84,7 +84,7 @@ double Voice::GetOscillator2Frequency(double dt)
 {
 	auto coarse = parameters[(int)InternalParameters::Osc2Coarse]->Get();
 	auto fine = parameters[(int)InternalParameters::Osc2Fine]->Get();
-	auto frequency = baseFrequency * coarse * fine;
+	auto frequency = baseFrequency * pitchBendFactor * coarse * fine;
 	auto fmMode = (FmModes)(int)parameters[(int)InternalParameters::FmMode]->Get();
 	switch (fmMode)
 	{
@@ -188,6 +188,7 @@ double Voice::ApplyFilter(double dt, double input)
 	auto cutoff = parameters[(int)InternalParameters::FilterCutoff]->Get();
 	cutoff += parameters[(int)InternalParameters::VolEnvCutoff]->Get() * volEnv.Get();
 	cutoff += parameters[(int)InternalParameters::ModEnvCutoff]->Get() * modEnv.Get();
+	cutoff += parameters[(int)InternalParameters::FilterKeyTracking]->Get() * baseFrequency * pitchBendFactor;
 	auto resonance = parameters[(int)InternalParameters::FilterResonance]->Get();
 	auto out = 0.0;
 	out += input * dryMix;
