@@ -12,6 +12,14 @@
 
 const int numVoices = 8;
 
+enum class VoiceModes
+{
+	Poly,
+	Mono,
+	Legato,
+	NumVoiceModes
+};
+
 class MikaMicro : public IPlug
 {
 public:
@@ -31,6 +39,7 @@ private:
 	void FlushMidi(int s);
 
 	IMidiQueue midiQueue;
+	std::vector<int> heldNotes;
 	std::array<std::unique_ptr<Parameter>, (int)InternalParameters::NumParameters> parameters;
 	double dt = 0.0;
 	std::vector<Voice> voices;

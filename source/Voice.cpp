@@ -1,5 +1,11 @@
 #include "Voice.h"
 
+void Voice::SetNote(int n)
+{
+	note = n;
+	targetFrequency = pitchToFrequency(note);
+}
+
 void Voice::Reset()
 {
 	oscFm.ResetPhase();
@@ -25,6 +31,12 @@ void Voice::UpdateEnvelopes(double dt)
 		parameters[(int)InternalParameters::VolEnvS]->Get(),
 		parameters[(int)InternalParameters::VolEnvR]->Get()
 	);
+}
+
+void Voice::UpdateGlide(double dt)
+{
+	auto glideLength = parameters[(int)InternalParameters::GlideLength]->Get();
+	baseFrequency += (targetFrequency - baseFrequency) * glideLength * dt;
 }
 
 double Voice::GetFmMultiplier(double dt)
@@ -175,6 +187,7 @@ double Voice::ApplyFilter(double dt, double input)
 double Voice::Next(double dt)
 {
 	UpdateEnvelopes(dt);
+	UpdateGlide(dt);
 	auto out = GetOscillators(dt);
 	out *= volEnv.Get();
 	out = ApplyFilter(dt, out);

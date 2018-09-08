@@ -27,6 +27,8 @@ enum class PublicParameters
 	VolEnvS,
 	VolEnvR,
 	VolEnvV,
+	VoiceMode,
+	GlideLength,
 	Volume,
 	NumParameters
 };
@@ -70,6 +72,8 @@ enum class InternalParameters
 	VolEnvS,
 	VolEnvR,
 	VolEnvV,
+	VoiceMode,
+	GlideLength,
 	Volume,
 	NumParameters
 };

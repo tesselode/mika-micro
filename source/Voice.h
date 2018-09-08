@@ -21,10 +21,10 @@ class Voice
 public:
 	Voice(std::array<std::unique_ptr<Parameter>, (int)InternalParameters::NumParameters> &p) : parameters(p) {}
 	int GetNote() { return note; }
-	void SetNote(int n) {
-		note = n;
-		baseFrequency = pitchToFrequency(note);
-	}
+	void SetNote(int n);
+	void SetVelocity(double v) { velocity = v; }
+	void SetPitchBendFactor(double f) { pitchBendFactor = f; }
+	void ResetPitch() { baseFrequency = targetFrequency; }
 	void Reset();
 	void Start();
 	void Release() { volEnv.Release(); }
@@ -34,6 +34,7 @@ public:
 
 private:
 	void UpdateEnvelopes(double dt);
+	void UpdateGlide(double dt);
 	double GetFmMultiplier(double dt);
 	double GetOscillator1Frequency(double dt, bool skipFm = false);
 	double GetOscillator2Frequency(double dt);
@@ -45,7 +46,10 @@ private:
 
 	std::array<std::unique_ptr<Parameter>, (int)InternalParameters::NumParameters> &parameters;
 	int note = 0;
+	double velocity = 0.0;
+	double targetFrequency = 440.0;
 	double baseFrequency = 440.0;
+	double pitchBendFactor = 1.0;
 	Oscillator oscFm;
 	Oscillator osc1a;
 	Oscillator osc1b;

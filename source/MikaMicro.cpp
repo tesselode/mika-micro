@@ -32,6 +32,9 @@ void MikaMicro::InitParameters()
 	GetParam((int)PublicParameters::VolEnvS)->InitDouble("Volume envelope sustain", 1.0, 0.0, 1.0, .01);
 	GetParam((int)PublicParameters::VolEnvR)->InitDouble("Volume envelope release time", 0.25, 0.0, 1.0, .01);
 	GetParam((int)PublicParameters::VolEnvV)->InitDouble("Volume envelope velocity sensitivity", 0.0, 0.0, 1.0, .01);
+
+	GetParam((int)PublicParameters::VoiceMode)->InitEnum("Voice mode", (int)VoiceModes::Legato, (int)VoiceModes::NumVoiceModes);
+	GetParam((int)PublicParameters::GlideLength)->InitDouble("Glide length", 0.0, 0.0, 1.0, .01);
 	GetParam((int)PublicParameters::Volume)->InitDouble("Master volume", 0.5, 0.0, 1.0, .01);
 
 	auto envelopeCurve = [](double v) {
@@ -166,6 +169,12 @@ void MikaMicro::InitParameters()
 	parameters[(int)InternalParameters::VolEnvR]->SetTransformation(envelopeCurve);
 	parameters[(int)InternalParameters::VolEnvV] = std::make_unique<Parameter>(GetParam((int)PublicParameters::VolEnvV));
 
+	parameters[(int)InternalParameters::VoiceMode] = std::make_unique<Parameter>(GetParam((int)PublicParameters::VoiceMode));
+	parameters[(int)InternalParameters::VoiceMode]->DisableSmoothing();
+	parameters[(int)InternalParameters::GlideLength] = std::make_unique<Parameter>(GetParam((int)PublicParameters::GlideLength));
+	parameters[(int)InternalParameters::GlideLength]->SetTransformation([](double v) {
+		return 1000.0 - 998.0 * pow(v, .025);
+	});
 	parameters[(int)InternalParameters::Volume] = std::make_unique<Parameter>(GetParam((int)PublicParameters::Volume));
 }
 
@@ -240,8 +249,8 @@ void MikaMicro::InitGraphics()
 	//pGraphics->AttachControl(new IKnobMultiControl(this, 203 * 4, 66.5 * 4, (int)Parameters::LfoCutoff, &knobMiddle));
 
 	// master
-	//pGraphics->AttachControl(new ISwitchControl(this, 6 * 4, 90 * 4, (int)Parameters::VoiceMode, &fmModeSwitch));
-	//pGraphics->AttachControl(new IKnobMultiControl(this, 22 * 4, 90 * 4, (int)Parameters::GlideLength, &knobLeft));
+	pGraphics->AttachControl(new ISwitchControl(this, 6 * 4, 90 * 4, (int)PublicParameters::VoiceMode, &fmModeSwitch));
+	pGraphics->AttachControl(new IKnobMultiControl(this, 22 * 4, 90 * 4, (int)PublicParameters::GlideLength, &knobLeft));
 	pGraphics->AttachControl(new IKnobMultiControl(this, 38 * 4, 90 * 4, (int)PublicParameters::Volume, &knobLeft));
 
 	//pGraphics->AttachControl(new PresetMenu(this, IRECT(0, 0, 100, 25)));
@@ -272,32 +281,93 @@ MikaMicro::MikaMicro(IPlugInstanceInfo instanceInfo)
 
 MikaMicro::~MikaMicro() {}
 
-void MikaMicro::FlushMidi(int s)
+void MikaMicro::FlushMidi(int sample)
 {
 	while (!midiQueue.Empty())
 	{
 		auto message = midiQueue.Peek();
-		if (message->mOffset > s) break;
+		if (message->mOffset > sample) break;
 
+		auto voiceMode = (VoiceModes)(int)parameters[(int)InternalParameters::VoiceMode]->Get();
 		auto status = message->StatusMsg();
 		auto note = message->NoteNumber();
-		auto velocity = message->Velocity();
+		auto velocity = pow(message->Velocity() * .0078125, 1.25);
 
 		if (status == IMidiMsg::kNoteOn && velocity == 0) status = IMidiMsg::kNoteOff;
 
 		switch (status)
 		{
 		case IMidiMsg::kNoteOff:
-			for (auto &v : voices)
-				if (v.GetNote() == note) v.Release();
+			heldNotes.erase(
+				std::remove(
+					std::begin(heldNotes),
+					std::end(heldNotes),
+					note
+				),
+				std::end(heldNotes)
+			);
+
+			switch (voiceMode)
+			{
+			case VoiceModes::Poly:
+				for (auto &voice : voices)
+					if (voice.GetNote() == note) voice.Release();
+				break;
+			case VoiceModes::Mono:
+			case VoiceModes::Legato:
+				if (heldNotes.empty())
+					voices[0].Release();
+				else
+					voices[0].SetNote(heldNotes.back());
+				break;
+			}
 			break;
 		case IMidiMsg::kNoteOn:
-			// get the quietest voice, prioritizing voices that are released
-			auto voice = std::min_element(std::begin(voices), std::end(voices), [](Voice a, Voice b) {
-				return a.IsReleased() == b.IsReleased() ? a.GetVolume() < b.GetVolume() : a.IsReleased();
-			});
-			voice->SetNote(note);
-			voice->Start();
+			switch (voiceMode)
+			{
+			case VoiceModes::Poly:
+			{
+				// get the quietest voice, prioritizing voices that are released
+				auto voice = std::min_element(
+					std::begin(voices),
+					std::end(voices),
+					[](Voice a, Voice b)
+				{
+					return a.IsReleased() == b.IsReleased() ? a.GetVolume() < b.GetVolume() : a.IsReleased();
+				}
+				);
+				voice->SetNote(note);
+				voice->SetVelocity(velocity);
+				voice->ResetPitch();
+				voice->Start();
+				break;
+			}
+			case VoiceModes::Mono:
+				voices[0].SetNote(note);
+				voices[0].SetVelocity(velocity);
+				voices[0].Start();
+				break;
+			case VoiceModes::Legato:
+				voices[0].SetNote(note);
+				if (heldNotes.empty())
+				{
+					voices[0].SetVelocity(velocity);
+					voices[0].ResetPitch();
+					voices[0].Start();
+				}
+				break;
+			}
+
+			heldNotes.push_back(note);
+			break;
+		case IMidiMsg::kPitchWheel:
+		{
+			auto pitchBendFactor = pitchFactor(message->PitchWheel() * 2.0);
+			for (auto &voice : voices) voice.SetPitchBendFactor(pitchBendFactor);
+			break;
+		}
+		case IMidiMsg::kAllNotesOff:
+			for (auto &voice : voices) voice.Release();
 			break;
 		}
 
