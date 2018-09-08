@@ -32,7 +32,8 @@ public:
 	void ProcessMidiMsg(IMidiMsg* message) { midiQueue.Add(message); }
 
 private:
-	void InitParameters();
+	void InitPublicParameters();
+	void InitInternalParameters();
 	void InitGraphics();
 	void InitPresets();
 	void InitVoices();

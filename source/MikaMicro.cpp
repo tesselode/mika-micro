@@ -3,7 +3,7 @@
 #include "IControl.h"
 #include "resource.h"
 
-void MikaMicro::InitParameters()
+void MikaMicro::InitPublicParameters()
 {
 	GetParam((int)PublicParameters::Osc1Wave)->InitEnum("Oscillator 1 waveform", (int)Waveforms::Saw, (int)Waveforms::NumWaveforms);
 	GetParam((int)PublicParameters::Osc1Coarse)->InitInt("Oscillator 1 coarse", 0, -24, 24, "semitones");
@@ -51,7 +51,10 @@ void MikaMicro::InitParameters()
 	GetParam((int)PublicParameters::VoiceMode)->InitEnum("Voice mode", (int)VoiceModes::Legato, (int)VoiceModes::NumVoiceModes);
 	GetParam((int)PublicParameters::GlideLength)->InitDouble("Glide length", 0.0, 0.0, 1.0, .01);
 	GetParam((int)PublicParameters::Volume)->InitDouble("Master volume", 0.5, 0.0, 1.0, .01);
+}
 
+void MikaMicro::InitInternalParameters()
+{
 	auto envelopeCurve = [](double v) {
 		return 1000.0 - 999.9 * pow(.5 - .5 * cos(v * pi), .01);
 	};
@@ -100,7 +103,7 @@ void MikaMicro::InitParameters()
 	parameters[(int)InternalParameters::Osc1SplitFactorB]->SetTransformation([](double v) {
 		return pitchFactor(-v);
 	});
-	
+
 	parameters[(int)InternalParameters::Osc2SineMix] = std::make_unique<Parameter>(GetParam((int)PublicParameters::Osc2Wave));
 	parameters[(int)InternalParameters::Osc2SineMix]->SetTransformation([](double v) {
 		return v == (int)Waveforms::Sine ? 1.0 : 0.0;
@@ -306,7 +309,8 @@ MikaMicro::MikaMicro(IPlugInstanceInfo instanceInfo)
 {
 	TRACE;
 
-	InitParameters();
+	InitPublicParameters();
+	InitInternalParameters();
 	InitGraphics();
 	InitPresets();
 	InitVoices();
