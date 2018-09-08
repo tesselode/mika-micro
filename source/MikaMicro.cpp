@@ -199,6 +199,9 @@ void MikaMicro::InitInternalParameters()
 	parameters[(int)InternalParameters::LfoAmount] = std::make_unique<Parameter>(GetParam((int)PublicParameters::LfoAmount));
 	parameters[(int)InternalParameters::LfoFrequency] = std::make_unique<Parameter>(GetParam((int)PublicParameters::LfoFrequency));
 	parameters[(int)InternalParameters::LfoDelay] = std::make_unique<Parameter>(GetParam((int)PublicParameters::LfoDelay));
+	parameters[(int)InternalParameters::LfoDelay]->SetTransformation([](double v) {
+		return 1000.1 - v;
+	});
 
 	parameters[(int)InternalParameters::VolEnvFm] = std::make_unique<Parameter>(GetParam((int)PublicParameters::VolEnvFm));
 	parameters[(int)InternalParameters::VolEnvCutoff] = std::make_unique<Parameter>(GetParam((int)PublicParameters::VolEnvCutoff));
@@ -420,8 +423,9 @@ void MikaMicro::ProcessDoubleReplacing(double** inputs, double** outputs, int nF
 	{
 		FlushMidi(s);
 		for (auto &p : parameters) p->Update(dt);
+		auto lfoValue = lfo.Next(dt, parameters[(int)InternalParameters::LfoFrequency]->Get(), 1.0, 0.0, 0.0, 0.0, 0.0, 0.0);
 		auto out = 0.0;
-		for (auto &v : voices) out += v.Next(dt);
+		for (auto &v : voices) out += v.Next(dt, lfoValue);
 		out *= parameters[(int)InternalParameters::Volume]->Get();
 		outputs[0][s] = out;
 		outputs[1][s] = out;

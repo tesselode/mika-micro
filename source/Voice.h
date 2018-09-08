@@ -27,26 +27,22 @@ public:
 	void ResetPitch() { baseFrequency = targetFrequency; }
 	void Reset();
 	void Start();
-	void Release()
-	{
-		volEnv.Release();
-		modEnv.Release();
-	}
-	double Next(double dt);
+	void Release();
+	double Next(double dt, double lfoValue);
 	bool IsReleased() { return volEnv.IsReleased(); }
 	double GetVolume() { return volEnv.Get(); }
 
 private:
 	void UpdateEnvelopes(double dt);
 	void UpdateGlide(double dt);
-	double GetFmMultiplier(double dt);
-	double GetOscillator1Frequency(double dt, bool skipFm = false);
-	double GetOscillator2Frequency(double dt);
-	double GetOscillator1(double dt);
-	double GetOscillator2(double dt);
-	double GetOscillators(double dt);
+	double GetFmMultiplier(double dt, double lfoValue);
+	double GetOscillator1Frequency(double dt, double lfoValue, bool skipFm = false);
+	double GetOscillator2Frequency(double dt, double lfoValue);
+	double GetOscillator1(double dt, double lfoValue);
+	double GetOscillator2(double dt, double lfoValue);
+	double GetOscillators(double dt, double lfoValue);
 
-	double ApplyFilter(double dt, double input);
+	double ApplyFilter(double dt, double input, double lfoValue);
 
 	std::array<std::unique_ptr<Parameter>, (int)InternalParameters::NumParameters> &parameters;
 	int note = 0;
@@ -61,6 +57,7 @@ private:
 	Oscillator osc2b;
 	Envelope volEnv;
 	Envelope modEnv;
+	Envelope lfoEnv;
 	TwoPoleFilter twoPole;
 	StateVariableFilter svf;
 	FourPoleFilter fourPole;

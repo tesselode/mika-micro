@@ -5,6 +5,7 @@
 #include <cmath>
 #include "IPlug_include_in_plug_hdr.h"
 #include "IMidiQueue.h"
+#include "Oscillator.h"
 #include "Parameter.h"
 #include "Util.h"
 #include <vector>
@@ -44,6 +45,7 @@ private:
 	std::array<std::unique_ptr<Parameter>, (int)InternalParameters::NumParameters> parameters;
 	double dt = 0.0;
 	std::vector<Voice> voices;
+	Oscillator lfo;
 };
 
 #endif
