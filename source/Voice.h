@@ -27,7 +27,11 @@ public:
 	void ResetPitch() { baseFrequency = targetFrequency; }
 	void Reset();
 	void Start();
-	void Release() { volEnv.Release(); }
+	void Release()
+	{
+		volEnv.Release();
+		modEnv.Release();
+	}
 	double Next(double dt);
 	bool IsReleased() { return volEnv.IsReleased(); }
 	double GetVolume() { return volEnv.Get(); }
@@ -56,6 +60,7 @@ private:
 	Oscillator osc2a;
 	Oscillator osc2b;
 	Envelope volEnv;
+	Envelope modEnv;
 	TwoPoleFilter twoPole;
 	StateVariableFilter svf;
 	FourPoleFilter fourPole;

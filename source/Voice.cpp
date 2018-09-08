@@ -14,12 +14,14 @@ void Voice::Reset()
 	osc2a.ResetPhase();
 	osc2b.ResetPhase(parameters[(int)InternalParameters::Osc1SplitFactorA]->Get() < 1.0 ? .33 : 0.0);
 	volEnv.Reset();
+	modEnv.Reset();
 }
 
 void Voice::Start()
 {
 	if (GetVolume() == 0.0) Reset();
 	volEnv.Start();
+	modEnv.Start();
 }
 
 void Voice::UpdateEnvelopes(double dt)
@@ -30,6 +32,13 @@ void Voice::UpdateEnvelopes(double dt)
 		parameters[(int)InternalParameters::VolEnvD]->Get(),
 		parameters[(int)InternalParameters::VolEnvS]->Get(),
 		parameters[(int)InternalParameters::VolEnvR]->Get()
+	);
+	modEnv.Update(
+		dt,
+		parameters[(int)InternalParameters::ModEnvA]->Get(),
+		parameters[(int)InternalParameters::ModEnvD]->Get(),
+		parameters[(int)InternalParameters::ModEnvS]->Get(),
+		parameters[(int)InternalParameters::ModEnvR]->Get()
 	);
 }
 
@@ -44,6 +53,8 @@ double Voice::GetFmMultiplier(double dt)
 	auto fmCoarse = parameters[(int)InternalParameters::FmCoarse]->Get();
 	auto fmFine = parameters[(int)InternalParameters::FmFine]->Get();
 	auto fmAmount = fmCoarse + fmFine;
+	fmAmount += parameters[(int)InternalParameters::VolEnvFm]->Get() * volEnv.Get();
+	fmAmount += parameters[(int)InternalParameters::ModEnvFm]->Get() * modEnv.Get();
 	return pitchFactor(oscFm.Next(dt, GetOscillator1Frequency(dt, true), 1.0, 0.0, 0.0, 0.0, 0.0, 0.0) * fmAmount);
 }
 
@@ -175,6 +186,8 @@ double Voice::ApplyFilter(double dt, double input)
 	if (dryMix == 1.0) return input;
 
 	auto cutoff = parameters[(int)InternalParameters::FilterCutoff]->Get();
+	cutoff += parameters[(int)InternalParameters::VolEnvCutoff]->Get() * volEnv.Get();
+	cutoff += parameters[(int)InternalParameters::ModEnvCutoff]->Get() * modEnv.Get();
 	auto resonance = parameters[(int)InternalParameters::FilterResonance]->Get();
 	auto out = 0.0;
 	out += input * dryMix;

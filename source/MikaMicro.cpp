@@ -32,6 +32,21 @@ void MikaMicro::InitParameters()
 	GetParam((int)PublicParameters::VolEnvS)->InitDouble("Volume envelope sustain", 1.0, 0.0, 1.0, .01);
 	GetParam((int)PublicParameters::VolEnvR)->InitDouble("Volume envelope release time", 0.25, 0.0, 1.0, .01);
 	GetParam((int)PublicParameters::VolEnvV)->InitDouble("Volume envelope velocity sensitivity", 0.0, 0.0, 1.0, .01);
+	GetParam((int)PublicParameters::ModEnvA)->InitDouble("Mod envelope attack time", 0.0, 0.0, 1.0, .01);
+	GetParam((int)PublicParameters::ModEnvD)->InitDouble("Mod envelope decay time", 0.5, 0.0, 1.0, .01);
+	GetParam((int)PublicParameters::ModEnvS)->InitDouble("Mod envelope sustain", 1.0, 0.0, 1.0, .01);
+	GetParam((int)PublicParameters::ModEnvR)->InitDouble("Mod envelope release time", 0.25, 0.0, 1.0, .01);
+	GetParam((int)PublicParameters::ModEnvV)->InitDouble("Mod envelope velocity sensitivity", 0.0, 0.0, 1.0, .01);
+	GetParam((int)PublicParameters::LfoAmount)->InitDouble("Vibrato amount", 0.0, -0.1, 0.1, .01);
+	GetParam((int)PublicParameters::LfoFrequency)->InitDouble("Vibrato frequency", 4.0, 0.1, 10.0, .01, "", "", 2.0);
+	GetParam((int)PublicParameters::LfoDelay)->InitDouble("Vibrato delay", 0.1, 0.1, 1000.0, .01, "", "", .001);
+
+	GetParam((int)PublicParameters::VolEnvFm)->InitDouble("Volume envelope to FM amount", 0.0, -24.0, 24.0, .01, "semitones");
+	GetParam((int)PublicParameters::ModEnvFm)->InitDouble("Modulation envelope to FM amount", 0.0, -24.0, 24.0, .01, "semitones");
+	GetParam((int)PublicParameters::LfoFm)->InitDouble("Vibrato to FM amount", 0.0, -24.0, 24.0, .01, "semitones");
+	GetParam((int)PublicParameters::VolEnvCutoff)->InitDouble("Volume envelope to filter cutoff", 0.0, -8000.0, 8000.0, .01, "hz");
+	GetParam((int)PublicParameters::ModEnvCutoff)->InitDouble("Modulation envelope to filter cutoff", 0.0, -8000.0, 8000.0, .01, "hz");
+	GetParam((int)PublicParameters::LfoCutoff)->InitDouble("Vibrato to filter cutoff", 0.0, -8000.0, 8000.0, .01);
 
 	GetParam((int)PublicParameters::VoiceMode)->InitEnum("Voice mode", (int)VoiceModes::Legato, (int)VoiceModes::NumVoiceModes);
 	GetParam((int)PublicParameters::GlideLength)->InitDouble("Glide length", 0.0, 0.0, 1.0, .01);
@@ -168,6 +183,24 @@ void MikaMicro::InitParameters()
 	parameters[(int)InternalParameters::VolEnvR] = std::make_unique<Parameter>(GetParam((int)PublicParameters::VolEnvR));
 	parameters[(int)InternalParameters::VolEnvR]->SetTransformation(envelopeCurve);
 	parameters[(int)InternalParameters::VolEnvV] = std::make_unique<Parameter>(GetParam((int)PublicParameters::VolEnvV));
+	parameters[(int)InternalParameters::ModEnvA] = std::make_unique<Parameter>(GetParam((int)PublicParameters::ModEnvA));
+	parameters[(int)InternalParameters::ModEnvA]->SetTransformation(envelopeCurve);
+	parameters[(int)InternalParameters::ModEnvD] = std::make_unique<Parameter>(GetParam((int)PublicParameters::ModEnvD));
+	parameters[(int)InternalParameters::ModEnvD]->SetTransformation(envelopeCurve);
+	parameters[(int)InternalParameters::ModEnvS] = std::make_unique<Parameter>(GetParam((int)PublicParameters::ModEnvS));
+	parameters[(int)InternalParameters::ModEnvR] = std::make_unique<Parameter>(GetParam((int)PublicParameters::ModEnvR));
+	parameters[(int)InternalParameters::ModEnvR]->SetTransformation(envelopeCurve);
+	parameters[(int)InternalParameters::ModEnvV] = std::make_unique<Parameter>(GetParam((int)PublicParameters::ModEnvV));
+	parameters[(int)InternalParameters::LfoAmount] = std::make_unique<Parameter>(GetParam((int)PublicParameters::LfoAmount));
+	parameters[(int)InternalParameters::LfoFrequency] = std::make_unique<Parameter>(GetParam((int)PublicParameters::LfoFrequency));
+	parameters[(int)InternalParameters::LfoDelay] = std::make_unique<Parameter>(GetParam((int)PublicParameters::LfoDelay));
+
+	parameters[(int)InternalParameters::VolEnvFm] = std::make_unique<Parameter>(GetParam((int)PublicParameters::VolEnvFm));
+	parameters[(int)InternalParameters::VolEnvCutoff] = std::make_unique<Parameter>(GetParam((int)PublicParameters::VolEnvCutoff));
+	parameters[(int)InternalParameters::ModEnvFm] = std::make_unique<Parameter>(GetParam((int)PublicParameters::ModEnvFm));
+	parameters[(int)InternalParameters::ModEnvCutoff] = std::make_unique<Parameter>(GetParam((int)PublicParameters::ModEnvCutoff));
+	parameters[(int)InternalParameters::LfoFm] = std::make_unique<Parameter>(GetParam((int)PublicParameters::LfoFm));
+	parameters[(int)InternalParameters::LfoCutoff] = std::make_unique<Parameter>(GetParam((int)PublicParameters::LfoCutoff));
 
 	parameters[(int)InternalParameters::VoiceMode] = std::make_unique<Parameter>(GetParam((int)PublicParameters::VoiceMode));
 	parameters[(int)InternalParameters::VoiceMode]->DisableSmoothing();
@@ -226,27 +259,27 @@ void MikaMicro::InitGraphics()
 	pGraphics->AttachControl(new IFaderControl(this, 144.5 * 4, 23 * 4, 20 * 4, (int)PublicParameters::VolEnvR, &slider));
 	pGraphics->AttachControl(new IBitmapControl(this, 153.5 * 4, 22 * 4, &sliderBg));
 	pGraphics->AttachControl(new IFaderControl(this, 152.5 * 4, 23 * 4, 20 * 4, (int)PublicParameters::VolEnvV, &slider));
-	//pGraphics->AttachControl(new IBitmapControl(this, 121.5 * 4, 56.5 * 4, &sliderBg));
-	//pGraphics->AttachControl(new IFaderControl(this, 120.5 * 4, 57.5 * 4, 20 * 4, (int)Parameters::ModEnvA, &slider));
-	//pGraphics->AttachControl(new IBitmapControl(this, 129.5 * 4, 56.5 * 4, &sliderBg));
-	//pGraphics->AttachControl(new IFaderControl(this, 128.5 * 4, 57.5 * 4, 20 * 4, (int)Parameters::ModEnvD, &slider));
-	//pGraphics->AttachControl(new IBitmapControl(this, 137.5 * 4, 56.5 * 4, &sliderBg));
-	//pGraphics->AttachControl(new IFaderControl(this, 136.5 * 4, 57.5 * 4, 20 * 4, (int)Parameters::ModEnvS, &slider));
-	//pGraphics->AttachControl(new IBitmapControl(this, 145.5 * 4, 56.5 * 4, &sliderBg));
-	//pGraphics->AttachControl(new IFaderControl(this, 144.5 * 4, 57.5 * 4, 20 * 4, (int)Parameters::ModEnvR, &slider));
-	//pGraphics->AttachControl(new IBitmapControl(this, 153.5 * 4, 56.5 * 4, &sliderBg));
-	//pGraphics->AttachControl(new IFaderControl(this, 152.5 * 4, 57.5 * 4, 20 * 4, (int)Parameters::ModEnvV, &slider));
-	//pGraphics->AttachControl(new IKnobMultiControl(this, 171 * 4, 13.5 * 4, (int)Parameters::LfoAmount, &knobMiddle));
-	//pGraphics->AttachControl(new IKnobMultiControl(this, 187 * 4, 13.5 * 4, (int)Parameters::LfoFrequency, &knobLeft));
-	//pGraphics->AttachControl(new IKnobMultiControl(this, 203 * 4, 13.5 * 4, (int)Parameters::LfoDelay, &knobLeft));
+	pGraphics->AttachControl(new IBitmapControl(this, 121.5 * 4, 56.5 * 4, &sliderBg));
+	pGraphics->AttachControl(new IFaderControl(this, 120.5 * 4, 57.5 * 4, 20 * 4, (int)PublicParameters::ModEnvA, &slider));
+	pGraphics->AttachControl(new IBitmapControl(this, 129.5 * 4, 56.5 * 4, &sliderBg));
+	pGraphics->AttachControl(new IFaderControl(this, 128.5 * 4, 57.5 * 4, 20 * 4, (int)PublicParameters::ModEnvD, &slider));
+	pGraphics->AttachControl(new IBitmapControl(this, 137.5 * 4, 56.5 * 4, &sliderBg));
+	pGraphics->AttachControl(new IFaderControl(this, 136.5 * 4, 57.5 * 4, 20 * 4, (int)PublicParameters::ModEnvS, &slider));
+	pGraphics->AttachControl(new IBitmapControl(this, 145.5 * 4, 56.5 * 4, &sliderBg));
+	pGraphics->AttachControl(new IFaderControl(this, 144.5 * 4, 57.5 * 4, 20 * 4, (int)PublicParameters::ModEnvR, &slider));
+	pGraphics->AttachControl(new IBitmapControl(this, 153.5 * 4, 56.5 * 4, &sliderBg));
+	pGraphics->AttachControl(new IFaderControl(this, 152.5 * 4, 57.5 * 4, 20 * 4, (int)PublicParameters::ModEnvV, &slider));
+	pGraphics->AttachControl(new IKnobMultiControl(this, 171 * 4, 13.5 * 4, (int)PublicParameters::LfoAmount, &knobMiddle));
+	pGraphics->AttachControl(new IKnobMultiControl(this, 187 * 4, 13.5 * 4, (int)PublicParameters::LfoFrequency, &knobLeft));
+	pGraphics->AttachControl(new IKnobMultiControl(this, 203 * 4, 13.5 * 4, (int)PublicParameters::LfoDelay, &knobLeft));
 
 	// targets
-	//pGraphics->AttachControl(new IKnobMultiControl(this, 171 * 4, 50.5 * 4, (int)Parameters::VolEnvFm, &knobMiddle));
-	//pGraphics->AttachControl(new IKnobMultiControl(this, 187 * 4, 50.5 * 4, (int)Parameters::ModEnvFm, &knobMiddle));
-	//pGraphics->AttachControl(new IKnobMultiControl(this, 203 * 4, 50.5 * 4, (int)Parameters::LfoFm, &knobMiddle));
-	//pGraphics->AttachControl(new IKnobMultiControl(this, 171 * 4, 66.5 * 4, (int)Parameters::VolEnvCutoff, &knobMiddle));
-	//pGraphics->AttachControl(new IKnobMultiControl(this, 187 * 4, 66.5 * 4, (int)Parameters::ModEnvCutoff, &knobMiddle));
-	//pGraphics->AttachControl(new IKnobMultiControl(this, 203 * 4, 66.5 * 4, (int)Parameters::LfoCutoff, &knobMiddle));
+	pGraphics->AttachControl(new IKnobMultiControl(this, 171 * 4, 50.5 * 4, (int)PublicParameters::VolEnvFm, &knobMiddle));
+	pGraphics->AttachControl(new IKnobMultiControl(this, 187 * 4, 50.5 * 4, (int)PublicParameters::ModEnvFm, &knobMiddle));
+	pGraphics->AttachControl(new IKnobMultiControl(this, 203 * 4, 50.5 * 4, (int)PublicParameters::LfoFm, &knobMiddle));
+	pGraphics->AttachControl(new IKnobMultiControl(this, 171 * 4, 66.5 * 4, (int)PublicParameters::VolEnvCutoff, &knobMiddle));
+	pGraphics->AttachControl(new IKnobMultiControl(this, 187 * 4, 66.5 * 4, (int)PublicParameters::ModEnvCutoff, &knobMiddle));
+	pGraphics->AttachControl(new IKnobMultiControl(this, 203 * 4, 66.5 * 4, (int)PublicParameters::LfoCutoff, &knobMiddle));
 
 	// master
 	pGraphics->AttachControl(new ISwitchControl(this, 6 * 4, 90 * 4, (int)PublicParameters::VoiceMode, &fmModeSwitch));
