@@ -1,0 +1,16 @@
+- [ ] Drift
+- [ ] Adjust LFO->Cutoff curve
+- [ ] Performance optimizations
+	- [ ] Oscillators
+	- [ ] Skip processing silent voices
+- [ ] Gray out useless controls
+- [ ] Make sure parameter defaults are reasonable
+- [ ] Final check for forgotten features
+- [ ] v3 new stuff
+	- [ ] Switch to IFramePopUpControl
+	- [ ] Better noise
+	- [ ] Modulation
+		- [ ] Mod wheel (?)
+		- [ ] Velocity->glide speed (?)
+		- [ ] Key->LFO speed (?)
+- [ ] Rewrite git history (if you're feeling daring)
