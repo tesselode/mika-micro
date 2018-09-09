@@ -35,11 +35,9 @@ public:
 private:
 	void UpdateEnvelopes(double dt);
 	void UpdateGlide(double dt);
-	double GetFmMultiplier(double dt, double lfoValue, double driftValue);
-	double GetOscillator1Frequency(double dt, double lfoValue, double driftValue, bool skipFm = false);
-	double GetOscillator2Frequency(double dt, double lfoValue, double driftValue);
-	double GetOscillator1(double dt, double lfoValue, double driftValue);
-	double GetOscillator2(double dt, double lfoValue, double driftValue);
+	void GetOscillatorFrequencies(double dt, double lfoValue, double driftValue, double & osc1Frequency, double & osc2Frequency);
+	double GetOscillator1(double dt, double frequency);
+	double GetOscillator2(double dt, double frequency);
 	double GetOscillators(double dt, double lfoValue, double driftValue);
 
 	double ApplyFilter(double dt, double input, double lfoValue, double driftValue);

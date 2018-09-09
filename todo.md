@@ -2,7 +2,7 @@
 - [X] Adjust LFO->Cutoff curve
 - [X] Envelope velocity sensitivity
 - [ ] Performance optimizations
-	- [ ] Oscillators
+	- [X] Oscillators
 	- [ ] Skip processing silent voices
 - [X] Gray out useless controls
 - [ ] Make sure parameter defaults are reasonable
