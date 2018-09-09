@@ -6,6 +6,8 @@
 void MikaMicro::InitParameters()
 {
 	GetParam((int)Parameters::Osc1Wave)->InitEnum("Oscillator 1 waveform", (int)Waveforms::Saw, (int)Waveforms::NumWaveforms);
+	GetParam((int)Parameters::Osc1Coarse)->InitInt("Oscillator 1 coarse", 0, -24, 24, "semitones");
+	GetParam((int)Parameters::Osc1Fine)->InitDouble("Oscillator 1 fine", 0.0, -1.0, 1.0, .01, "semitones");
 
 	GetParam((int)Parameters::VolEnvA)->InitDouble("Volume envelope attack time", 0.5, 0.0, 1.0, .01);
 	GetParam((int)Parameters::VolEnvD)->InitDouble("Volume envelope decay time", 0.5, 0.0, 1.0, .01);
@@ -29,8 +31,8 @@ void MikaMicro::InitGraphics()
 
 	// oscillators
 	pGraphics->AttachControl(new ISwitchControl(this, 22 * 4, 10 * 4, (int)Parameters::Osc1Wave, &waveformSwitch));
-	//pGraphics->AttachControl(new IKnobMultiControl(this, 38 * 4, 10 * 4, (int)Parameters::Osc1Coarse, &knobMiddle));
-	//pGraphics->AttachControl(new IKnobMultiControl(this, 54 * 4, 10 * 4, (int)Parameters::Osc1Fine, &knobMiddle));
+	pGraphics->AttachControl(new IKnobMultiControl(this, 38 * 4, 10 * 4, (int)Parameters::Osc1Coarse, &knobMiddle));
+	pGraphics->AttachControl(new IKnobMultiControl(this, 54 * 4, 10 * 4, (int)Parameters::Osc1Fine, &knobMiddle));
 	//pGraphics->AttachControl(new IKnobMultiControl(this, 70 * 4, 10 * 4, (int)Parameters::Osc1Split, &knobMiddle));
 	//pGraphics->AttachControl(new ISwitchControl(this, 22 * 4, 26 * 4, (int)Parameters::Osc2Wave, &waveformSwitch));
 	//pGraphics->AttachControl(new IKnobMultiControl(this, 38 * 4, 26 * 4, (int)Parameters::Osc2Coarse, &knobMiddle));
@@ -197,7 +199,7 @@ void MikaMicro::UpdateEnvelopes()
 
 double MikaMicro::GetOscillator(int voice)
 {
-	phaseIncrement[voice] = frequency[voice] * dt;
+	phaseIncrement[voice] = frequency[voice] * osc1Pitch * dt;
 	phase[voice] += phaseIncrement[voice];
 	while (phase[voice] > 1.0) phase[voice] -= 1.0;
 
@@ -260,6 +262,14 @@ void MikaMicro::OnParamChange(int paramIdx)
 
 	switch (parameter)
 	{
+	case Parameters::Osc1Coarse:
+	case Parameters::Osc1Fine:
+	{
+		auto coarse = GetParam((int)Parameters::Osc1Coarse)->Value();
+		auto fine = GetParam((int)Parameters::Osc1Fine)->Value();
+		osc1Pitch = pitchFactor(coarse + fine);
+		break;
+	}
 	case Parameters::VolEnvA:
 		volEnvA = 1000 - 999.9 * (.5 - .5 * cos(pow(value, .1) * pi));
 		break;

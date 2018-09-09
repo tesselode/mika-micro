@@ -12,6 +12,8 @@ const int numVoices = 8;
 enum class Parameters
 {
 	Osc1Wave,
+	Osc1Coarse,
+	Osc1Fine,
 	VolEnvA,
 	VolEnvD,
 	VolEnvS,
@@ -74,6 +76,7 @@ private:
 	std::array<double, numVoices> triCurrent;
 	std::array<double, numVoices> triLast;
 	std::array<double, numVoices> noiseValue;
+	double osc1Pitch;
 };
 
 #endif
