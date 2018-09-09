@@ -58,7 +58,7 @@ void Voice::UpdateGlide(double dt)
 	baseFrequency += (targetFrequency - baseFrequency) * glideLength * dt;
 }
 
-double Voice::GetFmMultiplier(double dt, double lfoValue)
+double Voice::GetFmMultiplier(double dt, double lfoValue, double driftValue)
 {
 	auto fmCoarse = parameters[(int)InternalParameters::FmCoarse]->Get();
 	auto fmFine = parameters[(int)InternalParameters::FmFine]->Get();
@@ -66,14 +66,14 @@ double Voice::GetFmMultiplier(double dt, double lfoValue)
 	fmAmount += parameters[(int)InternalParameters::VolEnvFm]->Get() * volEnv.Get();
 	fmAmount += parameters[(int)InternalParameters::ModEnvFm]->Get() * modEnv.Get();
 	fmAmount += parameters[(int)InternalParameters::LfoFm]->Get() * lfoValue;
-	return pitchFactor(oscFm.Next(dt, GetOscillator1Frequency(dt, lfoValue, true), 1.0, 0.0, 0.0, 0.0, 0.0, 0.0) * fmAmount);
+	return pitchFactor(oscFm.Next(dt, GetOscillator1Frequency(dt, lfoValue, driftValue, true), 1.0, 0.0, 0.0, 0.0, 0.0, 0.0) * fmAmount);
 }
 
-double Voice::GetOscillator1Frequency(double dt, double lfoValue, bool skipFm)
+double Voice::GetOscillator1Frequency(double dt, double lfoValue, double driftValue, bool skipFm)
 {
 	auto coarse = parameters[(int)InternalParameters::Osc1Coarse]->Get();
 	auto fine = parameters[(int)InternalParameters::Osc1Fine]->Get();
-	auto frequency = baseFrequency * pitchBendFactor * coarse * fine;
+	auto frequency = baseFrequency * pitchBendFactor * coarse * fine * (1.0 + driftValue);
 	auto lfoAmount = parameters[(int)InternalParameters::LfoAmount]->Get();
 	if (lfoAmount < 0.0) frequency *= 1.0 + abs(lfoAmount) * lfoValue;
 	switch (skipFm)
@@ -84,7 +84,7 @@ double Voice::GetOscillator1Frequency(double dt, double lfoValue, bool skipFm)
 		switch (fmMode)
 		{
 		case FmModes::Osc1:
-			frequency *= GetFmMultiplier(dt, lfoValue);
+			frequency *= GetFmMultiplier(dt, lfoValue, driftValue);
 			break;
 		}
 		break;
@@ -93,26 +93,26 @@ double Voice::GetOscillator1Frequency(double dt, double lfoValue, bool skipFm)
 	return frequency;
 }
 
-double Voice::GetOscillator2Frequency(double dt, double lfoValue)
+double Voice::GetOscillator2Frequency(double dt, double lfoValue, double driftValue)
 {
 	auto coarse = parameters[(int)InternalParameters::Osc2Coarse]->Get();
 	auto fine = parameters[(int)InternalParameters::Osc2Fine]->Get();
-	auto frequency = baseFrequency * pitchBendFactor * coarse * fine;
+	auto frequency = baseFrequency * pitchBendFactor * coarse * fine * (1.0 + driftValue);
 	auto lfoAmount = parameters[(int)InternalParameters::LfoAmount]->Get();
 	frequency *= 1.0 + abs(lfoAmount) * lfoValue;
 	auto fmMode = (FmModes)(int)parameters[(int)InternalParameters::FmMode]->Get();
 	switch (fmMode)
 	{
 	case FmModes::Osc2:
-		frequency *= GetFmMultiplier(dt, lfoValue);
+		frequency *= GetFmMultiplier(dt, lfoValue, driftValue);
 		break;
 	}
 	return frequency;
 }
 
-double Voice::GetOscillator1(double dt, double lfoValue)
+double Voice::GetOscillator1(double dt, double lfoValue, double driftValue)
 {
-	auto frequency = GetOscillator1Frequency(dt, lfoValue);
+	auto frequency = GetOscillator1Frequency(dt, lfoValue, driftValue);
 	auto splitA = parameters[(int)InternalParameters::Osc1SplitFactorA]->Get();
 	auto splitB = parameters[(int)InternalParameters::Osc1SplitFactorB]->Get();
 
@@ -145,9 +145,9 @@ double Voice::GetOscillator1(double dt, double lfoValue)
 	return out;
 }
 
-double Voice::GetOscillator2(double dt, double lfoValue)
+double Voice::GetOscillator2(double dt, double lfoValue, double driftValue)
 {
-	auto frequency = GetOscillator2Frequency(dt, lfoValue);
+	auto frequency = GetOscillator2Frequency(dt, lfoValue, driftValue);
 	auto splitA = parameters[(int)InternalParameters::Osc2SplitFactorA]->Get();
 	auto splitB = parameters[(int)InternalParameters::Osc2SplitFactorB]->Get();
 
@@ -180,18 +180,18 @@ double Voice::GetOscillator2(double dt, double lfoValue)
 	return out;
 }
 
-double Voice::GetOscillators(double dt, double lfoValue)
+double Voice::GetOscillators(double dt, double lfoValue, double driftValue)
 {
 	auto oscMix = parameters[(int)InternalParameters::OscMix]->Get();
 	auto out = 0.0;
 	if (oscMix < 1.0)
-		out += GetOscillator1(dt, lfoValue) * sqrt(1.0 - oscMix);
+		out += GetOscillator1(dt, lfoValue, driftValue) * sqrt(1.0 - oscMix);
 	if (oscMix > 0.0)
-		out += GetOscillator2(dt, lfoValue) * sqrt(oscMix);
+		out += GetOscillator2(dt, lfoValue, driftValue) * sqrt(oscMix);
 	return out;
 }
 
-double Voice::ApplyFilter(double dt, double input, double lfoValue)
+double Voice::ApplyFilter(double dt, double input, double lfoValue, double driftValue)
 {
 	auto dryMix = parameters[(int)InternalParameters::FilterDryMix]->Get();
 	auto twoPoleMix = parameters[(int)InternalParameters::Filter2pMix]->Get();
@@ -201,6 +201,7 @@ double Voice::ApplyFilter(double dt, double input, double lfoValue)
 	if (dryMix == 1.0) return input;
 
 	auto cutoff = parameters[(int)InternalParameters::FilterCutoff]->Get();
+	cutoff *= (1.0 + driftValue);
 	cutoff += parameters[(int)InternalParameters::VolEnvCutoff]->Get() * volEnv.Get();
 	cutoff += parameters[(int)InternalParameters::ModEnvCutoff]->Get() * modEnv.Get();
 	cutoff += parameters[(int)InternalParameters::LfoCutoff]->Get() * lfoValue;
@@ -214,13 +215,13 @@ double Voice::ApplyFilter(double dt, double input, double lfoValue)
 	return out;
 }
 
-double Voice::Next(double dt, double lfoValue)
+double Voice::Next(double dt, double lfoValue, double driftValue)
 {
 	UpdateEnvelopes(dt);
 	UpdateGlide(dt);
 	lfoValue *= lfoEnv.Get();
-	auto out = GetOscillators(dt, lfoValue);
+	auto out = GetOscillators(dt, lfoValue, driftValue);
 	out *= volEnv.Get();
-	out = ApplyFilter(dt, out, lfoValue);
+	out = ApplyFilter(dt, out, lfoValue, driftValue);
 	return out;
 }

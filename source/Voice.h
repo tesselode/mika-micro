@@ -28,21 +28,21 @@ public:
 	void Reset();
 	void Start();
 	void Release();
-	double Next(double dt, double lfoValue);
+	double Next(double dt, double lfoValue, double driftValue);
 	bool IsReleased() { return volEnv.IsReleased(); }
 	double GetVolume() { return volEnv.Get(); }
 
 private:
 	void UpdateEnvelopes(double dt);
 	void UpdateGlide(double dt);
-	double GetFmMultiplier(double dt, double lfoValue);
-	double GetOscillator1Frequency(double dt, double lfoValue, bool skipFm = false);
-	double GetOscillator2Frequency(double dt, double lfoValue);
-	double GetOscillator1(double dt, double lfoValue);
-	double GetOscillator2(double dt, double lfoValue);
-	double GetOscillators(double dt, double lfoValue);
+	double GetFmMultiplier(double dt, double lfoValue, double driftValue);
+	double GetOscillator1Frequency(double dt, double lfoValue, double driftValue, bool skipFm = false);
+	double GetOscillator2Frequency(double dt, double lfoValue, double driftValue);
+	double GetOscillator1(double dt, double lfoValue, double driftValue);
+	double GetOscillator2(double dt, double lfoValue, double driftValue);
+	double GetOscillators(double dt, double lfoValue, double driftValue);
 
-	double ApplyFilter(double dt, double input, double lfoValue);
+	double ApplyFilter(double dt, double input, double lfoValue, double driftValue);
 
 	std::array<std::unique_ptr<Parameter>, (int)InternalParameters::NumParameters> &parameters;
 	int note = 0;

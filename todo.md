@@ -1,10 +1,11 @@
-- [ ] Drift
+- [X] Drift
 - [ ] Adjust LFO->Cutoff curve
 - [ ] Performance optimizations
 	- [ ] Oscillators
 	- [ ] Skip processing silent voices
 - [ ] Gray out useless controls
 - [ ] Make sure parameter defaults are reasonable
+- [ ] Make sure parameters don't have to slide up to their initial values
 - [ ] Final check for forgotten features
 - [ ] v3 new stuff
 	- [ ] Switch to IFramePopUpControl

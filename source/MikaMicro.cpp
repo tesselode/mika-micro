@@ -417,6 +417,14 @@ void MikaMicro::FlushMidi(int sample)
 	}
 }
 
+double MikaMicro::NextDriftValue()
+{
+	driftVelocity += random() * 10000.0 * dt;
+	driftVelocity -= driftVelocity * 2.0 * dt;
+	driftPhase += driftVelocity * dt;
+	return .001 * sin(driftPhase);
+}
+
 void MikaMicro::ProcessDoubleReplacing(double** inputs, double** outputs, int nFrames)
 {
 	for (int s = 0; s < nFrames; s++)
@@ -424,8 +432,9 @@ void MikaMicro::ProcessDoubleReplacing(double** inputs, double** outputs, int nF
 		FlushMidi(s);
 		for (auto &p : parameters) p->Update(dt);
 		auto lfoValue = lfo.Next(dt, parameters[(int)InternalParameters::LfoFrequency]->Get(), 1.0, 0.0, 0.0, 0.0, 0.0, 0.0);
+		auto driftValue = NextDriftValue();
 		auto out = 0.0;
-		for (auto &v : voices) out += v.Next(dt, lfoValue);
+		for (auto &v : voices) out += v.Next(dt, lfoValue, driftValue);
 		out *= parameters[(int)InternalParameters::Volume]->Get();
 		outputs[0][s] = out;
 		outputs[1][s] = out;

@@ -39,6 +39,7 @@ private:
 	void InitPresets();
 	void InitVoices();
 	void FlushMidi(int s);
+	double NextDriftValue();
 
 	IMidiQueue midiQueue;
 	std::vector<int> heldNotes;
@@ -46,6 +47,8 @@ private:
 	double dt = 0.0;
 	std::vector<Voice> voices;
 	Oscillator lfo;
+	double driftVelocity = 0.0;
+	double driftPhase = 0.0;
 };
 
 #endif
