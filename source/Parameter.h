@@ -114,14 +114,15 @@ public:
 	Parameter(IParam* p) : parameter(p) {}
 	void SetTransformation(std::function<double(double)> f) { transformation = f; }
 	void DisableSmoothing() { smooth = false; }
+	void OnParameterChanged();
 	void Update(double dt);
 	double Get() { return value; }
+	IParam* GetParameter() { return parameter; }
 
 private:
 	IParam* parameter;
 	bool firstSample = true;
 	bool upToDate = false;
-	double previousRawValue = 0.0;
 	double target = 0.0;
 	double value = 0.0;
 	bool smooth = true;

@@ -498,5 +498,10 @@ void MikaMicro::GrayOutControls()
 void MikaMicro::OnParamChange(int paramIdx)
 {
 	IMutexLock lock(this);
+	for (auto &p : parameters)
+	{
+		if (p->GetParameter() == GetParam(paramIdx))
+			p->OnParameterChanged();
+	}
 	GrayOutControls();
 }

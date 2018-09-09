@@ -1,26 +1,29 @@
 #include "Parameter.h"
 
-void Parameter::Update(double dt)
+void Parameter::OnParameterChanged()
 {
-	auto rawValue = parameter->Value();
-	if (rawValue != previousRawValue) upToDate = false;
-	if (!upToDate)
+	target = transformation(parameter->Value());
+	if (smooth && !firstSample)
+		upToDate = false;
+	else
 	{
-		target = transformation(parameter->Value());
+		value = target;
 		upToDate = true;
 	}
-	previousRawValue = rawValue;
+}
 
-	if (value != target)
+void Parameter::Update(double dt)
+{
+	switch (upToDate)
 	{
-		if (smooth && !firstSample)
+	case false:
+		value += (target - value) * 100.0 * dt;
+		if (abs(target - value) < parameterCloseEnoughThreshold)
 		{
-			value += (target - value) * 100.0 * dt;
-			if (abs(target - value) < parameterCloseEnoughThreshold)
-				value = target;
-		}
-		else
 			value = target;
+			upToDate = true;
+		}
+		break;
 	}
 
 	firstSample = false;
