@@ -7,7 +7,7 @@
 - [X] Gray out useless controls
 - [ ] Make sure parameter defaults are reasonable
 	- [X] Rescale master volume
-- [ ] Make sure parameters don't have to slide up to their initial values
+- [X] Make sure parameters don't have to slide up to their initial values
 - [ ] Final check for forgotten features
 - [ ] v3 new stuff
 	- [ ] Switch to IFramePopUpControl

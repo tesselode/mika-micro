@@ -119,6 +119,7 @@ public:
 
 private:
 	IParam* parameter;
+	bool firstSample = true;
 	bool upToDate = false;
 	double previousRawValue = 0.0;
 	double target = 0.0;

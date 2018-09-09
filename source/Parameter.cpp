@@ -13,7 +13,7 @@ void Parameter::Update(double dt)
 
 	if (value != target)
 	{
-		if (smooth)
+		if (smooth && !firstSample)
 		{
 			value += (target - value) * 100.0 * dt;
 			if (abs(target - value) < parameterCloseEnoughThreshold)
@@ -22,4 +22,6 @@ void Parameter::Update(double dt)
 		else
 			value = target;
 	}
+
+	firstSample = false;
 }
