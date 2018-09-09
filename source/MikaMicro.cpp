@@ -209,6 +209,9 @@ void MikaMicro::InitInternalParameters()
 	parameters[(int)InternalParameters::ModEnvCutoff] = std::make_unique<Parameter>(GetParam((int)PublicParameters::ModEnvCutoff));
 	parameters[(int)InternalParameters::LfoFm] = std::make_unique<Parameter>(GetParam((int)PublicParameters::LfoFm));
 	parameters[(int)InternalParameters::LfoCutoff] = std::make_unique<Parameter>(GetParam((int)PublicParameters::LfoCutoff));
+	parameters[(int)InternalParameters::LfoCutoff]->SetTransformation([](double v) {
+		return copysign((v * .000125) * (v * .000125) * 8000.0, v);
+	});
 
 	parameters[(int)InternalParameters::VoiceMode] = std::make_unique<Parameter>(GetParam((int)PublicParameters::VoiceMode));
 	parameters[(int)InternalParameters::VoiceMode]->DisableSmoothing();

@@ -1,5 +1,6 @@
 - [X] Drift
-- [ ] Adjust LFO->Cutoff curve
+- [X] Adjust LFO->Cutoff curve
+- [ ] Envelope velocity sensitivity
 - [ ] Performance optimizations
 	- [ ] Oscillators
 	- [ ] Skip processing silent voices
