@@ -14,6 +14,14 @@ enum class Parameters
 	NumParameters
 };
 
+enum class EnvelopeStages
+{
+	Attack,
+	Decay,
+	Release,
+	Idle,
+};
+
 class MikaMicro : public IPlug
 {
 public:
@@ -26,11 +34,14 @@ public:
 	void ProcessMidiMsg(IMidiMsg *message) { midiQueue.Add(message); }
 
 private:
+	bool IsReleased(double voice) { return volEnvStage[voice] == EnvelopeStages::Release || volEnvStage[voice] == EnvelopeStages::Idle; }
 	void FlushMidi(int s);
+	void UpdateEnvelopes();
 
 	IMidiQueue midiQueue;
 	double dt = 0.0;
-	std::array<bool, numVoices> isPlaying;
+	std::array<EnvelopeStages, numVoices> volEnvStage;
+	std::array<double, numVoices> volEnvValue;
 	std::array<int, numVoices> note;
 	std::array<double, numVoices> frequency;
 	std::array<double, numVoices> phase;

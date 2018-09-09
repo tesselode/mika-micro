@@ -14,6 +14,12 @@ MikaMicro::MikaMicro(IPlugInstanceInfo instanceInfo)
 	AttachGraphics(pGraphics);
 
 	MakeDefaultPreset((char *) "-", 1);
+
+	for (int voice = 0; voice < numVoices; voice++)
+	{
+		volEnvStage[voice] = EnvelopeStages::Idle;
+		volEnvValue[voice] = 0.0;
+	}
 }
 
 MikaMicro::~MikaMicro() {}
@@ -31,23 +37,23 @@ void MikaMicro::FlushMidi(int s)
 		switch (status)
 		{
 		case IMidiMsg::kNoteOff:
-			for (int i = 0; i < numVoices; i++)
+			for (int voice = 0; voice < numVoices; voice++)
 			{
-				if (note[i] == message->NoteNumber())
+				if (!IsReleased(voice) && note[voice] == message->NoteNumber())
 				{
-					isPlaying[i] = false;
+					volEnvStage[voice] = EnvelopeStages::Release;
 				}
 			}
 			break;
 		case IMidiMsg::kNoteOn:
-			for (int i = 0; i < numVoices; i++)
+			for (int voice = 0; voice < numVoices; voice++)
 			{
-				if (!isPlaying[i])
+				if (IsReleased(voice))
 				{
-					isPlaying[i] = true;
-					note[i] = message->NoteNumber();
-					frequency[i] = pitchToFrequency(note[i]);
-					phase[i] = 0.0;
+					volEnvStage[voice] = EnvelopeStages::Attack;
+					note[voice] = message->NoteNumber();
+					frequency[voice] = pitchToFrequency(note[voice]);
+					phase[voice] = 0.0;
 					break;
 				}
 			}
@@ -58,19 +64,48 @@ void MikaMicro::FlushMidi(int s)
 	}
 }
 
+void MikaMicro::UpdateEnvelopes()
+{
+	for (int voice = 0; voice < numVoices; voice++)
+	{
+		switch (volEnvStage[voice])
+		{
+		case EnvelopeStages::Attack:
+			volEnvValue[voice] += (1.1 - volEnvValue[voice]) * 10.0 * dt;
+			if (volEnvValue[voice] >= 1.0)
+			{
+				volEnvValue[voice] = 1.0;
+				volEnvStage[voice] = EnvelopeStages::Decay;
+			}
+			break;
+		case EnvelopeStages::Decay:
+			volEnvValue[voice] += (.5 - volEnvValue[voice]) * 10.0 * dt;
+			break;
+		case EnvelopeStages::Release:
+			volEnvValue[voice] += (-.1 - volEnvValue[voice]) * 10.0 * dt;
+			if (volEnvValue[voice] <= 0.0)
+			{
+				volEnvValue[voice] = 0.0;
+				volEnvStage[voice] = EnvelopeStages::Idle;
+			}
+		}
+	}
+}
+
 void MikaMicro::ProcessDoubleReplacing(double** inputs, double** outputs, int nFrames)
 {
 	for (int s = 0; s < nFrames; s++)
 	{
 		FlushMidi(s);
+		UpdateEnvelopes();
 		auto out = 0.0;
-		for (int i = 0; i < numVoices; i++)
+		for (int voice = 0; voice < numVoices; voice++)
 		{
-			if (isPlaying[i])
+			if (volEnvStage[voice] != EnvelopeStages::Idle)
 			{
-				phase[i] += frequency[i] * dt;
-				while (phase[i] > 1.0) phase[i] -= 1.0;
-				out += .25 * sin(phase[i] * twoPi);
+				phase[voice] += frequency[voice] * dt;
+				while (phase[voice] > 1.0) phase[voice] -= 1.0;
+				out += .25 * sin(phase[voice] * twoPi) * volEnvValue[voice];
 			}
 		}
 		outputs[0][s] = out;
