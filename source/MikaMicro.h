@@ -11,6 +11,10 @@ const int numVoices = 8;
 
 enum class Parameters
 {
+	VolEnvA,
+	VolEnvD,
+	VolEnvS,
+	VolEnvR,
 	NumParameters
 };
 
@@ -34,6 +38,10 @@ public:
 	void ProcessMidiMsg(IMidiMsg *message) { midiQueue.Add(message); }
 
 private:
+	void InitParameters();
+	void InitGraphics();
+	void InitPresets();
+	void InitVoices();
 	bool IsReleased(double voice) { return volEnvStage[voice] == EnvelopeStages::Release || volEnvStage[voice] == EnvelopeStages::Idle; }
 	void FlushMidi(int s);
 	void UpdateEnvelopes();
@@ -42,6 +50,10 @@ private:
 	double dt = 0.0;
 	std::array<EnvelopeStages, numVoices> volEnvStage;
 	std::array<double, numVoices> volEnvValue;
+	double volEnvA = 0.0;
+	double volEnvD = 0.0;
+	double volEnvS = 0.0;
+	double volEnvR = 0.0;
 	std::array<int, numVoices> note;
 	std::array<double, numVoices> frequency;
 	std::array<double, numVoices> phase;
