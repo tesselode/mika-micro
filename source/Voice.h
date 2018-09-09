@@ -35,12 +35,14 @@ public:
 private:
 	void UpdateEnvelopes(double dt);
 	void UpdateGlide(double dt);
-	void GetOscillatorFrequencies(double dt, double lfoValue, double driftValue, double & osc1Frequency, double & osc2Frequency);
+	double GetFmAmount(double volEnvValue, double modEnvValue, double lfoValue);
+	void GetOscillatorFrequencies(double dt, double lfoValue, double driftValue, double volEnvValue, double modEnvValue,
+		double & osc1Frequency, double & osc2Frequency);
 	double GetOscillator1(double dt, double frequency);
 	double GetOscillator2(double dt, double frequency);
-	double GetOscillators(double dt, double lfoValue, double driftValue);
-
-	double ApplyFilter(double dt, double input, double lfoValue, double driftValue);
+	double GetOscillators(double dt, double volEnvValue, double modEnvValue, double lfoValue, double driftValue);
+	double GetFilterCutoff(double volEnvValue, double modEnvValue, double lfoValue, double driftValue);
+	double ApplyFilter(double dt, double input, double volEnvValue, double modEnvValue, double lfoValue, double driftValue);
 
 	std::array<std::unique_ptr<Parameter>, (int)InternalParameters::NumParameters> &parameters;
 	int note = 0;
