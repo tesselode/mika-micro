@@ -13,6 +13,9 @@ void Voice::Reset()
 	osc1b.ResetPhase(parameters[(int)InternalParameters::Osc1SplitFactorA]->Get() < 1.0 ? .33 : 0.0);
 	osc2a.ResetPhase();
 	osc2b.ResetPhase(parameters[(int)InternalParameters::Osc1SplitFactorA]->Get() < 1.0 ? .33 : 0.0);
+	twoPole.Reset();
+	svf.Reset();
+	fourPole.Reset();
 	volEnv.Reset();
 	modEnv.Reset();
 	lfoEnv.Reset();
@@ -212,11 +215,14 @@ double Voice::ApplyFilter(double dt, double input, double lfoValue, double drift
 double Voice::Next(double dt, double lfoValue, double driftValue)
 {
 	UpdateEnvelopes(dt);
+	auto volEnvValue = volEnv.Get(parameters[(int)InternalParameters::VolEnvV]->Get(), velocity);
+	if (volEnvValue == 0.0) return 0.0;
+
 	UpdateGlide(dt);
 	lfoValue *= lfoEnv.Get(0.0, velocity);
+
 	auto out = GetOscillators(dt, lfoValue, driftValue);
-	auto volEnvValue = volEnv.Get(parameters[(int)InternalParameters::VolEnvV]->Get(), velocity);
-	out *= volEnvValue;
 	out = ApplyFilter(dt, out, lfoValue, driftValue);
+	out *= volEnvValue;
 	return out;
 }

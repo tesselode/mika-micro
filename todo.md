@@ -3,7 +3,7 @@
 - [X] Envelope velocity sensitivity
 - [ ] Performance optimizations
 	- [X] Oscillators
-	- [ ] Skip processing silent voices
+	- [X] Skip processing silent voices
 - [X] Gray out useless controls
 - [ ] Make sure parameter defaults are reasonable
 	- [X] Rescale master volume

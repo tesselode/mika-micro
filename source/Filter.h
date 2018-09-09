@@ -15,7 +15,11 @@ enum class FilterModes
 class TwoPoleFilter
 {
 public:
-	bool IsSilent() { return b == 0.0; }
+	void Reset()
+	{
+		a = 0.0;
+		b = 0.0;
+	}
 	double Process(double dt, double input, double cutoff, double resonance);
 
 private:
@@ -26,7 +30,11 @@ private:
 class StateVariableFilter
 {
 public:
-	bool IsSilent() { return low == 0.0; }
+	void Reset()
+	{
+		band = 0.0;
+		low = 0.0;
+	}
 	double Process(double dt, double input, double cutoff, double resonance);
 
 private:
@@ -37,7 +45,13 @@ private:
 class FourPoleFilter
 {
 public:
-	bool IsSilent() { return d == 0.0; }
+	void Reset()
+	{
+		a = 0.0;
+		b = 0.0;
+		c = 0.0;
+		d = 0.0;
+	}
 	double Process(double dt, double input, double cutoff, double resonance);
 
 private:
