@@ -40,7 +40,9 @@ private:
 	void InitVoices();
 	void FlushMidi(int s);
 	double NextDriftValue();
+	void GrayOutControls();
 
+	IGraphics* pGraphics;
 	IMidiQueue midiQueue;
 	std::vector<int> heldNotes;
 	std::array<std::unique_ptr<Parameter>, (int)InternalParameters::NumParameters> parameters;

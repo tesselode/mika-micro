@@ -224,7 +224,7 @@ void MikaMicro::InitInternalParameters()
 
 void MikaMicro::InitGraphics()
 {
-	auto pGraphics = MakeGraphics(this, GUI_WIDTH, GUI_HEIGHT, 120);
+	pGraphics = MakeGraphics(this, GUI_WIDTH, GUI_HEIGHT, 120);
 	pGraphics->AttachBackground(BG_ID, BG_FN);
 
 	auto knobLeft = pGraphics->LoadIBitmap(KNOBLEFT_ID, KNOBLEFT_FN, 100);
@@ -434,7 +434,8 @@ void MikaMicro::ProcessDoubleReplacing(double** inputs, double** outputs, int nF
 	{
 		FlushMidi(s);
 		for (auto &p : parameters) p->Update(dt);
-		auto lfoValue = lfo.Next(dt, parameters[(int)InternalParameters::LfoFrequency]->Get(), 1.0, 0.0, 0.0, 0.0, 0.0, 0.0);
+		auto lfoValue = lfo.Next(dt, parameters[(int)InternalParameters::LfoFrequency]->Get(),
+			1.0, 0.0, 0.0, 0.0, 0.0, 0.0);
 		auto driftValue = NextDriftValue();
 		auto out = 0.0;
 		for (auto &v : voices) out += v.Next(dt, lfoValue, driftValue);
@@ -451,7 +452,51 @@ void MikaMicro::Reset()
 	dt = 1.0 / GetSampleRate();
 }
 
+void MikaMicro::GrayOutControls()
+{
+	auto osc1Enabled = GetParam((int)PublicParameters::OscMix)->Value() > 0.0;
+	auto osc2Enabled = GetParam((int)PublicParameters::OscMix)->Value() < 1.0;
+	auto osc1Noise = (Waveforms)(int)GetParam((int)PublicParameters::Osc1Wave)->Value() == Waveforms::Noise;
+	auto osc2Noise = (Waveforms)(int)GetParam((int)PublicParameters::Osc2Wave)->Value() == Waveforms::Noise;
+	auto fmMode = (FmModes)(int)GetParam((int)PublicParameters::FmMode)->Value();
+	auto fmEnabled = (fmMode == FmModes::Osc1 && osc1Enabled && !osc1Noise) ||
+		(fmMode == FmModes::Osc2 && osc2Enabled && !osc2Noise);
+	auto filterEnabled = (FilterModes)(int)GetParam((int)PublicParameters::FilterMode)->Value() != FilterModes::Off;
+	auto modEnvEnabled = GetParam((int)PublicParameters::ModEnvFm)->Value() != 0.0 ||
+		GetParam((int)PublicParameters::ModEnvCutoff)->Value() != 0.0;
+	auto vibratoEnabled = GetParam((int)PublicParameters::LfoFm)->Value() != 0.0 ||
+		GetParam((int)PublicParameters::LfoCutoff)->Value() != 0.0 ||
+		GetParam((int)PublicParameters::LfoAmount)->Value() < 0.0 ||
+		(GetParam((int)PublicParameters::LfoAmount)->Value() > 0.0 && osc2Enabled);
+
+	// oscillator 1
+	pGraphics->GetControl(1)->GrayOut(!osc1Enabled);
+	pGraphics->GetControl(2)->GrayOut(!((osc1Enabled && !osc1Noise) || fmEnabled));
+	pGraphics->GetControl(3)->GrayOut(!((osc1Enabled && !osc1Noise) || fmEnabled));
+	pGraphics->GetControl(4)->GrayOut(!(osc1Enabled && !osc1Noise));
+
+	// oscillator 2
+	pGraphics->GetControl(5)->GrayOut(!osc2Enabled);
+	for (int i = 6; i < 9; i++) pGraphics->GetControl(i)->GrayOut(!(osc2Enabled && !osc2Noise));
+
+	// fm
+	for (int i = 12; i < 14; i++) pGraphics->GetControl(i)->GrayOut(!fmEnabled);
+	for (int i = 41; i < 44; i++) pGraphics->GetControl(i)->GrayOut(!fmEnabled);
+
+	// filter
+	for (int i = 15; i < 18; i++) pGraphics->GetControl(i)->GrayOut(!filterEnabled);
+	for (int i = 44; i < 47; i++) pGraphics->GetControl(i)->GrayOut(!filterEnabled);
+
+	// mod sources
+	for (int i = 28; i < 38; i++) pGraphics->GetControl(i)->GrayOut(!modEnvEnabled);
+	for (int i = 39; i < 41; i++) pGraphics->GetControl(i)->GrayOut(!vibratoEnabled);
+
+	// glide
+	pGraphics->GetControl(48)->GrayOut(!GetParam((int)PublicParameters::VoiceMode)->Value());
+}
+
 void MikaMicro::OnParamChange(int paramIdx)
 {
 	IMutexLock lock(this);
+	GrayOutControls();
 }

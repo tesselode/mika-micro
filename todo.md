@@ -4,7 +4,7 @@
 - [ ] Performance optimizations
 	- [ ] Oscillators
 	- [ ] Skip processing silent voices
-- [ ] Gray out useless controls
+- [X] Gray out useless controls
 - [ ] Make sure parameter defaults are reasonable
 	- [ ] Rescale master volume
 - [ ] Make sure parameters don't have to slide up to their initial values
