@@ -17,6 +17,7 @@ enum class Parameters
 	Osc2Wave,
 	Osc2Coarse,
 	Osc2Fine,
+	OscMix,
 	VolEnvA,
 	VolEnvD,
 	VolEnvS,
@@ -72,23 +73,27 @@ private:
 	void InitVoices();
 	bool IsReleased(double voice) { return volEnvStage[voice] == EnvelopeStages::Release || volEnvStage[voice] == EnvelopeStages::Idle; }
 	void FlushMidi(int s);
+	void UpdateParameters();
 	void UpdateEnvelopes();
 	double GetOscillator(Oscillator &osc, double frequency);
+	double GetVoice(int voice);
 
 	IMidiQueue midiQueue;
 	double dt = 0.0;
 	std::array<EnvelopeStages, numVoices> volEnvStage;
 	std::array<double, numVoices> volEnvValue;
-	double volEnvA = 0.0;
-	double volEnvD = 0.0;
-	double volEnvS = 0.0;
-	double volEnvR = 0.0;
 	std::array<int, numVoices> note;
 	std::array<double, numVoices> frequency;
 	std::array<Oscillator, numVoices> osc1;
 	std::array<Oscillator, numVoices> osc2;
-	double osc1Pitch;
-	double osc2Pitch;
+
+	double osc1Pitch = 1.0;
+	double osc2Pitch = 1.0;
+	double oscMix = 0.0;
+	double volEnvA = 0.0;
+	double volEnvD = 0.0;
+	double volEnvS = 0.0;
+	double volEnvR = 0.0;
 };
 
 #endif
