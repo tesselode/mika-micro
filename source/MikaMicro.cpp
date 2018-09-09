@@ -51,7 +51,7 @@ void MikaMicro::InitPublicParameters()
 
 	GetParam((int)PublicParameters::VoiceMode)->InitEnum("Voice mode", (int)VoiceModes::Legato, (int)VoiceModes::NumVoiceModes);
 	GetParam((int)PublicParameters::GlideLength)->InitDouble("Glide length", 0.0, 0.0, 1.0, .01);
-	GetParam((int)PublicParameters::Volume)->InitDouble("Master volume", 0.5, 0.0, 1.0, .01);
+	GetParam((int)PublicParameters::Volume)->InitDouble("Master volume", 0.25, 0.0, 0.5, .01);
 }
 
 void MikaMicro::InitInternalParameters()
