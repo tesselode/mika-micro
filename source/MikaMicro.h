@@ -11,11 +11,23 @@ const int numVoices = 8;
 
 enum class Parameters
 {
+	Osc1Wave,
 	VolEnvA,
 	VolEnvD,
 	VolEnvS,
 	VolEnvR,
 	NumParameters
+};
+
+enum class Waveforms
+{
+	Sine,
+	Triangle,
+	Saw,
+	Square,
+	Pulse,
+	Noise,
+	NumWaveforms
 };
 
 enum class EnvelopeStages
@@ -45,6 +57,7 @@ private:
 	bool IsReleased(double voice) { return volEnvStage[voice] == EnvelopeStages::Release || volEnvStage[voice] == EnvelopeStages::Idle; }
 	void FlushMidi(int s);
 	void UpdateEnvelopes();
+	double GetOscillator(int voice);
 
 	IMidiQueue midiQueue;
 	double dt = 0.0;
@@ -57,6 +70,10 @@ private:
 	std::array<int, numVoices> note;
 	std::array<double, numVoices> frequency;
 	std::array<double, numVoices> phase;
+	std::array<double, numVoices> phaseIncrement;
+	std::array<double, numVoices> triCurrent;
+	std::array<double, numVoices> triLast;
+	std::array<double, numVoices> noiseValue;
 };
 
 #endif

@@ -5,6 +5,8 @@
 
 void MikaMicro::InitParameters()
 {
+	GetParam((int)Parameters::Osc1Wave)->InitEnum("Oscillator 1 waveform", (int)Waveforms::Saw, (int)Waveforms::NumWaveforms);
+
 	GetParam((int)Parameters::VolEnvA)->InitDouble("Volume envelope attack time", 0.5, 0.0, 1.0, .01);
 	GetParam((int)Parameters::VolEnvD)->InitDouble("Volume envelope decay time", 0.5, 0.0, 1.0, .01);
 	GetParam((int)Parameters::VolEnvS)->InitDouble("Volume envelope sustain", 0.5, 0.0, 1.0, .01);
@@ -21,12 +23,12 @@ void MikaMicro::InitGraphics()
 	auto knobRight = pGraphics->LoadIBitmap(KNOBRIGHT_ID, KNOBRIGHT_FN, 100);
 	auto slider = pGraphics->LoadIBitmap(SLIDER_ID, SLIDER_FN, 1);
 	auto sliderBg = pGraphics->LoadIBitmap(SLIDERBG_ID, SLIDERBG_FN, 1);
-	//auto waveformSwitch = pGraphics->LoadIBitmap(WAVEFORMSWITCH_ID, WAVEFORMSWITCH_FN, (int)Waveforms::NumWaveforms);
+	auto waveformSwitch = pGraphics->LoadIBitmap(WAVEFORMSWITCH_ID, WAVEFORMSWITCH_FN, (int)Waveforms::NumWaveforms);
 	auto toggleSwitch = pGraphics->LoadIBitmap(TOGGLESWITCH_ID, TOGGLESWITCH_FN, 2);
 	auto fmModeSwitch = pGraphics->LoadIBitmap(FMMODESWITCH_ID, FMMODESWITCH_FN, 3);
 
 	// oscillators
-	//pGraphics->AttachControl(new ISwitchControl(this, 22 * 4, 10 * 4, (int)Parameters::Osc1Wave, &waveformSwitch));
+	pGraphics->AttachControl(new ISwitchControl(this, 22 * 4, 10 * 4, (int)Parameters::Osc1Wave, &waveformSwitch));
 	//pGraphics->AttachControl(new IKnobMultiControl(this, 38 * 4, 10 * 4, (int)Parameters::Osc1Coarse, &knobMiddle));
 	//pGraphics->AttachControl(new IKnobMultiControl(this, 54 * 4, 10 * 4, (int)Parameters::Osc1Fine, &knobMiddle));
 	//pGraphics->AttachControl(new IKnobMultiControl(this, 70 * 4, 10 * 4, (int)Parameters::Osc1Split, &knobMiddle));
@@ -102,6 +104,13 @@ void MikaMicro::InitVoices()
 	{
 		volEnvStage[voice] = EnvelopeStages::Idle;
 		volEnvValue[voice] = 0.0;
+		note[voice] = 0;
+		frequency[voice] = 0.0;
+		phase[voice] = 0.0;
+		phaseIncrement[voice] = 0.0;
+		triCurrent[voice] = 0.0;
+		triLast[voice] = 0.0;
+		noiseValue[voice] = 19.1919191919191919191919191919191919191919;
 	}
 }
 
@@ -186,6 +195,36 @@ void MikaMicro::UpdateEnvelopes()
 	}
 }
 
+double MikaMicro::GetOscillator(int voice)
+{
+	phaseIncrement[voice] = frequency[voice] * dt;
+	phase[voice] += phaseIncrement[voice];
+	while (phase[voice] > 1.0) phase[voice] -= 1.0;
+
+	auto waveform = (Waveforms)(int)GetParam((int)Parameters::Osc1Wave)->Value();
+	switch (waveform)
+	{
+	case Waveforms::Sine:
+		return sin(phase[voice] * twoPi);
+	case Waveforms::Triangle:
+		triLast[voice] = triCurrent[voice];
+		triCurrent[voice] = phaseIncrement[voice] * GeneratePulse(phase[voice], phaseIncrement[voice], .5) + (1.0 - phaseIncrement[voice]) * triLast[voice];
+		return triCurrent[voice] * 5.0;
+	case Waveforms::Saw:
+		return 1.0 - 2.0 * phase[voice] + Blep(phase[voice], phaseIncrement[voice]);
+		break;
+	case Waveforms::Square:
+		return GeneratePulse(phase[voice], phaseIncrement[voice], .5);
+	case Waveforms::Pulse:
+		return GeneratePulse(phase[voice], phaseIncrement[voice], .75);
+	case Waveforms::Noise:
+		noiseValue[voice] += 19.0;
+		noiseValue[voice] *= noiseValue[voice];
+		noiseValue[voice] -= (int)noiseValue[voice];
+		return noiseValue[voice] - .5;
+	}
+}
+
 void MikaMicro::ProcessDoubleReplacing(double** inputs, double** outputs, int nFrames)
 {
 	for (int s = 0; s < nFrames; s++)
@@ -197,9 +236,7 @@ void MikaMicro::ProcessDoubleReplacing(double** inputs, double** outputs, int nF
 		{
 			if (volEnvStage[voice] != EnvelopeStages::Idle)
 			{
-				phase[voice] += frequency[voice] * dt;
-				while (phase[voice] > 1.0) phase[voice] -= 1.0;
-				out += .25 * sin(phase[voice] * twoPi) * volEnvValue[voice];
+				out += .25 * GetOscillator(voice) * volEnvValue[voice];
 			}
 		}
 		outputs[0][s] = out;
