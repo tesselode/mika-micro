@@ -8,6 +8,9 @@ void MikaMicro::InitParameters()
 	GetParam((int)Parameters::Osc1Wave)->InitEnum("Oscillator 1 waveform", (int)Waveforms::Saw, (int)Waveforms::NumWaveforms);
 	GetParam((int)Parameters::Osc1Coarse)->InitInt("Oscillator 1 coarse", 0, -24, 24, "semitones");
 	GetParam((int)Parameters::Osc1Fine)->InitDouble("Oscillator 1 fine", 0.0, -1.0, 1.0, .01, "semitones");
+	GetParam((int)Parameters::Osc2Wave)->InitEnum("Oscillator 1 waveform", (int)Waveforms::Saw, (int)Waveforms::NumWaveforms);
+	GetParam((int)Parameters::Osc2Coarse)->InitInt("Oscillator 2 coarse", 0, -24, 24, "semitones");
+	GetParam((int)Parameters::Osc2Fine)->InitDouble("Oscillator 2 fine", 0.0, -1.0, 1.0, .01, "semitones");
 
 	GetParam((int)Parameters::VolEnvA)->InitDouble("Volume envelope attack time", 0.5, 0.0, 1.0, .01);
 	GetParam((int)Parameters::VolEnvD)->InitDouble("Volume envelope decay time", 0.5, 0.0, 1.0, .01);
@@ -34,9 +37,9 @@ void MikaMicro::InitGraphics()
 	pGraphics->AttachControl(new IKnobMultiControl(this, 38 * 4, 10 * 4, (int)Parameters::Osc1Coarse, &knobMiddle));
 	pGraphics->AttachControl(new IKnobMultiControl(this, 54 * 4, 10 * 4, (int)Parameters::Osc1Fine, &knobMiddle));
 	//pGraphics->AttachControl(new IKnobMultiControl(this, 70 * 4, 10 * 4, (int)Parameters::Osc1Split, &knobMiddle));
-	//pGraphics->AttachControl(new ISwitchControl(this, 22 * 4, 26 * 4, (int)Parameters::Osc2Wave, &waveformSwitch));
-	//pGraphics->AttachControl(new IKnobMultiControl(this, 38 * 4, 26 * 4, (int)Parameters::Osc2Coarse, &knobMiddle));
-	//pGraphics->AttachControl(new IKnobMultiControl(this, 54 * 4, 26 * 4, (int)Parameters::Osc2Fine, &knobMiddle));
+	pGraphics->AttachControl(new ISwitchControl(this, 22 * 4, 26 * 4, (int)Parameters::Osc2Wave, &waveformSwitch));
+	pGraphics->AttachControl(new IKnobMultiControl(this, 38 * 4, 26 * 4, (int)Parameters::Osc2Coarse, &knobMiddle));
+	pGraphics->AttachControl(new IKnobMultiControl(this, 54 * 4, 26 * 4, (int)Parameters::Osc2Fine, &knobMiddle));
 	//pGraphics->AttachControl(new IKnobMultiControl(this, 70 * 4, 26 * 4, (int)Parameters::Osc2Split, &knobMiddle));
 	//pGraphics->AttachControl(new IBitmapControl(this, 91.5 * 4, 15 * 4, &sliderBg));
 	//pGraphics->AttachControl(new IFaderControl(this, 90.5 * 4, 16 * 4, 20 * 4, (int)Parameters::OscMix, &slider));
@@ -108,11 +111,6 @@ void MikaMicro::InitVoices()
 		volEnvValue[voice] = 0.0;
 		note[voice] = 0;
 		frequency[voice] = 0.0;
-		phase[voice] = 0.0;
-		phaseIncrement[voice] = 0.0;
-		triCurrent[voice] = 0.0;
-		triLast[voice] = 0.0;
-		noiseValue[voice] = 19.1919191919191919191919191919191919191919;
 	}
 }
 
@@ -158,7 +156,7 @@ void MikaMicro::FlushMidi(int s)
 					volEnvStage[voice] = EnvelopeStages::Attack;
 					note[voice] = message->NoteNumber();
 					frequency[voice] = pitchToFrequency(note[voice]);
-					phase[voice] = 0.0;
+					osc1[voice].phase = 0.0;
 					break;
 				}
 			}
@@ -197,33 +195,32 @@ void MikaMicro::UpdateEnvelopes()
 	}
 }
 
-double MikaMicro::GetOscillator(int voice)
+double MikaMicro::GetOscillator(Oscillator &osc, double frequency)
 {
-	phaseIncrement[voice] = frequency[voice] * osc1Pitch * dt;
-	phase[voice] += phaseIncrement[voice];
-	while (phase[voice] > 1.0) phase[voice] -= 1.0;
+	osc.phaseIncrement = frequency * osc.tune * dt;
+	osc.phase += osc.phaseIncrement;
+	while (osc.phase > 1.0) osc.phase -= 1.0;
 
-	auto waveform = (Waveforms)(int)GetParam((int)Parameters::Osc1Wave)->Value();
-	switch (waveform)
+	switch (osc.waveform)
 	{
 	case Waveforms::Sine:
-		return sin(phase[voice] * twoPi);
+		return sin(osc.phase * twoPi);
 	case Waveforms::Triangle:
-		triLast[voice] = triCurrent[voice];
-		triCurrent[voice] = phaseIncrement[voice] * GeneratePulse(phase[voice], phaseIncrement[voice], .5) + (1.0 - phaseIncrement[voice]) * triLast[voice];
-		return triCurrent[voice] * 5.0;
+		osc.triLast = osc.triCurrent;
+		osc.triCurrent = osc.phaseIncrement * GeneratePulse(osc.phase, osc.phaseIncrement, .5) + (1.0 - osc.phaseIncrement) * osc.triLast;
+		return osc.triCurrent * 5.0;
 	case Waveforms::Saw:
-		return 1.0 - 2.0 * phase[voice] + Blep(phase[voice], phaseIncrement[voice]);
+		return 1.0 - 2.0 * osc.phase + Blep(osc.phase, osc.phaseIncrement);
 		break;
 	case Waveforms::Square:
-		return GeneratePulse(phase[voice], phaseIncrement[voice], .5);
+		return GeneratePulse(osc.phase, osc.phaseIncrement, .5);
 	case Waveforms::Pulse:
-		return GeneratePulse(phase[voice], phaseIncrement[voice], .75);
+		return GeneratePulse(osc.phase, osc.phaseIncrement, .75);
 	case Waveforms::Noise:
-		noiseValue[voice] += 19.0;
-		noiseValue[voice] *= noiseValue[voice];
-		noiseValue[voice] -= (int)noiseValue[voice];
-		return noiseValue[voice] - .5;
+		osc.noiseValue += 19.0;
+		osc.noiseValue *= osc.noiseValue;
+		osc.noiseValue -= (int)osc.noiseValue;
+		return osc.noiseValue - .5;
 	}
 }
 
@@ -238,7 +235,8 @@ void MikaMicro::ProcessDoubleReplacing(double** inputs, double** outputs, int nF
 		{
 			if (volEnvStage[voice] != EnvelopeStages::Idle)
 			{
-				out += .25 * GetOscillator(voice) * volEnvValue[voice];
+				out += .25 * GetOscillator(osc1[voice], frequency[voice]) * volEnvValue[voice];
+				out += .25 * GetOscillator(osc2[voice], frequency[voice]) * volEnvValue[voice];
 			}
 		}
 		outputs[0][s] = out;
@@ -262,12 +260,40 @@ void MikaMicro::OnParamChange(int paramIdx)
 
 	switch (parameter)
 	{
+	case Parameters::Osc1Wave:
+		for (int voice = 0; voice < numVoices; voice++)
+		{
+			osc1[voice].waveform = (Waveforms)(int)value;
+		}
+		break;
 	case Parameters::Osc1Coarse:
 	case Parameters::Osc1Fine:
 	{
 		auto coarse = GetParam((int)Parameters::Osc1Coarse)->Value();
 		auto fine = GetParam((int)Parameters::Osc1Fine)->Value();
-		osc1Pitch = pitchFactor(coarse + fine);
+		auto tune = pitchFactor(coarse + fine);
+		for (int voice = 0; voice < numVoices; voice++)
+		{
+			osc1[voice].tune = tune;
+		}
+		break;
+	}
+	case Parameters::Osc2Wave:
+		for (int voice = 0; voice < numVoices; voice++)
+		{
+			osc2[voice].waveform = (Waveforms)(int)value;
+		}
+		break;
+	case Parameters::Osc2Coarse:
+	case Parameters::Osc2Fine:
+	{
+		auto coarse = GetParam((int)Parameters::Osc2Coarse)->Value();
+		auto fine = GetParam((int)Parameters::Osc2Fine)->Value();
+		auto tune = pitchFactor(coarse + fine);
+		for (int voice = 0; voice < numVoices; voice++)
+		{
+			osc2[voice].tune = tune;
+		}
 		break;
 	}
 	case Parameters::VolEnvA:

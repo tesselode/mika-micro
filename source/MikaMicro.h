@@ -14,6 +14,9 @@ enum class Parameters
 	Osc1Wave,
 	Osc1Coarse,
 	Osc1Fine,
+	Osc2Wave,
+	Osc2Coarse,
+	Osc2Fine,
 	VolEnvA,
 	VolEnvD,
 	VolEnvS,
@@ -40,6 +43,17 @@ enum class EnvelopeStages
 	Idle,
 };
 
+struct Oscillator
+{
+	Waveforms waveform = Waveforms::Sine;
+	double tune = 1.0;
+	double phase = 0.0;
+	double phaseIncrement = 0.0;
+	double triCurrent = 0.0;
+	double triLast = 0.0;
+	double noiseValue = 19.1919191919191919191919191919191919191919;
+};
+
 class MikaMicro : public IPlug
 {
 public:
@@ -59,7 +73,7 @@ private:
 	bool IsReleased(double voice) { return volEnvStage[voice] == EnvelopeStages::Release || volEnvStage[voice] == EnvelopeStages::Idle; }
 	void FlushMidi(int s);
 	void UpdateEnvelopes();
-	double GetOscillator(int voice);
+	double GetOscillator(Oscillator &osc, double frequency);
 
 	IMidiQueue midiQueue;
 	double dt = 0.0;
@@ -71,12 +85,10 @@ private:
 	double volEnvR = 0.0;
 	std::array<int, numVoices> note;
 	std::array<double, numVoices> frequency;
-	std::array<double, numVoices> phase;
-	std::array<double, numVoices> phaseIncrement;
-	std::array<double, numVoices> triCurrent;
-	std::array<double, numVoices> triLast;
-	std::array<double, numVoices> noiseValue;
+	std::array<Oscillator, numVoices> osc1;
+	std::array<Oscillator, numVoices> osc2;
 	double osc1Pitch;
+	double osc2Pitch;
 };
 
 #endif
