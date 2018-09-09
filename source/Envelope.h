@@ -15,7 +15,10 @@ public:
 	void Start() { stage = EnvelopeStages::Attack; }
 	void Release() { stage = EnvelopeStages::Release; }
 	void Update(double dt, double a, double d, double s, double r);
-	double Get() { return value; }
+	double Get(double velocitySensitivity, double velocity)
+	{
+		return value * (1.0 + (velocity - 1.0) * velocitySensitivity);
+	}
 	bool IsReleased() { return stage == EnvelopeStages::Release || stage == EnvelopeStages::Idle; }
 
 private:

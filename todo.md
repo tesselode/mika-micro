@@ -1,11 +1,12 @@
 - [X] Drift
 - [X] Adjust LFO->Cutoff curve
-- [ ] Envelope velocity sensitivity
+- [X] Envelope velocity sensitivity
 - [ ] Performance optimizations
 	- [ ] Oscillators
 	- [ ] Skip processing silent voices
 - [ ] Gray out useless controls
 - [ ] Make sure parameter defaults are reasonable
+	- [ ] Rescale master volume
 - [ ] Make sure parameters don't have to slide up to their initial values
 - [ ] Final check for forgotten features
 - [ ] v3 new stuff

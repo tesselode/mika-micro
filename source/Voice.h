@@ -30,7 +30,7 @@ public:
 	void Release();
 	double Next(double dt, double lfoValue, double driftValue);
 	bool IsReleased() { return volEnv.IsReleased(); }
-	double GetVolume() { return volEnv.Get(); }
+	double GetVolume() { return volEnv.Get(parameters[(int)InternalParameters::VolEnvV]->Get(), velocity); }
 
 private:
 	void UpdateEnvelopes(double dt);
