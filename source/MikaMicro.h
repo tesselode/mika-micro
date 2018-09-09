@@ -14,9 +14,11 @@ enum class Parameters
 	Osc1Wave,
 	Osc1Coarse,
 	Osc1Fine,
+	Osc1Split,
 	Osc2Wave,
 	Osc2Coarse,
 	Osc2Fine,
+	Osc2Split,
 	OscMix,
 	VolEnvA,
 	VolEnvD,
@@ -46,8 +48,6 @@ enum class EnvelopeStages
 
 struct Oscillator
 {
-	Waveforms waveform = Waveforms::Sine;
-	double tune = 1.0;
 	double phase = 0.0;
 	double phaseIncrement = 0.0;
 	double triCurrent = 0.0;
@@ -75,7 +75,7 @@ private:
 	void FlushMidi(int s);
 	void UpdateParameters();
 	void UpdateEnvelopes();
-	double GetOscillator(Oscillator &osc, double frequency);
+	double GetOscillator(Oscillator &osc, Waveforms waveform, double frequency);
 	double GetVoice(int voice);
 
 	IMidiQueue midiQueue;
@@ -84,11 +84,22 @@ private:
 	std::array<double, numVoices> volEnvValue;
 	std::array<int, numVoices> note;
 	std::array<double, numVoices> frequency;
-	std::array<Oscillator, numVoices> osc1;
-	std::array<Oscillator, numVoices> osc2;
+	std::array<Oscillator, numVoices> osc1a;
+	std::array<Oscillator, numVoices> osc1b;
+	std::array<Oscillator, numVoices> osc2a;
+	std::array<Oscillator, numVoices> osc2b;
 
-	double osc1Pitch = 1.0;
-	double osc2Pitch = 1.0;
+	double osc1Tune = 1.0;
+	double targetOsc1SplitMix = 0.0;
+	double osc1SplitMix = 0.0;
+	double osc1SplitFactorA = 1.0;
+	double osc1SplitFactorB = 1.0;
+	double osc2Tune = 1.0;
+	double targetOsc2SplitMix = 0.0;
+	double osc2SplitMix = 0.0;
+	double osc2SplitFactorA = 1.0;
+	double osc2SplitFactorB = 1.0;
+	double targetOscMix = 0.0;
 	double oscMix = 0.0;
 	double volEnvA = 0.0;
 	double volEnvD = 0.0;
