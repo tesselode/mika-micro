@@ -14,6 +14,9 @@
     </ClInclude>
     <ClInclude Include="Util.h" />
     <ClInclude Include="Envelope.h" />
+    <ClInclude Include="Oscillator.h" />
+    <ClInclude Include="SmoothSwitch.h" />
+    <ClInclude Include="Voice.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="MikaMicro.rc" />

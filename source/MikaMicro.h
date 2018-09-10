@@ -6,7 +6,9 @@
 #include "Envelope.h"
 #include "IPlug_include_in_plug_hdr.h"
 #include "IMidiQueue.h"
+#include "SmoothSwitch.h"
 #include "Util.h"
+#include "Voice.h"
 
 const int numVoices = 8;
 
@@ -39,45 +41,6 @@ enum class Waveforms
 	NumWaveforms
 };
 
-struct SmoothSwitch
-{
-	double current = -1.0;
-	double previous = -1.0;
-	double mix = 1.0;
-	bool switching = false;
-
-	void Update(double dt)
-	{
-		switch (switching)
-		{
-		case true:
-			mix += (1.0 - mix) * 100.0 * dt;
-			if (mix > .999)
-			{
-				mix = 1.0;
-				switching = false;
-			}
-		}
-	}
-
-	void Switch(double value)
-	{
-		previous = current;
-		current = value;
-		mix = 0.0;
-		switching = true;
-	}
-};
-
-struct Oscillator
-{
-	double phase = 0.0;
-	double phaseIncrement = 0.0;
-	double triCurrent = 0.0;
-	double triLast = 0.0;
-	double noiseValue = 19.1919191919191919191919191919191919191919;
-};
-
 class MikaMicro : public IPlug
 {
 public:
@@ -93,23 +56,16 @@ private:
 	void InitParameters();
 	void InitGraphics();
 	void InitPresets();
-	void InitVoices();
 	void FlushMidi(int s);
 	void UpdateParameters();
 	void UpdateEnvelopes();
 	double GetWaveform(Oscillator &osc, Waveforms waveform);
 	double GetOscillator(Oscillator &osc, SmoothSwitch &waveform, double frequency);
-	double GetVoice(int voice);
+	double GetVoice(Voice &voice);
 
 	IMidiQueue midiQueue;
 	double dt = 0.0;
-	std::array<Envelope, numVoices> volEnv;
-	std::array<int, numVoices> note;
-	std::array<double, numVoices> frequency;
-	std::array<Oscillator, numVoices> osc1a;
-	std::array<Oscillator, numVoices> osc1b;
-	std::array<Oscillator, numVoices> osc2a;
-	std::array<Oscillator, numVoices> osc2b;
+	std::array<Voice, numVoices> voices;
 
 	SmoothSwitch osc1Wave;
 	double osc1Tune = 1.0;

@@ -106,15 +106,6 @@ void MikaMicro::InitPresets()
 	MakeDefaultPreset((char *) "-", 1);
 }
 
-void MikaMicro::InitVoices()
-{
-	for (int voice = 0; voice < numVoices; voice++)
-	{
-		note[voice] = 0;
-		frequency[voice] = 0.0;
-	}
-}
-
 MikaMicro::MikaMicro(IPlugInstanceInfo instanceInfo)
   :	IPLUG_CTOR((int)Parameters::NumParameters, 1, instanceInfo)
 {
@@ -123,7 +114,6 @@ MikaMicro::MikaMicro(IPlugInstanceInfo instanceInfo)
 	InitParameters();
 	InitGraphics();
 	InitPresets();
-	InitVoices();
 }
 
 MikaMicro::~MikaMicro() {}
@@ -141,30 +131,20 @@ void MikaMicro::FlushMidi(int s)
 		switch (status)
 		{
 		case IMidiMsg::kNoteOff:
-			for (int voice = 0; voice < numVoices; voice++)
+			for (auto &v : voices)
 			{
-				if (!volEnv[voice].IsReleased() && note[voice] == message->NoteNumber())
+				if (!v.volEnv.IsReleased() && v.note == message->NoteNumber())
 				{
-					volEnv[voice].stage = EnvelopeStages::Release;
+					v.volEnv.stage = EnvelopeStages::Release;
 				}
 			}
 			break;
 		case IMidiMsg::kNoteOn:
-			for (int voice = 0; voice < numVoices; voice++)
+			for (auto &v : voices)
 			{
-				if (volEnv[voice].IsReleased())
+				if (v.volEnv.IsReleased())
 				{
-					note[voice] = message->NoteNumber();
-					frequency[voice] = pitchToFrequency(note[voice]);
-					if (volEnv[voice].stage == EnvelopeStages::Idle)
-					{
-						auto osc1PhaseOffset = osc1SplitFactorA > 1.0;
-						osc1a[voice].phase = 0.0;
-						osc1b[voice].phase = osc1SplitFactorA > 1.0 ? .33 : 0.0;
-						osc2a[voice].phase = 0.0;
-						osc2b[voice].phase = osc2SplitFactorA > 1.0 ? .33 : 0.0;
-					}
-					volEnv[voice].stage = EnvelopeStages::Attack;
+					v.Start(message->NoteNumber(), osc1SplitFactorA > 1.0);
 					break;
 				}
 			}
@@ -186,8 +166,7 @@ void MikaMicro::UpdateParameters()
 
 void MikaMicro::UpdateEnvelopes()
 {
-	for (int voice = 0; voice < numVoices; voice++)
-		volEnv[voice].Update(dt);
+	for (auto &v : voices) v.volEnv.Update(dt);
 }
 
 double MikaMicro::GetWaveform(Oscillator &osc, Waveforms waveform)
@@ -235,29 +214,29 @@ double MikaMicro::GetOscillator(Oscillator &osc, SmoothSwitch &waveform, double 
 	}
 }
 
-double MikaMicro::GetVoice(int voice)
+double MikaMicro::GetVoice(Voice &voice)
 {
-	if (volEnv[voice].stage == EnvelopeStages::Idle) return 0.0;
+	if (voice.volEnv.stage == EnvelopeStages::Idle) return 0.0;
 	auto out = 0.0;
 	if (oscMix < .999)
 	{
-		auto osc1Frequency = osc1Tune * frequency[voice];
+		auto osc1Frequency = osc1Tune * voice.frequency;
 		auto osc1Out = 0.0;
-		osc1Out += GetOscillator(osc1a[voice], osc1Wave, osc1Frequency * osc1SplitFactorA);
+		osc1Out += GetOscillator(voice.osc1a, osc1Wave, osc1Frequency * osc1SplitFactorA);
 		if (osc1SplitMix > .001)
-			osc1Out += osc1SplitMix * GetOscillator(osc1b[voice], osc1Wave, osc1Frequency * osc1SplitFactorB);
+			osc1Out += osc1SplitMix * GetOscillator(voice.osc1b, osc1Wave, osc1Frequency * osc1SplitFactorB);
 		out += osc1Out * sqrt(1.0 - oscMix);
 	}
 	if (oscMix > .001)
 	{
-		auto osc2Frequency = osc2Tune * frequency[voice];
+		auto osc2Frequency = osc2Tune * voice.frequency;
 		auto osc2Out = 0.0;
-		osc2Out += GetOscillator(osc2a[voice], osc2Wave, osc2Frequency * osc2SplitFactorA);
+		osc2Out += GetOscillator(voice.osc2a, osc2Wave, osc2Frequency * osc2SplitFactorA);
 		if (osc2SplitMix > .001)
-			osc2Out += osc2SplitMix * GetOscillator(osc2b[voice], osc2Wave, osc2Frequency * osc2SplitFactorB);
+			osc2Out += osc2SplitMix * GetOscillator(voice.osc2b, osc2Wave, osc2Frequency * osc2SplitFactorB);
 		out += osc2Out * sqrt(oscMix);
 	}
-	out *= volEnv[voice].value;
+	out *= voice.volEnv.value;
 	return out;
 }
 
@@ -269,10 +248,7 @@ void MikaMicro::ProcessDoubleReplacing(double** inputs, double** outputs, int nF
 		UpdateParameters();
 		UpdateEnvelopes();
 		auto out = 0.0;
-		for (int voice = 0; voice < numVoices; voice++)
-		{
-			out += GetVoice(voice);
-		}
+		for (auto &v : voices) out += GetVoice(v);
 		out *= .5;
 		outputs[0][s] = out;
 		outputs[1][s] = out;
@@ -333,26 +309,22 @@ void MikaMicro::OnParamChange(int paramIdx)
 	case Parameters::VolEnvA:
 	{
 		auto volEnvA = 1000 - 999.9 * (.5 - .5 * cos(pow(value, .1) * pi));
-		for (int voice = 0; voice < numVoices; voice++)
-			volEnv[voice].a = volEnvA;
+		for (auto &v : voices) v.volEnv.a = volEnvA;
 		break;
 	}
 	case Parameters::VolEnvD:
 	{
 		auto volEnvD = 1000 - 999.9 * (.5 - .5 * cos(pow(value, .1) * pi));
-		for (int voice = 0; voice < numVoices; voice++)
-			volEnv[voice].d = volEnvD;
+		for (auto &v : voices) v.volEnv.d = volEnvD;
 		break;
 	}
 	case Parameters::VolEnvS:
-		for (int voice = 0; voice < numVoices; voice++)
-			volEnv[voice].s = value;
+		for (auto &v : voices) v.volEnv.s = value;
 		break;
 	case Parameters::VolEnvR:
 	{
 		auto volEnvR = 1000 - 999.9 * (.5 - .5 * cos(pow(value, .1) * pi));
-		for (int voice = 0; voice < numVoices; voice++)
-			volEnv[voice].r = volEnvR;
+		for (auto &v : voices) v.volEnv.r = volEnvR;
 		break;
 	}
 	}
