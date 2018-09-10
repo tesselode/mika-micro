@@ -46,6 +46,36 @@ enum class EnvelopeStages
 	Idle,
 };
 
+struct SmoothSwitch
+{
+	double current = -1.0;
+	double previous = -1.0;
+	double mix = 1.0;
+	bool switching = false;
+
+	void Update(double dt)
+	{
+		switch (switching)
+		{
+		case true:
+			mix += (1.0 - mix) * 100.0 * dt;
+			if (mix > .999)
+			{
+				mix = 1.0;
+				switching = false;
+			}
+		}
+	}
+
+	void Switch(double value)
+	{
+		previous = current;
+		current = value;
+		mix = 0.0;
+		switching = true;
+	}
+};
+
 struct Oscillator
 {
 	double phase = 0.0;
@@ -75,7 +105,8 @@ private:
 	void FlushMidi(int s);
 	void UpdateParameters();
 	void UpdateEnvelopes();
-	double GetOscillator(Oscillator &osc, Waveforms waveform, double frequency);
+	double GetWaveform(Oscillator &osc, Waveforms waveform);
+	double GetOscillator(Oscillator &osc, SmoothSwitch &waveform, double frequency);
 	double GetVoice(int voice);
 
 	IMidiQueue midiQueue;
@@ -89,11 +120,13 @@ private:
 	std::array<Oscillator, numVoices> osc2a;
 	std::array<Oscillator, numVoices> osc2b;
 
+	SmoothSwitch osc1Wave;
 	double osc1Tune = 1.0;
 	double targetOsc1SplitMix = 0.0;
 	double osc1SplitMix = 0.0;
 	double osc1SplitFactorA = 1.0;
 	double osc1SplitFactorB = 1.0;
+	SmoothSwitch osc2Wave;
 	double osc2Tune = 1.0;
 	double targetOsc2SplitMix = 0.0;
 	double osc2SplitMix = 0.0;

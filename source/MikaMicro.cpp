@@ -179,7 +179,9 @@ void MikaMicro::FlushMidi(int s)
 
 void MikaMicro::UpdateParameters()
 {
+	osc1Wave.Update(dt);
 	osc1SplitMix += (targetOsc1SplitMix - osc1SplitMix) * 100.0 * dt;
+	osc2Wave.Update(dt);
 	osc2SplitMix += (targetOsc2SplitMix - osc2SplitMix) * 100.0 * dt;
 	oscMix += (targetOscMix - oscMix) * 100.0 * dt;
 }
@@ -212,12 +214,8 @@ void MikaMicro::UpdateEnvelopes()
 	}
 }
 
-double MikaMicro::GetOscillator(Oscillator &osc, Waveforms waveform, double frequency)
+double MikaMicro::GetWaveform(Oscillator &osc, Waveforms waveform)
 {
-	osc.phaseIncrement = frequency * dt;
-	osc.phase += osc.phaseIncrement;
-	while (osc.phase > 1.0) osc.phase -= 1.0;
-
 	switch (waveform)
 	{
 	case Waveforms::Sine:
@@ -241,28 +239,46 @@ double MikaMicro::GetOscillator(Oscillator &osc, Waveforms waveform, double freq
 	}
 }
 
+double MikaMicro::GetOscillator(Oscillator &osc, SmoothSwitch &waveform, double frequency)
+{
+	osc.phaseIncrement = frequency * dt;
+	osc.phase += osc.phaseIncrement;
+	while (osc.phase > 1.0) osc.phase -= 1.0;
+
+	switch (waveform.switching)
+	{
+	case true:
+	{
+		auto out = 0.0;
+		out += (1.0 - waveform.mix) * GetWaveform(osc, (Waveforms)(int)waveform.previous);
+		out += waveform.mix * GetWaveform(osc, (Waveforms)(int)waveform.current);
+		return out;
+	}
+	case false:
+		return GetWaveform(osc, (Waveforms)(int)waveform.current);
+	}
+}
+
 double MikaMicro::GetVoice(int voice)
 {
 	if (volEnvStage[voice] == EnvelopeStages::Idle) return 0.0;
 	auto out = 0.0;
 	if (oscMix < .999)
 	{
-		auto waveform = (Waveforms)(int)GetParam((int)Parameters::Osc1Wave)->Value();
 		auto osc1Frequency = osc1Tune * frequency[voice];
 		auto osc1Out = 0.0;
-		osc1Out += GetOscillator(osc1a[voice], waveform, osc1Frequency * osc1SplitFactorA);
+		osc1Out += GetOscillator(osc1a[voice], osc1Wave, osc1Frequency * osc1SplitFactorA);
 		if (osc1SplitMix > .001)
-			osc1Out += osc1SplitMix * GetOscillator(osc1b[voice], waveform, osc1Frequency * osc1SplitFactorB);
+			osc1Out += osc1SplitMix * GetOscillator(osc1b[voice], osc1Wave, osc1Frequency * osc1SplitFactorB);
 		out += osc1Out * sqrt(1.0 - oscMix);
 	}
 	if (oscMix > .001)
 	{
-		auto waveform = (Waveforms)(int)GetParam((int)Parameters::Osc2Wave)->Value();
 		auto osc2Frequency = osc2Tune * frequency[voice];
 		auto osc2Out = 0.0;
-		osc2Out += GetOscillator(osc2a[voice], waveform, osc2Frequency * osc2SplitFactorA);
+		osc2Out += GetOscillator(osc2a[voice], osc2Wave, osc2Frequency * osc2SplitFactorA);
 		if (osc2SplitMix > .001)
-			osc2Out += osc2SplitMix * GetOscillator(osc2b[voice], waveform, osc2Frequency * osc2SplitFactorB);
+			osc2Out += osc2SplitMix * GetOscillator(osc2b[voice], osc2Wave, osc2Frequency * osc2SplitFactorB);
 		out += osc2Out * sqrt(oscMix);
 	}
 	out *= volEnvValue[voice];
@@ -303,6 +319,9 @@ void MikaMicro::OnParamChange(int paramIdx)
 
 	switch (parameter)
 	{
+	case Parameters::Osc1Wave:
+		osc1Wave.Switch(value);
+		break;
 	case Parameters::Osc1Coarse:
 	case Parameters::Osc1Fine:
 	{
@@ -315,6 +334,9 @@ void MikaMicro::OnParamChange(int paramIdx)
 		targetOsc1SplitMix = value != 0.0 ? 1.0 : 0.0;
 		osc1SplitFactorA = pitchFactor(-value);
 		osc1SplitFactorB = pitchFactor(value);
+		break;
+	case Parameters::Osc2Wave:
+		osc2Wave.Switch(value);
 		break;
 	case Parameters::Osc2Coarse:
 	case Parameters::Osc2Fine:
