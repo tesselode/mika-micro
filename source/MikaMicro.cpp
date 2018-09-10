@@ -15,6 +15,10 @@ void MikaMicro::InitParameters()
 	GetParam((int)Parameters::Osc2Split)->InitDouble("Oscillator 2 split", 0.0, -1.0, 1.0, .01, "semitones");
 	GetParam((int)Parameters::OscMix)->InitDouble("Oscillator mix", 1.0, 0.0, 1.0, .01);
 
+	GetParam((int)Parameters::FmMode)->InitEnum("FM mode", (int)FmModes::Off, (int)FmModes::NumFmModes);
+	GetParam((int)Parameters::FmCoarse)->InitInt("FM coarse", 0, 0, 48);
+	GetParam((int)Parameters::FmFine)->InitDouble("FM fine", 0.0, -1.0, 1.0, .01);
+
 	GetParam((int)Parameters::VolEnvA)->InitDouble("Volume envelope attack time", 0.5, 0.0, 1.0, .01);
 	GetParam((int)Parameters::VolEnvD)->InitDouble("Volume envelope decay time", 0.5, 0.0, 1.0, .01);
 	GetParam((int)Parameters::VolEnvS)->InitDouble("Volume envelope sustain", 0.5, 0.0, 1.0, .01);
@@ -48,9 +52,9 @@ void MikaMicro::InitGraphics()
 	pGraphics->AttachControl(new IFaderControl(this, 90.5 * 4, 16 * 4, 20 * 4, (int)Parameters::OscMix, &slider));
 
 	// fm
-	//pGraphics->AttachControl(new ISwitchControl(this, 22 * 4, 42 * 4, (int)Parameters::FmMode, &fmModeSwitch));
-	//pGraphics->AttachControl(new IKnobMultiControl(this, 38 * 4, 42 * 4, (int)Parameters::FmCoarse, &knobLeft));
-	//pGraphics->AttachControl(new IKnobMultiControl(this, 54 * 4, 42 * 4, (int)Parameters::FmFine, &knobMiddle));
+	pGraphics->AttachControl(new ISwitchControl(this, 22 * 4, 42 * 4, (int)Parameters::FmMode, &fmModeSwitch));
+	pGraphics->AttachControl(new IKnobMultiControl(this, 38 * 4, 42 * 4, (int)Parameters::FmCoarse, &knobLeft));
+	pGraphics->AttachControl(new IKnobMultiControl(this, 54 * 4, 42 * 4, (int)Parameters::FmFine, &knobMiddle));
 
 	// filter
 	//pGraphics->AttachControl(new ISwitchPopUpControl(this, 22 * 4, 62 * 4, (int)Parameters::FilterMode, &fmModeSwitch));
@@ -164,18 +168,38 @@ void MikaMicro::UpdateParameters()
 	oscMix += (targetOscMix - oscMix) * 100.0 * dt;
 }
 
-void MikaMicro::UpdateEnvelopes()
-{
-	for (auto &v : voices) v.volEnv.Update(dt);
-}
-
 double MikaMicro::GetVoice(Voice &voice)
 {
+	voice.volEnv.Update(dt);
 	if (voice.volEnv.stage == EnvelopeStages::Idle) return 0.0;
+
+	auto osc1Frequency = osc1Tune * voice.frequency;
+	auto osc2Frequency = osc2Tune * voice.frequency;
+
+	auto fmMode = (FmModes)(int)GetParam((int)Parameters::FmMode)->Value();
+	switch (fmMode)
+	{
+	case FmModes::Osc1:
+	case FmModes::Osc2:
+	{
+		auto fmAmount = baseFmAmount;
+		auto fmMultiplier = pitchFactor(voice.oscFm.Get(dt, osc1Frequency) * fmAmount);
+		switch (fmMode)
+		{
+		case FmModes::Osc1:
+			osc1Frequency *= fmMultiplier;
+			break;
+		case FmModes::Osc2:
+			osc2Frequency *= fmMultiplier;
+			break;
+		}
+		break;
+	}
+	}
+
 	auto out = 0.0;
 	if (oscMix < .999)
 	{
-		auto osc1Frequency = osc1Tune * voice.frequency;
 		auto osc1Out = 0.0;
 		osc1Out += voice.osc1a.Get(dt, osc1Wave, osc1Frequency * osc1SplitFactorA);
 		if (osc1SplitMix > .001)
@@ -184,7 +208,6 @@ double MikaMicro::GetVoice(Voice &voice)
 	}
 	if (oscMix > .001)
 	{
-		auto osc2Frequency = osc2Tune * voice.frequency;
 		auto osc2Out = 0.0;
 		osc2Out += voice.osc2a.Get(dt, osc2Wave, osc2Frequency * osc2SplitFactorA);
 		if (osc2SplitMix > .001)
@@ -201,7 +224,6 @@ void MikaMicro::ProcessDoubleReplacing(double** inputs, double** outputs, int nF
 	{
 		FlushMidi(s);
 		UpdateParameters();
-		UpdateEnvelopes();
 		auto out = 0.0;
 		for (auto &v : voices) out += GetVoice(v);
 		out *= .5;
@@ -261,6 +283,14 @@ void MikaMicro::OnParamChange(int paramIdx)
 	case Parameters::OscMix:
 		targetOscMix = 1.0 - value;
 		break;
+	case Parameters::FmCoarse:
+	case Parameters::FmFine:
+	{
+		auto fmCoarse = GetParam((int)Parameters::FmCoarse)->Value();
+		auto fmFine = GetParam((int)Parameters::FmFine)->Value();
+		baseFmAmount = fmCoarse + fmFine;
+		break;
+	}
 	case Parameters::VolEnvA:
 	{
 		auto volEnvA = 1000 - 999.9 * (.5 - .5 * cos(pow(value, .1) * pi));

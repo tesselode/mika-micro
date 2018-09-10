@@ -44,6 +44,14 @@ struct Oscillator
 		}
 	}
 
+	double Get(double dt, double frequency)
+	{
+		phaseIncrement = frequency * dt;
+		phase += phaseIncrement;
+		while (phase > 1.0) phase -= 1.0;
+		return GetWaveform(Waveforms::Sine);
+	}
+
 	double Get(double dt, SmoothSwitch &waveform, double frequency)
 	{
 		phaseIncrement = frequency * dt;

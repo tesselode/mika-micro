@@ -9,6 +9,7 @@ struct Voice
 	Envelope volEnv;
 	int note = 0;
 	double frequency = 0.0;
+	Oscillator oscFm;
 	Oscillator osc1a;
 	Oscillator osc1b;
 	Oscillator osc2a;
@@ -20,6 +21,7 @@ struct Voice
 		frequency = pitchToFrequency(note);
 		if (volEnv.stage == EnvelopeStages::Idle)
 		{
+			oscFm.phase = 0.0;
 			osc1a.phase = 0.0;
 			osc1b.phase = outOfPhase ? .33 : 0.0;
 			osc2a.phase = 0.0;

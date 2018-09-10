@@ -12,6 +12,14 @@
 
 const int numVoices = 8;
 
+enum class FmModes
+{
+	Off,
+	Osc1,
+	Osc2,
+	NumFmModes
+};
+
 enum class Parameters
 {
 	Osc1Wave,
@@ -23,6 +31,9 @@ enum class Parameters
 	Osc2Fine,
 	Osc2Split,
 	OscMix,
+	FmMode,
+	FmCoarse,
+	FmFine,
 	VolEnvA,
 	VolEnvD,
 	VolEnvS,
@@ -47,7 +58,6 @@ private:
 	void InitPresets();
 	void FlushMidi(int s);
 	void UpdateParameters();
-	void UpdateEnvelopes();
 	double GetVoice(Voice &voice);
 
 	IMidiQueue midiQueue;
@@ -68,6 +78,7 @@ private:
 	double osc2SplitFactorB = 1.0;
 	double targetOscMix = 0.0;
 	double oscMix = 0.0;
+	double baseFmAmount = 0.0;
 };
 
 #endif
