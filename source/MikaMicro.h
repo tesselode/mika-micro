@@ -30,17 +30,6 @@ enum class Parameters
 	NumParameters
 };
 
-enum class Waveforms
-{
-	Sine,
-	Triangle,
-	Saw,
-	Square,
-	Pulse,
-	Noise,
-	NumWaveforms
-};
-
 class MikaMicro : public IPlug
 {
 public:
@@ -59,8 +48,6 @@ private:
 	void FlushMidi(int s);
 	void UpdateParameters();
 	void UpdateEnvelopes();
-	double GetWaveform(Oscillator &osc, Waveforms waveform);
-	double GetOscillator(Oscillator &osc, SmoothSwitch &waveform, double frequency);
 	double GetVoice(Voice &voice);
 
 	IMidiQueue midiQueue;

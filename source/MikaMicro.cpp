@@ -169,51 +169,6 @@ void MikaMicro::UpdateEnvelopes()
 	for (auto &v : voices) v.volEnv.Update(dt);
 }
 
-double MikaMicro::GetWaveform(Oscillator &osc, Waveforms waveform)
-{
-	switch (waveform)
-	{
-	case Waveforms::Sine:
-		return sin(osc.phase * twoPi);
-	case Waveforms::Triangle:
-		osc.triLast = osc.triCurrent;
-		osc.triCurrent = osc.phaseIncrement * GeneratePulse(osc.phase, osc.phaseIncrement, .5) + (1.0 - osc.phaseIncrement) * osc.triLast;
-		return osc.triCurrent * 5.0;
-	case Waveforms::Saw:
-		return 1.0 - 2.0 * osc.phase + Blep(osc.phase, osc.phaseIncrement);
-		break;
-	case Waveforms::Square:
-		return GeneratePulse(osc.phase, osc.phaseIncrement, .5);
-	case Waveforms::Pulse:
-		return GeneratePulse(osc.phase, osc.phaseIncrement, .75);
-	case Waveforms::Noise:
-		osc.noiseValue += 19.0;
-		osc.noiseValue *= osc.noiseValue;
-		osc.noiseValue -= (int)osc.noiseValue;
-		return osc.noiseValue - .5;
-	}
-}
-
-double MikaMicro::GetOscillator(Oscillator &osc, SmoothSwitch &waveform, double frequency)
-{
-	osc.phaseIncrement = frequency * dt;
-	osc.phase += osc.phaseIncrement;
-	while (osc.phase > 1.0) osc.phase -= 1.0;
-
-	switch (waveform.switching)
-	{
-	case true:
-	{
-		auto out = 0.0;
-		out += (1.0 - waveform.mix) * GetWaveform(osc, (Waveforms)(int)waveform.previous);
-		out += waveform.mix * GetWaveform(osc, (Waveforms)(int)waveform.current);
-		return out;
-	}
-	case false:
-		return GetWaveform(osc, (Waveforms)(int)waveform.current);
-	}
-}
-
 double MikaMicro::GetVoice(Voice &voice)
 {
 	if (voice.volEnv.stage == EnvelopeStages::Idle) return 0.0;
@@ -222,18 +177,18 @@ double MikaMicro::GetVoice(Voice &voice)
 	{
 		auto osc1Frequency = osc1Tune * voice.frequency;
 		auto osc1Out = 0.0;
-		osc1Out += GetOscillator(voice.osc1a, osc1Wave, osc1Frequency * osc1SplitFactorA);
+		osc1Out += voice.osc1a.Get(dt, osc1Wave, osc1Frequency * osc1SplitFactorA);
 		if (osc1SplitMix > .001)
-			osc1Out += osc1SplitMix * GetOscillator(voice.osc1b, osc1Wave, osc1Frequency * osc1SplitFactorB);
+			osc1Out += osc1SplitMix * voice.osc1b.Get(dt, osc1Wave, osc1Frequency * osc1SplitFactorB);
 		out += osc1Out * sqrt(1.0 - oscMix);
 	}
 	if (oscMix > .001)
 	{
 		auto osc2Frequency = osc2Tune * voice.frequency;
 		auto osc2Out = 0.0;
-		osc2Out += GetOscillator(voice.osc2a, osc2Wave, osc2Frequency * osc2SplitFactorA);
+		osc2Out += voice.osc2a.Get(dt, osc2Wave, osc2Frequency * osc2SplitFactorA);
 		if (osc2SplitMix > .001)
-			osc2Out += osc2SplitMix * GetOscillator(voice.osc2b, osc2Wave, osc2Frequency * osc2SplitFactorB);
+			osc2Out += osc2SplitMix * voice.osc2b.Get(dt, osc2Wave, osc2Frequency * osc2SplitFactorB);
 		out += osc2Out * sqrt(oscMix);
 	}
 	out *= voice.volEnv.value;
