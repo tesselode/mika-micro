@@ -13,6 +13,7 @@
       <Filter>vst2</Filter>
     </ClInclude>
     <ClInclude Include="Util.h" />
+    <ClInclude Include="Envelope.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="MikaMicro.rc" />

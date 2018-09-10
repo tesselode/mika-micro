@@ -237,6 +237,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="..\..\WDL\IPlug\IPlugVST.h" />
+    <ClInclude Include="Envelope.h" />
     <ClInclude Include="MikaMicro.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="Util.h" />

@@ -3,6 +3,7 @@
 
 #include <array>
 #include <cmath>
+#include "Envelope.h"
 #include "IPlug_include_in_plug_hdr.h"
 #include "IMidiQueue.h"
 #include "Util.h"
@@ -36,14 +37,6 @@ enum class Waveforms
 	Pulse,
 	Noise,
 	NumWaveforms
-};
-
-enum class EnvelopeStages
-{
-	Attack,
-	Decay,
-	Release,
-	Idle,
 };
 
 struct SmoothSwitch
@@ -101,7 +94,6 @@ private:
 	void InitGraphics();
 	void InitPresets();
 	void InitVoices();
-	bool IsReleased(double voice) { return volEnvStage[voice] == EnvelopeStages::Release || volEnvStage[voice] == EnvelopeStages::Idle; }
 	void FlushMidi(int s);
 	void UpdateParameters();
 	void UpdateEnvelopes();
@@ -111,8 +103,7 @@ private:
 
 	IMidiQueue midiQueue;
 	double dt = 0.0;
-	std::array<EnvelopeStages, numVoices> volEnvStage;
-	std::array<double, numVoices> volEnvValue;
+	std::array<Envelope, numVoices> volEnv;
 	std::array<int, numVoices> note;
 	std::array<double, numVoices> frequency;
 	std::array<Oscillator, numVoices> osc1a;
@@ -134,10 +125,6 @@ private:
 	double osc2SplitFactorB = 1.0;
 	double targetOscMix = 0.0;
 	double oscMix = 0.0;
-	double volEnvA = 0.0;
-	double volEnvD = 0.0;
-	double volEnvS = 0.0;
-	double volEnvR = 0.0;
 };
 
 #endif
