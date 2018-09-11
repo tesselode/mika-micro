@@ -10,6 +10,7 @@
 #include "Oscillator.h"
 #include "SmoothSwitch.h"
 #include "Util.h"
+#include <vector>
 #include "Voice.h"
 
 const int numVoices = 8;
@@ -56,6 +57,8 @@ enum class Parameters
 	ModEnvCutoff,
 	LfoFm,
 	LfoCutoff,
+	VoiceMode,
+	GlideLength,
 	NumParameters
 };
 
@@ -79,6 +82,7 @@ private:
 	double GetVoice(Voice &voice);
 
 	IMidiQueue midiQueue;
+	std::vector<int> heldNotes;
 	double dt = 0.0;
 	std::array<Voice, numVoices> voices;
 	Oscillator lfo;
@@ -101,6 +105,7 @@ private:
 	double baseFmAmount = 0.0;
 	SmoothSwitch filterMode;
 	double lfoToCutoff = 0.0;
+	double glideLength = 0.0;
 };
 
 #endif

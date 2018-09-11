@@ -46,6 +46,9 @@ void MikaMicro::InitParameters()
 	GetParam((int)Parameters::VolEnvCutoff)->InitDouble("Volume envelope to filter cutoff", 0.0, -8000.0, 8000.0, .01, "hz");
 	GetParam((int)Parameters::ModEnvCutoff)->InitDouble("Modulation envelope to filter cutoff", 0.0, -8000.0, 8000.0, .01, "hz");
 	GetParam((int)Parameters::LfoCutoff)->InitDouble("Vibrato to filter cutoff", 0.0, -8000.0, 8000.0, .01);
+
+	GetParam((int)Parameters::VoiceMode)->InitEnum("Voice mode", (int)(VoiceModes::Legato), (int)(VoiceModes::NumVoiceModes));
+	GetParam((int)Parameters::GlideLength)->InitDouble("Glide length", 0.0, 0.0, 1.0, .01);
 }
 
 void MikaMicro::InitGraphics()
@@ -119,8 +122,8 @@ void MikaMicro::InitGraphics()
 	pGraphics->AttachControl(new IKnobMultiControl(this, 203 * 4, 66.5 * 4, (int)Parameters::LfoCutoff, &knobMiddle));
 
 	// master
-	//pGraphics->AttachControl(new ISwitchControl(this, 6 * 4, 90 * 4, (int)Parameters::VoiceMode, &fmModeSwitch));
-	//pGraphics->AttachControl(new IKnobMultiControl(this, 22 * 4, 90 * 4, (int)Parameters::GlideLength, &knobLeft));
+	pGraphics->AttachControl(new ISwitchControl(this, 6 * 4, 90 * 4, (int)Parameters::VoiceMode, &fmModeSwitch));
+	pGraphics->AttachControl(new IKnobMultiControl(this, 22 * 4, 90 * 4, (int)Parameters::GlideLength, &knobLeft));
 	//pGraphics->AttachControl(new IKnobMultiControl(this, 38 * 4, 90 * 4, (int)Parameters::MasterVolume, &knobLeft));
 
 	//pGraphics->AttachControl(new PresetMenu(this, IRECT(0, 0, 100, 25)));
@@ -145,34 +148,95 @@ MikaMicro::MikaMicro(IPlugInstanceInfo instanceInfo)
 
 MikaMicro::~MikaMicro() {}
 
-void MikaMicro::FlushMidi(int s)
+void MikaMicro::FlushMidi(int sample)
 {
 	while (!midiQueue.Empty())
 	{
 		auto message = midiQueue.Peek();
-		if (message->mOffset > s) break;
+		if (message->mOffset > sample) break;
 
+		auto voiceMode = (VoiceModes)(int)GetParam((int)Parameters::VoiceMode)->Value();
 		auto status = message->StatusMsg();
-		if (status == IMidiMsg::kNoteOn && message->Velocity() == 0) status = IMidiMsg::kNoteOff;
+		auto note = message->NoteNumber();
+		auto velocity = pow(message->Velocity() * .0078125, 1.25);
+		auto osc1OutOfPhase = osc1SplitFactorA > 1.0;
+		auto osc2OutOfPhase = osc2SplitFactorA > 1.0;
+
+		if (status == IMidiMsg::kNoteOn && velocity == 0) status = IMidiMsg::kNoteOff;
 
 		switch (status)
 		{
 		case IMidiMsg::kNoteOff:
-			for (auto &v : voices)
+			heldNotes.erase(
+				std::remove(
+					std::begin(heldNotes),
+					std::end(heldNotes),
+					note
+				),
+				std::end(heldNotes)
+			);
+
+			switch (voiceMode)
 			{
-				if (!v.volEnv.IsReleased() && v.note == message->NoteNumber())
-					v.Release();
+			case VoiceModes::Poly:
+				for (auto &voice : voices)
+					if (voice.note == note) voice.Release();
+				break;
+			case VoiceModes::Mono:
+			case VoiceModes::Legato:
+				if (heldNotes.empty())
+					voices[0].Release();
+				else
+					voices[0].SetNote(heldNotes.back());
+				break;
 			}
 			break;
 		case IMidiMsg::kNoteOn:
-			for (auto &v : voices)
+			switch (voiceMode)
 			{
-				if (v.volEnv.IsReleased())
+			case VoiceModes::Poly:
+			{
+				// get the quietest voice, prioritizing voices that are released
+				auto voice = std::min_element(
+					std::begin(voices),
+					std::end(voices),
+					[](Voice a, Voice b)
 				{
-					v.Start(message->NoteNumber(), osc1SplitFactorA > 1.0);
-					break;
+					return a.IsReleased() == b.IsReleased() ? a.GetVolume() < b.GetVolume() : a.IsReleased();
 				}
+				);
+				voice->SetNote(note);
+				voice->SetVelocity(velocity);
+				voice->ResetPitch();
+				voice->Start(osc1OutOfPhase, osc2OutOfPhase);
+				break;
 			}
+			case VoiceModes::Mono:
+				voices[0].SetNote(note);
+				voices[0].SetVelocity(velocity);
+				voices[0].Start(osc1OutOfPhase, osc2OutOfPhase);
+				break;
+			case VoiceModes::Legato:
+				voices[0].SetNote(note);
+				if (heldNotes.empty())
+				{
+					voices[0].SetVelocity(velocity);
+					voices[0].ResetPitch();
+					voices[0].Start(osc1OutOfPhase, osc2OutOfPhase);
+				}
+				break;
+			}
+
+			heldNotes.push_back(note);
+			break;
+		case IMidiMsg::kPitchWheel:
+		{
+			auto pitchBendFactor = pitchFactor(message->PitchWheel() * 2.0);
+			//for (auto &voice : voices) voice.SetPitchBendFactor(pitchBendFactor);
+			break;
+		}
+		case IMidiMsg::kAllNotesOff:
+			for (auto &voice : voices) voice.Release();
 			break;
 		}
 
@@ -198,8 +262,10 @@ double MikaMicro::GetVoice(Voice &voice)
 	voice.lfoEnv.Update(dt);
 	auto delayedLfoValue = lfoValue * voice.lfoEnv.value;
 
-	auto osc1Frequency = osc1Tune * voice.frequency;
-	auto osc2Frequency = osc2Tune * voice.frequency;
+	voice.baseFrequency += (voice.targetFrequency - voice.baseFrequency) * glideLength * dt;
+
+	auto osc1Frequency = osc1Tune * voice.baseFrequency;
+	auto osc2Frequency = osc2Tune * voice.baseFrequency;
 
 	auto fmMode = (FmModes)(int)GetParam((int)Parameters::FmMode)->Value();
 	switch (fmMode)
@@ -384,6 +450,17 @@ void MikaMicro::OnParamChange(int paramIdx)
 	}
 	case Parameters::LfoCutoff:
 		lfoToCutoff = copysign((value * .000125) * (value * .000125) * 8000.0, value);
+		break;
+	case Parameters::VoiceMode:
+		switch ((VoiceModes)(int)value)
+		{
+		case VoiceModes::Mono:
+		case VoiceModes::Legato:
+			for (int i = 1; i < numVoices; i++) voices[i].Release();
+		}
+		break;
+	case Parameters::GlideLength:
+		glideLength = 1000 - 999.0 * (.5 - .5 * cos(pow(value, .1) * pi));
 		break;
 	}
 }
