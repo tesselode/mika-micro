@@ -19,6 +19,15 @@ void MikaMicro::InitParameters()
 	GetParam((int)Parameters::FmCoarse)->InitInt("FM coarse", 0, 0, 48);
 	GetParam((int)Parameters::FmFine)->InitDouble("FM fine", 0.0, -1.0, 1.0, .01);
 
+	GetParam((int)Parameters::FilterMode)->InitEnum("Filter mode", (int)FilterModes::Off, (int)FilterModes::NumFilterModes);
+	GetParam((int)Parameters::FilterMode)->SetDisplayText((int)FilterModes::Off, "Off");
+	GetParam((int)Parameters::FilterMode)->SetDisplayText((int)FilterModes::TwoPole, "Two pole");
+	GetParam((int)Parameters::FilterMode)->SetDisplayText((int)FilterModes::Svf, "State variable");
+	GetParam((int)Parameters::FilterMode)->SetDisplayText((int)FilterModes::FourPole, "Four pole");
+	GetParam((int)Parameters::FilterCutoff)->InitDouble("Filter cutoff", 8000.0, 20.0, 8000.0, .01, "hz");
+	GetParam((int)Parameters::FilterResonance)->InitDouble("Filter resonance", 0.0, 0.0, 1.0, .01);
+	//GetParam((int)Parameters::FilterKeyTrack)->InitDouble("Filter key tracking", 0.0, -1.0, 1.0,
+
 	GetParam((int)Parameters::VolEnvA)->InitDouble("Volume envelope attack time", 0.5, 0.0, 1.0, .01);
 	GetParam((int)Parameters::VolEnvD)->InitDouble("Volume envelope decay time", 0.5, 0.0, 1.0, .01);
 	GetParam((int)Parameters::VolEnvS)->InitDouble("Volume envelope sustain", 0.5, 0.0, 1.0, .01);
@@ -57,9 +66,9 @@ void MikaMicro::InitGraphics()
 	pGraphics->AttachControl(new IKnobMultiControl(this, 54 * 4, 42 * 4, (int)Parameters::FmFine, &knobMiddle));
 
 	// filter
-	//pGraphics->AttachControl(new ISwitchPopUpControl(this, 22 * 4, 62 * 4, (int)Parameters::FilterMode, &fmModeSwitch));
-	//pGraphics->AttachControl(new IKnobMultiControl(this, 38 * 4, 62 * 4, (int)Parameters::FilterCutoff, &knobRight));
-	//pGraphics->AttachControl(new IKnobMultiControl(this, 54 * 4, 62 * 4, (int)Parameters::FilterResonance, &knobLeft));
+	pGraphics->AttachControl(new ISwitchControl(this, 22 * 4, 62 * 4, (int)Parameters::FilterMode, &fmModeSwitch));
+	pGraphics->AttachControl(new IKnobMultiControl(this, 38 * 4, 62 * 4, (int)Parameters::FilterCutoff, &knobRight));
+	pGraphics->AttachControl(new IKnobMultiControl(this, 54 * 4, 62 * 4, (int)Parameters::FilterResonance, &knobLeft));
 	//pGraphics->AttachControl(new IKnobMultiControl(this, 70 * 4, 62 * 4, (int)Parameters::FilterKeyTrack, &knobMiddle));
 
 	// modulation sources
@@ -166,6 +175,7 @@ void MikaMicro::UpdateParameters()
 	osc2Wave.Update(dt);
 	osc2SplitMix += (targetOsc2SplitMix - osc2SplitMix) * 100.0 * dt;
 	oscMix += (targetOscMix - oscMix) * 100.0 * dt;
+	filterMode.Update(dt);
 }
 
 double MikaMicro::GetVoice(Voice &voice)
@@ -214,6 +224,9 @@ double MikaMicro::GetVoice(Voice &voice)
 			osc2Out += osc2SplitMix * voice.osc2b.Get(dt, osc2Wave, osc2Frequency * osc2SplitFactorB);
 		out += osc2Out * sqrt(oscMix);
 	}
+	auto cutoff = GetParam((int)Parameters::FilterCutoff)->Value();
+	auto resonance = GetParam((int)Parameters::FilterResonance)->Value();
+	out = voice.filter.Process(dt, out, filterMode, cutoff, resonance);
 	out *= voice.volEnv.value;
 	return out;
 }
@@ -291,6 +304,9 @@ void MikaMicro::OnParamChange(int paramIdx)
 		baseFmAmount = fmCoarse + fmFine;
 		break;
 	}
+	case Parameters::FilterMode:
+		filterMode.Switch(value);
+		break;
 	case Parameters::VolEnvA:
 	{
 		auto volEnvA = 1000 - 999.9 * (.5 - .5 * cos(pow(value, .1) * pi));

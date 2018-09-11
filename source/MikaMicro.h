@@ -4,6 +4,7 @@
 #include <array>
 #include <cmath>
 #include "Envelope.h"
+#include "Filter.h"
 #include "IPlug_include_in_plug_hdr.h"
 #include "IMidiQueue.h"
 #include "SmoothSwitch.h"
@@ -34,6 +35,9 @@ enum class Parameters
 	FmMode,
 	FmCoarse,
 	FmFine,
+	FilterMode,
+	FilterCutoff,
+	FilterResonance,
 	VolEnvA,
 	VolEnvD,
 	VolEnvS,
@@ -79,6 +83,7 @@ private:
 	double targetOscMix = 0.0;
 	double oscMix = 0.0;
 	double baseFmAmount = 0.0;
+	SmoothSwitch filterMode;
 };
 
 #endif

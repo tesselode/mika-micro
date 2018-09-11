@@ -19,6 +19,8 @@ struct Envelope
 
 	bool IsReleased() { return stage == EnvelopeStages::Release || stage == EnvelopeStages::Idle; }
 
+	void Reset() { value = 0.0; }
+
 	void Update(double dt)
 	{
 		switch (stage)
