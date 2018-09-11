@@ -42,6 +42,14 @@ enum class Parameters
 	VolEnvD,
 	VolEnvS,
 	VolEnvR,
+	ModEnvA,
+	ModEnvD,
+	ModEnvS,
+	ModEnvR,
+	VolEnvFm,
+	VolEnvCutoff,
+	ModEnvFm,
+	ModEnvCutoff,
 	NumParameters
 };
 

@@ -20,6 +20,8 @@ struct Envelope
 	bool IsReleased() { return stage == EnvelopeStages::Release || stage == EnvelopeStages::Idle; }
 
 	void Reset() { value = 0.0; }
+	void Start() { stage = EnvelopeStages::Attack; }
+	void Release() { stage = EnvelopeStages::Release; }
 
 	void Update(double dt)
 	{

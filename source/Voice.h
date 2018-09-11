@@ -8,6 +8,7 @@
 struct Voice
 {
 	Envelope volEnv;
+	Envelope modEnv;
 	int note = 0;
 	double frequency = 0.0;
 	Oscillator oscFm;
@@ -25,7 +26,14 @@ struct Voice
 		osc2a.phase = 0.0;
 		osc2b.phase = outOfPhase ? .33 : 0.0;
 		volEnv.Reset();
+		modEnv.Reset();
 		filter.Reset();
+	}
+
+	void Release()
+	{
+		volEnv.Release();
+		modEnv.Release();
 	}
 
 	void Start(int newNote, bool outOfPhase)
@@ -33,6 +41,7 @@ struct Voice
 		note = newNote;
 		frequency = pitchToFrequency(note);
 		if (volEnv.stage == EnvelopeStages::Idle) Reset(outOfPhase);
-		volEnv.stage = EnvelopeStages::Attack;
+		volEnv.Start();
+		modEnv.Start();
 	}
 };
