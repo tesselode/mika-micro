@@ -7,6 +7,7 @@
 #include "Filter.h"
 #include "IPlug_include_in_plug_hdr.h"
 #include "IMidiQueue.h"
+#include "Oscillator.h"
 #include "SmoothSwitch.h"
 #include "Util.h"
 #include "Voice.h"
@@ -46,10 +47,15 @@ enum class Parameters
 	ModEnvD,
 	ModEnvS,
 	ModEnvR,
+	LfoAmount,
+	LfoFrequency,
+	LfoDelay,
 	VolEnvFm,
 	VolEnvCutoff,
 	ModEnvFm,
 	ModEnvCutoff,
+	LfoFm,
+	LfoCutoff,
 	NumParameters
 };
 
@@ -75,6 +81,8 @@ private:
 	IMidiQueue midiQueue;
 	double dt = 0.0;
 	std::array<Voice, numVoices> voices;
+	Oscillator lfo;
+	double lfoValue = 0.0;
 
 	SmoothSwitch osc1Wave;
 	double osc1Tune = 1.0;
@@ -92,6 +100,7 @@ private:
 	double oscMix = 0.0;
 	double baseFmAmount = 0.0;
 	SmoothSwitch filterMode;
+	double lfoToCutoff = 0.0;
 };
 
 #endif

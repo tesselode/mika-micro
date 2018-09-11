@@ -10,10 +10,12 @@ enum class EnvelopeStages
 
 struct Envelope
 {
+	// these defaults are used for the lfo delay envelope
 	double a = 0.0;
-	double d = 0.0;
-	double s = 0.0;
-	double r = 0.0;
+	double d = 0.5;
+	double s = 1.0;
+	double r = 0.5;
+
 	EnvelopeStages stage = EnvelopeStages::Idle;
 	double value = 0.0;
 
