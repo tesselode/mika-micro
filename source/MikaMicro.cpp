@@ -49,6 +49,7 @@ void MikaMicro::InitParameters()
 
 	GetParam((int)Parameters::VoiceMode)->InitEnum("Voice mode", (int)(VoiceModes::Legato), (int)(VoiceModes::NumVoiceModes));
 	GetParam((int)Parameters::GlideLength)->InitDouble("Glide length", 0.0, 0.0, 1.0, .01);
+	GetParam((int)Parameters::MasterVolume)->InitDouble("Master volume", 0.25, 0.0, 0.5, .01);
 }
 
 void MikaMicro::InitGraphics()
@@ -124,7 +125,7 @@ void MikaMicro::InitGraphics()
 	// master
 	pGraphics->AttachControl(new ISwitchControl(this, 6 * 4, 90 * 4, (int)Parameters::VoiceMode, &fmModeSwitch));
 	pGraphics->AttachControl(new IKnobMultiControl(this, 22 * 4, 90 * 4, (int)Parameters::GlideLength, &knobLeft));
-	//pGraphics->AttachControl(new IKnobMultiControl(this, 38 * 4, 90 * 4, (int)Parameters::MasterVolume, &knobLeft));
+	pGraphics->AttachControl(new IKnobMultiControl(this, 38 * 4, 90 * 4, (int)Parameters::MasterVolume, &knobLeft));
 
 	//pGraphics->AttachControl(new PresetMenu(this, IRECT(0, 0, 100, 25)));
 
@@ -252,6 +253,7 @@ void MikaMicro::UpdateParameters()
 	osc2SplitMix += (targetOsc2SplitMix - osc2SplitMix) * 100.0 * dt;
 	oscMix += (targetOscMix - oscMix) * 100.0 * dt;
 	filterMode.Update(dt);
+	masterVolume += (targetMasterVolume - masterVolume) * 100.0 * dt;
 }
 
 double MikaMicro::GetVoice(Voice &voice)
@@ -331,7 +333,7 @@ void MikaMicro::ProcessDoubleReplacing(double** inputs, double** outputs, int nF
 		lfoValue = lfo.Get(dt, GetParam((int)Parameters::LfoFrequency)->Value());
 		auto out = 0.0;
 		for (auto &v : voices) out += GetVoice(v);
-		out *= .5;
+		out *= masterVolume;
 		outputs[0][s] = out;
 		outputs[1][s] = out;
 	}
@@ -462,5 +464,7 @@ void MikaMicro::OnParamChange(int paramIdx)
 	case Parameters::GlideLength:
 		glideLength = 1000 - 999.0 * (.5 - .5 * cos(pow(value, .1) * pi));
 		break;
+	case Parameters::MasterVolume:
+		targetMasterVolume = value;
 	}
 }
