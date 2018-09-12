@@ -273,6 +273,9 @@ void MikaMicro::UpdateParameters()
 	osc2SplitMix += (targetOsc2SplitMix - osc2SplitMix) * 100.0 * dt;
 	oscMix += (targetOscMix - oscMix) * 100.0 * dt;
 	filterMode.Update(dt);
+	filterCutoff += (targetFilterCutoff - filterCutoff) * 100.0 * dt;
+	filterResonance += (targetFilterResonance - filterResonance) * 100.0 * dt;
+	filterKeyTracking += (targetFilterKeyTracking - filterKeyTracking) * 100.0 * dt;
 	masterVolume += (targetMasterVolume - masterVolume) * 100.0 * dt;
 }
 
@@ -347,14 +350,13 @@ double MikaMicro::GetVoice(Voice &voice)
 
 	out *= volEnvValue;
 
-	auto cutoff = GetParam((int)Parameters::FilterCutoff)->Value();
+	auto cutoff = filterCutoff;
 	cutoff += GetParam((int)Parameters::VolEnvCutoff)->Value() * volEnvValue;
 	cutoff += GetParam((int)Parameters::ModEnvCutoff)->Value() * modEnvValue;
 	cutoff += GetParam((int)Parameters::LfoCutoff)->Value() * delayedLfoValue;
 	cutoff += GetParam((int)Parameters::FilterKeyTracking)->Value() * baseFrequency;
 	cutoff *= 1.0 - driftValue;
-	auto resonance = GetParam((int)Parameters::FilterResonance)->Value();
-	out = voice.filter.Process(dt, out, filterMode, cutoff, resonance);
+	out = voice.filter.Process(dt, out, filterMode, cutoff, filterResonance);
 
 	return out;
 }
@@ -475,6 +477,15 @@ void MikaMicro::OnParamChange(int paramIdx)
 	}
 	case Parameters::FilterMode:
 		filterMode.Switch(value);
+		break;
+	case Parameters::FilterCutoff:
+		targetFilterCutoff = value;
+		break;
+	case Parameters::FilterResonance:
+		targetFilterResonance = value;
+		break;
+	case Parameters::FilterKeyTracking:
+		targetFilterKeyTracking = value;
 		break;
 	case Parameters::VolEnvA:
 	{

@@ -114,6 +114,12 @@ private:
 	double oscMix = 0.0;
 	double baseFmAmount = 0.0;
 	SmoothSwitch filterMode;
+	double targetFilterCutoff = 0.0;
+	double filterCutoff = 0.0;
+	double targetFilterResonance = 0.0;
+	double filterResonance = 0.0;
+	double targetFilterKeyTracking = 0.0;
+	double filterKeyTracking = 0.0;
 	double lfoToCutoff = 0.0;
 	double glideLength = 0.0;
 	double targetMasterVolume = 0.0;
