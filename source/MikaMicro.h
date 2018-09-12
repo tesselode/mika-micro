@@ -40,6 +40,7 @@ enum class Parameters
 	FilterMode,
 	FilterCutoff,
 	FilterResonance,
+	FilterKeyTracking,
 	VolEnvA,
 	VolEnvD,
 	VolEnvS,
