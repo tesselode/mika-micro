@@ -32,10 +32,12 @@ void MikaMicro::InitParameters()
 	GetParam((int)Parameters::VolEnvD)->InitDouble("Volume envelope decay time", 0.5, 0.0, 1.0, .01);
 	GetParam((int)Parameters::VolEnvS)->InitDouble("Volume envelope sustain", 0.5, 0.0, 1.0, .01);
 	GetParam((int)Parameters::VolEnvR)->InitDouble("Volume envelope release time", 0.5, 0.0, 1.0, .01);
+	GetParam((int)Parameters::VolEnvV)->InitDouble("Volume envelope velocity sensitivity", 0.0, 0.0, 1.0, .01);
 	GetParam((int)Parameters::ModEnvA)->InitDouble("Mod envelope attack time", 0.5, 0.0, 1.0, .01);
 	GetParam((int)Parameters::ModEnvD)->InitDouble("Mod envelope decay time", 0.5, 0.0, 1.0, .01);
 	GetParam((int)Parameters::ModEnvS)->InitDouble("Mod envelope sustain", 0.5, 0.0, 1.0, .01);
 	GetParam((int)Parameters::ModEnvR)->InitDouble("Mod envelope release time", 0.5, 0.0, 1.0, .01);
+	GetParam((int)Parameters::ModEnvV)->InitDouble("Mod envelope velocity sensitivity", 0.0, 0.0, 1.0, .01);
 	GetParam((int)Parameters::LfoAmount)->InitDouble("Vibrato amount", 0.0, -0.1, 0.1, .01);
 	GetParam((int)Parameters::LfoFrequency)->InitDouble("Vibrato frequency", 4.0, 0.1, 10.0, .01, "", "", 2.0);
 	GetParam((int)Parameters::LfoDelay)->InitDouble("Vibrato delay", 0.1, 0.1, 1000.0, .01, "", "", .001);
@@ -98,8 +100,8 @@ void MikaMicro::InitGraphics()
 	pGraphics->AttachControl(new IFaderControl(this, 136.5 * 4, 23 * 4, 20 * 4, (int)Parameters::VolEnvS, &slider));
 	pGraphics->AttachControl(new IBitmapControl(this, 145.5 * 4, 22 * 4, &sliderBg));
 	pGraphics->AttachControl(new IFaderControl(this, 144.5 * 4, 23 * 4, 20 * 4, (int)Parameters::VolEnvR, &slider));
-	//pGraphics->AttachControl(new IBitmapControl(this, 153.5 * 4, 22 * 4, &sliderBg));
-	//pGraphics->AttachControl(new IFaderControl(this, 152.5 * 4, 23 * 4, 20 * 4, (int)Parameters::VolEnvV, &slider));
+	pGraphics->AttachControl(new IBitmapControl(this, 153.5 * 4, 22 * 4, &sliderBg));
+	pGraphics->AttachControl(new IFaderControl(this, 152.5 * 4, 23 * 4, 20 * 4, (int)Parameters::VolEnvV, &slider));
 	pGraphics->AttachControl(new IBitmapControl(this, 121.5 * 4, 56.5 * 4, &sliderBg));
 	pGraphics->AttachControl(new IFaderControl(this, 120.5 * 4, 57.5 * 4, 20 * 4, (int)Parameters::ModEnvA, &slider));
 	pGraphics->AttachControl(new IBitmapControl(this, 129.5 * 4, 56.5 * 4, &sliderBg));
@@ -108,8 +110,8 @@ void MikaMicro::InitGraphics()
 	pGraphics->AttachControl(new IFaderControl(this, 136.5 * 4, 57.5 * 4, 20 * 4, (int)Parameters::ModEnvS, &slider));
 	pGraphics->AttachControl(new IBitmapControl(this, 145.5 * 4, 56.5 * 4, &sliderBg));
 	pGraphics->AttachControl(new IFaderControl(this, 144.5 * 4, 57.5 * 4, 20 * 4, (int)Parameters::ModEnvR, &slider));
-	//pGraphics->AttachControl(new IBitmapControl(this, 153.5 * 4, 56.5 * 4, &sliderBg));
-	//pGraphics->AttachControl(new IFaderControl(this, 152.5 * 4, 57.5 * 4, 20 * 4, (int)Parameters::ModEnvV, &slider));
+	pGraphics->AttachControl(new IBitmapControl(this, 153.5 * 4, 56.5 * 4, &sliderBg));
+	pGraphics->AttachControl(new IFaderControl(this, 152.5 * 4, 57.5 * 4, 20 * 4, (int)Parameters::ModEnvV, &slider));
 	pGraphics->AttachControl(new IKnobMultiControl(this, 171 * 4, 13.5 * 4, (int)Parameters::LfoAmount, &knobMiddle));
 	pGraphics->AttachControl(new IKnobMultiControl(this, 187 * 4, 13.5 * 4, (int)Parameters::LfoFrequency, &knobLeft));
 	pGraphics->AttachControl(new IKnobMultiControl(this, 203 * 4, 13.5 * 4, (int)Parameters::LfoDelay, &knobLeft));
@@ -262,6 +264,10 @@ double MikaMicro::GetVoice(Voice &voice)
 	if (voice.volEnv.stage == EnvelopeStages::Idle) return 0.0;
 	voice.modEnv.Update(dt);
 	voice.lfoEnv.Update(dt);
+	auto volEnvV = GetParam((int)Parameters::VolEnvV)->Value();
+	auto volEnvValue = (1.0 - volEnvV) * voice.volEnv.value + volEnvV * voice.volEnv.value * voice.velocity;
+	auto modEnvV = GetParam((int)Parameters::ModEnvV)->Value();
+	auto modEnvValue = (1.0 - modEnvV) * voice.modEnv.value + modEnvV * voice.modEnv.value * voice.velocity;
 	auto delayedLfoValue = lfoValue * voice.lfoEnv.value;
 
 	voice.baseFrequency += (voice.targetFrequency - voice.baseFrequency) * glideLength * dt;
@@ -276,8 +282,8 @@ double MikaMicro::GetVoice(Voice &voice)
 	case FmModes::Osc2:
 	{
 		auto fmAmount = baseFmAmount;
-		fmAmount += GetParam((int)Parameters::VolEnvFm)->Value() * voice.volEnv.value;
-		fmAmount += GetParam((int)Parameters::ModEnvFm)->Value() * voice.modEnv.value;
+		fmAmount += GetParam((int)Parameters::VolEnvFm)->Value() * volEnvValue;
+		fmAmount += GetParam((int)Parameters::ModEnvFm)->Value() * modEnvValue;
 		fmAmount += GetParam((int)Parameters::LfoFm)->Value() * delayedLfoValue;
 
 		auto fmMultiplier = pitchFactor(voice.oscFm.Get(dt, osc1Frequency) * fmAmount);
@@ -313,13 +319,13 @@ double MikaMicro::GetVoice(Voice &voice)
 	}
 
 	auto cutoff = GetParam((int)Parameters::FilterCutoff)->Value();
-	cutoff += GetParam((int)Parameters::VolEnvCutoff)->Value() * voice.volEnv.value;
-	cutoff += GetParam((int)Parameters::ModEnvCutoff)->Value() * voice.modEnv.value;
+	cutoff += GetParam((int)Parameters::VolEnvCutoff)->Value() * volEnvValue;
+	cutoff += GetParam((int)Parameters::ModEnvCutoff)->Value() * modEnvValue;
 	cutoff += GetParam((int)Parameters::LfoCutoff)->Value() * delayedLfoValue;
 	auto resonance = GetParam((int)Parameters::FilterResonance)->Value();
 	out = voice.filter.Process(dt, out, filterMode, cutoff, resonance);
 
-	out *= voice.volEnv.value;
+	out *= volEnvValue;
 
 	return out;
 }
