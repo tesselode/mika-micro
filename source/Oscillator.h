@@ -37,6 +37,8 @@ struct Oscillator
 		case Waveforms::Pulse:
 			return GeneratePulse(phase, phaseIncrement, .75);
 		case Waveforms::Noise:
+			// Ove Karlsen's noise algorithm
+			// http://musicdsp.org/showArchiveComment.php?ArchiveID=217
 			noiseValue += 19.0;
 			noiseValue *= noiseValue;
 			noiseValue -= (int)noiseValue;
