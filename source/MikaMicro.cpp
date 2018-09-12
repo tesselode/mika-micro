@@ -235,7 +235,7 @@ void MikaMicro::FlushMidi(int sample)
 		case IMidiMsg::kPitchWheel:
 		{
 			auto pitchBendFactor = pitchFactor(message->PitchWheel() * 2.0);
-			//for (auto &voice : voices) voice.SetPitchBendFactor(pitchBendFactor);
+			for (auto &voice : voices) voice.SetPitchBendFactor(pitchBendFactor);
 			break;
 		}
 		case IMidiMsg::kAllNotesOff:
@@ -270,10 +270,11 @@ double MikaMicro::GetVoice(Voice &voice)
 	auto modEnvValue = (1.0 - modEnvV) * voice.modEnv.value + modEnvV * voice.modEnv.value * voice.velocity;
 	auto delayedLfoValue = lfoValue * voice.lfoEnv.value;
 
-	voice.baseFrequency += (voice.targetFrequency - voice.baseFrequency) * glideLength * dt;
+	voice.frequency += (voice.targetFrequency - voice.frequency) * glideLength * dt;
 
-	auto osc1Frequency = osc1Tune * voice.baseFrequency;
-	auto osc2Frequency = osc2Tune * voice.baseFrequency;
+	auto baseFrequency = voice.frequency * voice.pitchBend;
+	auto osc1Frequency = osc1Tune * baseFrequency;
+	auto osc2Frequency = osc2Tune * baseFrequency;
 
 	auto fmMode = (FmModes)(int)GetParam((int)Parameters::FmMode)->Value();
 	switch (fmMode)

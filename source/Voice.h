@@ -20,8 +20,9 @@ struct Voice
 	Envelope lfoEnv;
 	int note = 0;
 	double targetFrequency = 0.0;
-	double baseFrequency = 0.0;
+	double frequency = 0.0;
 	double velocity = 0.0;
+	double pitchBend = 1.0;
 	Oscillator oscFm;
 	Oscillator osc1a;
 	Oscillator osc1b;
@@ -58,7 +59,9 @@ struct Voice
 		targetFrequency = pitchToFrequency(note);
 	}
 
-	void ResetPitch() { baseFrequency = targetFrequency; }
+	void SetPitchBendFactor(double f) { pitchBend = f; }
+
+	void ResetPitch() { frequency = targetFrequency; }
 
 	void SetVelocity(double v) { velocity = v; }
 
