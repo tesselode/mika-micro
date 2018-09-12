@@ -258,6 +258,14 @@ void MikaMicro::UpdateParameters()
 	masterVolume += (targetMasterVolume - masterVolume) * 100.0 * dt;
 }
 
+void MikaMicro::UpdateDrift()
+{
+	driftVelocity += random() * 10000.0 * dt;
+	driftVelocity -= driftVelocity * 2.0 * dt;
+	driftPhase += driftVelocity * dt;
+	driftValue = .001 * sin(driftPhase);
+}
+
 double MikaMicro::GetVoice(Voice &voice)
 {
 	voice.volEnv.Update(dt);
@@ -272,7 +280,7 @@ double MikaMicro::GetVoice(Voice &voice)
 
 	voice.frequency += (voice.targetFrequency - voice.frequency) * glideLength * dt;
 
-	auto baseFrequency = voice.frequency * voice.pitchBend;
+	auto baseFrequency = voice.frequency * voice.pitchBend * (1.0 + driftValue);
 	auto osc1Frequency = osc1Tune * baseFrequency;
 	auto osc2Frequency = osc2Tune * baseFrequency;
 
@@ -324,6 +332,7 @@ double MikaMicro::GetVoice(Voice &voice)
 	cutoff += GetParam((int)Parameters::ModEnvCutoff)->Value() * modEnvValue;
 	cutoff += GetParam((int)Parameters::LfoCutoff)->Value() * delayedLfoValue;
 	cutoff += GetParam((int)Parameters::FilterKeyTracking)->Value() * baseFrequency;
+	cutoff *= 1.0 - driftValue;
 	auto resonance = GetParam((int)Parameters::FilterResonance)->Value();
 	out = voice.filter.Process(dt, out, filterMode, cutoff, resonance);
 
@@ -338,6 +347,7 @@ void MikaMicro::ProcessDoubleReplacing(double** inputs, double** outputs, int nF
 	{
 		FlushMidi(s);
 		UpdateParameters();
+		UpdateDrift();
 		lfoValue = lfo.Get(dt, GetParam((int)Parameters::LfoFrequency)->Value());
 		auto out = 0.0;
 		for (auto &v : voices) out += GetVoice(v);

@@ -83,6 +83,7 @@ private:
 	void InitPresets();
 	void FlushMidi(int s);
 	void UpdateParameters();
+	void UpdateDrift();
 	double GetVoice(Voice &voice);
 
 	IMidiQueue midiQueue;
@@ -91,6 +92,9 @@ private:
 	std::array<Voice, numVoices> voices;
 	Oscillator lfo;
 	double lfoValue = 0.0;
+	double driftVelocity = 0.0;
+	double driftPhase = 0.0;
+	double driftValue = 0.0;
 
 	SmoothSwitch osc1Wave;
 	double osc1Tune = 1.0;
