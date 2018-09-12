@@ -23,6 +23,7 @@ struct SmoothSwitch
 
 	void Switch(double value)
 	{
+		if (current == value) return;
 		previous = current;
 		current = value;
 		mix = 0.0;

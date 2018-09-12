@@ -6,16 +6,31 @@
 void MikaMicro::InitParameters()
 {
 	GetParam((int)Parameters::Osc1Wave)->InitEnum("Oscillator 1 waveform", (int)Waveforms::Saw, (int)Waveforms::NumWaveforms);
+	GetParam((int)Parameters::Osc1Wave)->SetDisplayText((int)Waveforms::Sine, "Sine");
+	GetParam((int)Parameters::Osc1Wave)->SetDisplayText((int)Waveforms::Triangle, "Triangle");
+	GetParam((int)Parameters::Osc1Wave)->SetDisplayText((int)Waveforms::Saw, "Saw");
+	GetParam((int)Parameters::Osc1Wave)->SetDisplayText((int)Waveforms::Square, "Square");
+	GetParam((int)Parameters::Osc1Wave)->SetDisplayText((int)Waveforms::Pulse, "Pulse");
+	GetParam((int)Parameters::Osc1Wave)->SetDisplayText((int)Waveforms::Noise, "Noise");
 	GetParam((int)Parameters::Osc1Coarse)->InitInt("Oscillator 1 coarse", 0, -24, 24, "semitones");
 	GetParam((int)Parameters::Osc1Fine)->InitDouble("Oscillator 1 fine", 0.0, -1.0, 1.0, .01, "semitones");
 	GetParam((int)Parameters::Osc1Split)->InitDouble("Oscillator 1 split", 0.0, -1.0, 1.0, .01, "semitones");
 	GetParam((int)Parameters::Osc2Wave)->InitEnum("Oscillator 1 waveform", (int)Waveforms::Saw, (int)Waveforms::NumWaveforms);
 	GetParam((int)Parameters::Osc2Coarse)->InitInt("Oscillator 2 coarse", 0, -24, 24, "semitones");
+	GetParam((int)Parameters::Osc2Wave)->SetDisplayText((int)Waveforms::Sine, "Sine");
+	GetParam((int)Parameters::Osc2Wave)->SetDisplayText((int)Waveforms::Triangle, "Triangle");
+	GetParam((int)Parameters::Osc2Wave)->SetDisplayText((int)Waveforms::Saw, "Saw");
+	GetParam((int)Parameters::Osc2Wave)->SetDisplayText((int)Waveforms::Square, "Square");
+	GetParam((int)Parameters::Osc2Wave)->SetDisplayText((int)Waveforms::Pulse, "Pulse");
+	GetParam((int)Parameters::Osc2Wave)->SetDisplayText((int)Waveforms::Noise, "Noise");
 	GetParam((int)Parameters::Osc2Fine)->InitDouble("Oscillator 2 fine", 0.0, -1.0, 1.0, .01, "semitones");
 	GetParam((int)Parameters::Osc2Split)->InitDouble("Oscillator 2 split", 0.0, -1.0, 1.0, .01, "semitones");
 	GetParam((int)Parameters::OscMix)->InitDouble("Oscillator mix", 1.0, 0.0, 1.0, .01);
 
 	GetParam((int)Parameters::FmMode)->InitEnum("FM mode", (int)FmModes::Off, (int)FmModes::NumFmModes);
+	GetParam((int)Parameters::FmMode)->SetDisplayText((int)FmModes::Off, "Off");
+	GetParam((int)Parameters::FmMode)->SetDisplayText((int)FmModes::Osc1, "1->1");
+	GetParam((int)Parameters::FmMode)->SetDisplayText((int)FmModes::Osc2, "1->2");
 	GetParam((int)Parameters::FmCoarse)->InitInt("FM coarse", 0, 0, 48);
 	GetParam((int)Parameters::FmFine)->InitDouble("FM fine", 0.0, -1.0, 1.0, .01);
 
@@ -50,6 +65,9 @@ void MikaMicro::InitParameters()
 	GetParam((int)Parameters::LfoCutoff)->InitDouble("Vibrato to filter cutoff", 0.0, -8000.0, 8000.0, .01);
 
 	GetParam((int)Parameters::VoiceMode)->InitEnum("Voice mode", (int)(VoiceModes::Legato), (int)(VoiceModes::NumVoiceModes));
+	GetParam((int)Parameters::VoiceMode)->SetDisplayText((int)VoiceModes::Poly, "Poly");
+	GetParam((int)Parameters::VoiceMode)->SetDisplayText((int)VoiceModes::Mono, "Mono");
+	GetParam((int)Parameters::VoiceMode)->SetDisplayText((int)VoiceModes::Legato, "Legato");
 	GetParam((int)Parameters::GlideLength)->InitDouble("Glide length", 0.0, 0.0, 1.0, .01);
 	GetParam((int)Parameters::MasterVolume)->InitDouble("Master volume", 0.25, 0.0, 0.5, .01);
 }
@@ -69,11 +87,11 @@ void MikaMicro::InitGraphics()
 	auto fmModeSwitch = pGraphics->LoadIBitmap(FMMODESWITCH_ID, FMMODESWITCH_FN, 3);
 
 	// oscillators
-	pGraphics->AttachControl(new ISwitchControl(this, 22 * 4, 10 * 4, (int)Parameters::Osc1Wave, &waveformSwitch));
+	pGraphics->AttachControl(new ISwitchPopUpControl(this, 22 * 4, 10 * 4, (int)Parameters::Osc1Wave, &waveformSwitch));
 	pGraphics->AttachControl(new IKnobMultiControl(this, 38 * 4, 10 * 4, (int)Parameters::Osc1Coarse, &knobMiddle));
 	pGraphics->AttachControl(new IKnobMultiControl(this, 54 * 4, 10 * 4, (int)Parameters::Osc1Fine, &knobMiddle));
 	pGraphics->AttachControl(new IKnobMultiControl(this, 70 * 4, 10 * 4, (int)Parameters::Osc1Split, &knobMiddle));
-	pGraphics->AttachControl(new ISwitchControl(this, 22 * 4, 26 * 4, (int)Parameters::Osc2Wave, &waveformSwitch));
+	pGraphics->AttachControl(new ISwitchPopUpControl(this, 22 * 4, 26 * 4, (int)Parameters::Osc2Wave, &waveformSwitch));
 	pGraphics->AttachControl(new IKnobMultiControl(this, 38 * 4, 26 * 4, (int)Parameters::Osc2Coarse, &knobMiddle));
 	pGraphics->AttachControl(new IKnobMultiControl(this, 54 * 4, 26 * 4, (int)Parameters::Osc2Fine, &knobMiddle));
 	pGraphics->AttachControl(new IKnobMultiControl(this, 70 * 4, 26 * 4, (int)Parameters::Osc2Split, &knobMiddle));
@@ -81,12 +99,12 @@ void MikaMicro::InitGraphics()
 	pGraphics->AttachControl(new IFaderControl(this, 90.5 * 4, 16 * 4, 20 * 4, (int)Parameters::OscMix, &slider));
 
 	// fm
-	pGraphics->AttachControl(new ISwitchControl(this, 22 * 4, 42 * 4, (int)Parameters::FmMode, &fmModeSwitch));
+	pGraphics->AttachControl(new ISwitchPopUpControl(this, 22 * 4, 42 * 4, (int)Parameters::FmMode, &fmModeSwitch));
 	pGraphics->AttachControl(new IKnobMultiControl(this, 38 * 4, 42 * 4, (int)Parameters::FmCoarse, &knobLeft));
 	pGraphics->AttachControl(new IKnobMultiControl(this, 54 * 4, 42 * 4, (int)Parameters::FmFine, &knobMiddle));
 
 	// filter
-	pGraphics->AttachControl(new ISwitchControl(this, 22 * 4, 62 * 4, (int)Parameters::FilterMode, &fmModeSwitch));
+	pGraphics->AttachControl(new ISwitchPopUpControl(this, 22 * 4, 62 * 4, (int)Parameters::FilterMode, &fmModeSwitch));
 	pGraphics->AttachControl(new IKnobMultiControl(this, 38 * 4, 62 * 4, (int)Parameters::FilterCutoff, &knobRight));
 	pGraphics->AttachControl(new IKnobMultiControl(this, 54 * 4, 62 * 4, (int)Parameters::FilterResonance, &knobLeft));
 	pGraphics->AttachControl(new IKnobMultiControl(this, 70 * 4, 62 * 4, (int)Parameters::FilterKeyTracking, &knobMiddle));
@@ -125,7 +143,7 @@ void MikaMicro::InitGraphics()
 	pGraphics->AttachControl(new IKnobMultiControl(this, 203 * 4, 66.5 * 4, (int)Parameters::LfoCutoff, &knobMiddle));
 
 	// master
-	pGraphics->AttachControl(new ISwitchControl(this, 6 * 4, 90 * 4, (int)Parameters::VoiceMode, &fmModeSwitch));
+	pGraphics->AttachControl(new ISwitchPopUpControl(this, 6 * 4, 90 * 4, (int)Parameters::VoiceMode, &fmModeSwitch));
 	pGraphics->AttachControl(new IKnobMultiControl(this, 22 * 4, 90 * 4, (int)Parameters::GlideLength, &knobLeft));
 	pGraphics->AttachControl(new IKnobMultiControl(this, 38 * 4, 90 * 4, (int)Parameters::MasterVolume, &knobLeft));
 

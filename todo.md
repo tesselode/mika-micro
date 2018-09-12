@@ -4,3 +4,7 @@
 	- [ ] Filter cutoff
 	- [ ] Filter resonance
 	- [ ] Filter key tracking
+- [ ] Make sure parameter defaults are sensible
+- [ ] v3 additions
+	- [ ] More interesting noise
+	- [ ] ~Secrets~ panel?
