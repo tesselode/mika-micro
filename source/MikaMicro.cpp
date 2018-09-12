@@ -269,7 +269,7 @@ void MikaMicro::UpdateDrift()
 double MikaMicro::GetVoice(Voice &voice)
 {
 	voice.volEnv.Update(dt);
-	if (voice.volEnv.stage == EnvelopeStages::Idle) return 0.0;
+	if (voice.volEnv.stage == EnvelopeStages::Idle && voice.filter.IsSilent(filterMode)) return 0.0;
 	voice.modEnv.Update(dt);
 	voice.lfoEnv.Update(dt);
 	auto volEnvV = GetParam((int)Parameters::VolEnvV)->Value();
@@ -327,6 +327,8 @@ double MikaMicro::GetVoice(Voice &voice)
 		out += osc2Out * sqrt(oscMix);
 	}
 
+	out *= volEnvValue;
+
 	auto cutoff = GetParam((int)Parameters::FilterCutoff)->Value();
 	cutoff += GetParam((int)Parameters::VolEnvCutoff)->Value() * volEnvValue;
 	cutoff += GetParam((int)Parameters::ModEnvCutoff)->Value() * modEnvValue;
@@ -335,8 +337,6 @@ double MikaMicro::GetVoice(Voice &voice)
 	cutoff *= 1.0 - driftValue;
 	auto resonance = GetParam((int)Parameters::FilterResonance)->Value();
 	out = voice.filter.Process(dt, out, filterMode, cutoff, resonance);
-
-	out *= volEnvValue;
 
 	return out;
 }

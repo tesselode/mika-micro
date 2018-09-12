@@ -24,6 +24,8 @@ struct TwoPoleFilter
 		b = 0.0;
 	}
 
+	bool IsSilent() { return b == 0.0; }
+
 	double Process(double dt, double input, double cutoff, double resonance)
 	{
 		// f calculation
@@ -54,6 +56,8 @@ struct StateVariableFilter
 		band = 0.0;
 		low = 0.0;
 	}
+
+	bool IsSilent() { return low == 0.0; }
 
 	double StateVariableFilter::Process(double dt, double input, double cutoff, double resonance)
 	{
@@ -90,6 +94,8 @@ struct FourPoleFilter
 		d = 0.0;
 	}
 
+	bool IsSilent() { return d == 0.0; }
+
 	double FourPoleFilter::Process(double dt, double input, double cutoff, double resonance)
 	{
 		// f calculation
@@ -125,6 +131,32 @@ struct Filter
 		twoPoleFilter.Reset();
 		stateVariableFilter.Reset();
 		fourPoleFilter.Reset();
+	}
+
+	bool IsSilentIndividual(FilterModes mode)
+	{
+		switch (mode)
+		{
+		case FilterModes::Off:
+			return true;
+		case FilterModes::TwoPole:
+			return twoPoleFilter.IsSilent();
+		case FilterModes::Svf:
+			return stateVariableFilter.IsSilent();
+		case FilterModes::FourPole:
+			return fourPoleFilter.IsSilent();
+		}
+	}
+
+	bool IsSilent(SmoothSwitch mode)
+	{
+		switch (mode.switching)
+		{
+		case true:
+			return IsSilentIndividual((FilterModes)(int)mode.previous) && IsSilentIndividual((FilterModes)(int)mode.current);
+		case false:
+			return IsSilentIndividual((FilterModes)(int)mode.current);
+		}
 	}
 
 	double ProcessIndividual(double dt, double input, FilterModes mode, double cutoff, double resonance)
