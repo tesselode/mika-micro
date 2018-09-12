@@ -85,7 +85,9 @@ private:
 	void UpdateParameters();
 	void UpdateDrift();
 	double GetVoice(Voice &voice);
+	void GrayOutControls();
 
+	IGraphics* pGraphics;
 	IMidiQueue midiQueue;
 	std::vector<int> heldNotes;
 	double dt = 0.0;
