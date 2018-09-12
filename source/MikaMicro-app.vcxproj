@@ -282,9 +282,8 @@
     <ClInclude Include="Filter.h" />
     <ClInclude Include="MikaMicro.h" />
     <ClInclude Include="Oscillator.h" />
-    <ClInclude Include="Parameters.h" />
-    <ClInclude Include="PresetMenu.h" />
     <ClInclude Include="resource.h" />
+    <ClInclude Include="SmoothSwitch.h" />
     <ClInclude Include="Util.h" />
     <ClInclude Include="Voice.h" />
   </ItemGroup>
@@ -297,12 +296,7 @@
     <ClCompile Include="..\..\WDL\rtaudiomidi\RtMidi.cpp" />
     <ClCompile Include="app_wrapper\app_dialog.cpp" />
     <ClCompile Include="app_wrapper\app_main.cpp" />
-    <ClCompile Include="Envelope.cpp" />
-    <ClCompile Include="Filter.cpp" />
     <ClCompile Include="MikaMicro.cpp" />
-    <ClCompile Include="Oscillator.cpp" />
-    <ClCompile Include="Presets.cpp" />
-    <ClCompile Include="Voice.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="MikaMicro.rc" />

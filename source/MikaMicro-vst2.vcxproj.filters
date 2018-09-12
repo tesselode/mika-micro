@@ -5,11 +5,6 @@
     <ClCompile Include="..\..\WDL\IPlug\IPlugVST.cpp">
       <Filter>vst2</Filter>
     </ClCompile>
-    <ClCompile Include="Envelope.cpp" />
-    <ClCompile Include="Filter.cpp" />
-    <ClCompile Include="Oscillator.cpp" />
-    <ClCompile Include="Voice.cpp" />
-    <ClCompile Include="Presets.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MikaMicro.h" />
@@ -17,13 +12,11 @@
     <ClInclude Include="..\..\WDL\IPlug\IPlugVST.h">
       <Filter>vst2</Filter>
     </ClInclude>
-    <ClInclude Include="Envelope.h" />
-    <ClInclude Include="Filter.h" />
-    <ClInclude Include="Oscillator.h" />
-    <ClInclude Include="Parameters.h" />
     <ClInclude Include="Util.h" />
+    <ClInclude Include="Envelope.h" />
+    <ClInclude Include="Oscillator.h" />
+    <ClInclude Include="SmoothSwitch.h" />
     <ClInclude Include="Voice.h" />
-    <ClInclude Include="PresetMenu.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="MikaMicro.rc" />

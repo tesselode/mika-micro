@@ -1,79 +1,76 @@
 #pragma once
 
-#include <array>
 #include "Envelope.h"
 #include "Filter.h"
 #include "Oscillator.h"
-#include "Parameters.h"
 #include "Util.h"
 
-class Voice
+enum class VoiceModes
 {
-public:
-	Voice(std::array<double, (int)Parameters::NumParameters> &parameters) : p(parameters) {}
+	Poly,
+	Mono,
+	Legato,
+	NumVoiceModes
+};
 
-	void SetOsc1Wave(Waveforms waveform)
-	{
-		osc1a.SetWaveform(waveform);
-		osc1b.SetWaveform(waveform);
-	}
-	void SetOsc1PitchFactor(double f) { osc1PitchFactor = f; }
-	void SetOsc1Split(double s)
-	{
-		osc1SplitFactorA = 1.0 + s;
-		osc1SplitFactorB = 1.0 / osc1SplitFactorA;
-	}
-	void SetOsc2Wave(Waveforms waveform)
-	{
-		osc2a.SetWaveform(waveform);
-		osc2b.SetWaveform(waveform);
-	}
-	void SetOsc2PitchFactor(double f) { osc2PitchFactor = f; }
-	void SetOsc2Split(double s)
-	{
-		osc2SplitFactorA = 1.0 + s;
-		osc2SplitFactorB = 1.0 / osc2SplitFactorA;
-	}
-	void SetFilterMode(FilterModes mode) { filter.SetMode(mode); }
-
-	void SetNote(int note);
-	int GetNote() { return note; }
-	void SetVelocity(double v) { velocity = v; }
-	void SetPitchBendFactor(double f) { pitchBendFactor = f; }
-	void ResetPitch() { baseFrequency = targetFrequency; }
-	double GetVolume() { return volEnv.Get(p[(int)Parameters::VolEnvV], velocity); }
-	bool IsReleased() { return volEnv.IsReleased(); }
-	void Start();
-	void Release();
-	double Next(double dt, double lfoValue, double driftValue);
-
-private:
-	double GetFilterCutoff(double volEnvValue, double modEnvValue, double lfoValue, double driftValue);
-	void UpdateEnvelopes(double dt);
-	void Reset();
-
-	std::array<double, (int)Parameters::NumParameters> &p;
+struct Voice
+{
+	Envelope volEnv;
+	Envelope modEnv;
+	Envelope lfoEnv;
+	int note = 0;
+	double targetFrequency = 0.0;
+	double frequency = 0.0;
+	double velocity = 0.0;
+	double pitchBend = 1.0;
 	Oscillator oscFm;
 	Oscillator osc1a;
 	Oscillator osc1b;
 	Oscillator osc2a;
 	Oscillator osc2b;
-	Envelope volEnv;
-	Envelope modEnv;
-	Envelope lfoEnv;
-	MultiFilter filter;
-	int note = 69;
-	double targetFrequency = 440.0;
-	double baseFrequency = 440.0;
-	double pitchBendFactor = 1.0;
-	double velocity = 0.0;
-	double osc1PitchFactor = 1.0;
-	double osc1SplitFactorA = 1.0;
-	double osc1SplitFactorB = 1.0;
-	double osc1bMix = 0.0;
-	double osc2PitchFactor = 1.0;
-	double osc2SplitFactorA = 1.0;
-	double osc2SplitFactorB = 1.0;
-	double osc2bMix = 0.0;
-};
+	Filter filter;
 
+	bool IsReleased() { return volEnv.IsReleased(); }
+	double GetVolume() { return volEnv.value; }
+
+	void Reset(bool osc1OutOfPhase, bool osc2OutOfPhase)
+	{
+		oscFm.phase = 0.0;
+		osc1a.phase = 0.0;
+		osc1b.phase = osc1OutOfPhase ? .33 : 0.0;
+		osc2a.phase = 0.0;
+		osc2b.phase = osc2OutOfPhase ? .33 : 0.0;
+		volEnv.Reset();
+		modEnv.Reset();
+		lfoEnv.Reset();
+		filter.Reset();
+	}
+
+	void Release()
+	{
+		volEnv.Release();
+		modEnv.Release();
+		lfoEnv.Release();
+	}
+
+	void SetNote(int n)
+	{
+		note = n;
+		targetFrequency = pitchToFrequency(note);
+	}
+
+	void SetPitchBendFactor(double f) { pitchBend = f; }
+
+	void ResetPitch() { frequency = targetFrequency; }
+
+	void SetVelocity(double v) { velocity = v; }
+
+	void Start(bool osc1OutOfPhase, bool osc2OutOfPhase)
+	{
+		if (volEnv.stage == EnvelopeStages::Idle)
+			Reset(osc1OutOfPhase, osc2OutOfPhase);
+		volEnv.Start();
+		modEnv.Start();
+		lfoEnv.Start();
+	}
+};
