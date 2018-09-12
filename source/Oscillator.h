@@ -19,7 +19,7 @@ struct Oscillator
 	double triLast = 0.0;
 	double noiseValue = 19.1919191919191919191919191919191919191919;
 
-	double GetWaveform(Waveforms waveform)
+	double GetWaveform(Waveforms waveform, double frequency)
 	{
 		switch (waveform)
 		{
@@ -39,7 +39,7 @@ struct Oscillator
 		case Waveforms::Noise:
 			// Ove Karlsen's noise algorithm
 			// http://musicdsp.org/showArchiveComment.php?ArchiveID=217
-			noiseValue += 19.0;
+			noiseValue += .26 + frequency * .001;
 			noiseValue *= noiseValue;
 			noiseValue -= (int)noiseValue;
 			return noiseValue - .5;
@@ -51,7 +51,7 @@ struct Oscillator
 		phaseIncrement = frequency * dt;
 		phase += phaseIncrement;
 		while (phase > 1.0) phase -= 1.0;
-		return GetWaveform(Waveforms::Sine);
+		return GetWaveform(Waveforms::Sine, frequency);
 	}
 
 	double Get(double dt, SmoothSwitch &waveform, double frequency)
@@ -65,12 +65,12 @@ struct Oscillator
 		case true:
 		{
 			auto out = 0.0;
-			out += (1.0 - waveform.mix) * GetWaveform((Waveforms)(int)waveform.previous);
-			out += waveform.mix * GetWaveform((Waveforms)(int)waveform.current);
+			out += (1.0 - waveform.mix) * GetWaveform((Waveforms)(int)waveform.previous, frequency);
+			out += waveform.mix * GetWaveform((Waveforms)(int)waveform.current, frequency);
 			return out;
 		}
 		case false:
-			return GetWaveform((Waveforms)(int)waveform.current);
+			return GetWaveform((Waveforms)(int)waveform.current, frequency);
 		}
 	}
 };
