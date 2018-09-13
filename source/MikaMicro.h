@@ -62,6 +62,7 @@ enum class Parameters
 	LfoCutoff,
 	VoiceMode,
 	GlideLength,
+	VelocityToGlideLength,
 	MasterVolume,
 	NumParameters
 };
@@ -121,7 +122,6 @@ private:
 	double targetFilterKeyTracking = 0.0;
 	double filterKeyTracking = 0.0;
 	double lfoToCutoff = 0.0;
-	double glideLength = 0.0;
 	double targetMasterVolume = 0.0;
 	double masterVolume = 0.0;
 };

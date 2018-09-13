@@ -22,6 +22,9 @@ struct Voice
 	double targetFrequency = 0.0;
 	double frequency = 0.0;
 	double velocity = 0.0;
+	double glideLength = 0.0;
+	double velocityToGlideLength = 0.0;
+	double glideSpeed = 0.0;
 	double pitchBend = 1.0;
 	Oscillator oscFm;
 	Oscillator osc1a;
@@ -63,7 +66,13 @@ struct Voice
 
 	void ResetPitch() { frequency = targetFrequency; }
 
-	void SetVelocity(double v) { velocity = v; }
+	void SetVelocity(double v)
+	{
+		velocity = v;
+		auto velocitySensitiveGlideLength = glideLength + velocityToGlideLength * velocity;
+		velocitySensitiveGlideLength = velocitySensitiveGlideLength < 0.0 ? 0.0 : velocitySensitiveGlideLength;
+		glideSpeed = 1000 - 999.0 * (.5 - .5 * cos(pow(velocitySensitiveGlideLength, .1) * pi));
+	}
 
 	void Start(bool osc1OutOfPhase, bool osc2OutOfPhase)
 	{

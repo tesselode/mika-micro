@@ -69,6 +69,7 @@ void MikaMicro::InitParameters()
 	GetParam((int)Parameters::VoiceMode)->SetDisplayText((int)VoiceModes::Mono, "Mono");
 	GetParam((int)Parameters::VoiceMode)->SetDisplayText((int)VoiceModes::Legato, "Legato");
 	GetParam((int)Parameters::GlideLength)->InitDouble("Glide length", 0.0, 0.0, 1.0, .01);
+	GetParam((int)Parameters::VelocityToGlideLength)->InitDouble("Velocity to glide length", 0.0, -1.0, 1.0, .01);
 	GetParam((int)Parameters::MasterVolume)->InitDouble("Master volume", 0.25, 0.0, 0.5, .01);
 }
 
@@ -145,7 +146,8 @@ void MikaMicro::InitGraphics()
 	// master
 	pGraphics->AttachControl(new ISwitchPopUpControl(this, 6 * 4, 90 * 4, (int)Parameters::VoiceMode, &fmModeSwitch));
 	pGraphics->AttachControl(new IKnobMultiControl(this, 22 * 4, 90 * 4, (int)Parameters::GlideLength, &knobLeft));
-	pGraphics->AttachControl(new IKnobMultiControl(this, 38 * 4, 90 * 4, (int)Parameters::MasterVolume, &knobLeft));
+	pGraphics->AttachControl(new IKnobMultiControl(this, 38 * 4, 90 * 4, (int)Parameters::VelocityToGlideLength, &knobMiddle));
+	pGraphics->AttachControl(new IKnobMultiControl(this, 54 * 4, 90 * 4, (int)Parameters::MasterVolume, &knobLeft));
 
 	//pGraphics->AttachControl(new PresetMenu(this, IRECT(0, 0, 100, 25)));
 
@@ -299,7 +301,7 @@ double MikaMicro::GetVoice(Voice &voice)
 	auto modEnvValue = (1.0 - modEnvV) * voice.modEnv.value + modEnvV * voice.modEnv.value * voice.velocity;
 	auto delayedLfoValue = lfoValue * voice.lfoEnv.value;
 
-	voice.frequency += (voice.targetFrequency - voice.frequency) * glideLength * dt;
+	voice.frequency += (voice.targetFrequency - voice.frequency) * voice.glideSpeed * dt;
 
 	auto baseFrequency = voice.frequency * voice.pitchBend * (1.0 + driftValue);
 	auto osc1Frequency = osc1Tune * baseFrequency;
@@ -548,10 +550,14 @@ void MikaMicro::OnParamChange(int paramIdx)
 		}
 		break;
 	case Parameters::GlideLength:
-		glideLength = 1000 - 999.0 * (.5 - .5 * cos(pow(value, .1) * pi));
+		for (auto &v : voices) v.glideLength = value;
+		break;
+	case Parameters::VelocityToGlideLength:
+		for (auto &v : voices) v.velocityToGlideLength = value;
 		break;
 	case Parameters::MasterVolume:
 		targetMasterVolume = value;
+		break;
 	}
 
 	GrayOutControls();
